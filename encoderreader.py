@@ -44,7 +44,7 @@ class EncoderReader(Process):
                 previousSecs = currentSecs
                 pulsesSince = self.pulses
                 self.pulses = 0
-                distanceSince = pulsesSince * WHEEL_SIZE
+                distanceSince = (pulsesSince / ENCODER_REV_PULSE) * WHEEL_SIZE
                 positionSince = distanceSince / RAIL_LENGTH
                 with self.lock:
                     self.distance.value += distanceSince

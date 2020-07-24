@@ -21,6 +21,7 @@ class CameraLight(Light):
 
     def set_intensity(self, intensity):
         self.pin.ChangeDutyCycle(intensity)
+        self.intensity = intensity
     
 
 class ArduinoLight(Light):
