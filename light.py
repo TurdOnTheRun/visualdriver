@@ -11,34 +11,26 @@ class Light:
         return self.name
 
 
-class CameraLight(Light):
-
-    def __init__(self, id, pin, intensity=0):
-        super().__init__(id, intensity)
-        self.name = 'CameraLight-' + str(id)
-        self.pin = pin
-    
-
-    def set_intensity(self, intensity):
-        self.pin.ChangeDutyCycle(intensity)
-        self.intensity = intensity
-    
-
 class ArduinoLight(Light):
 
-    def __init__(self, id, alm, intensity=0):
+    def __init__(self, id, apm, intensity=0):
+        #apm: Queue shared with the ArduinoPwmManager
+
         if type(id) is not int:
             raise ArduinoLightError(message='Id has to be integer not ' + type(id))
         if id < 1 or id > 9:
             raise ArduinoLightError(message='Id is out of range: ' + str(id))
+        if 'HC-06' not in apm.conn:
+            if id > 3:
+                raise ArduinoLightError(message='Id is out of range: ' + str(id))
         super().__init__(id, intensity)
         self.name = 'ArduinoLight-' + str(id)
-        self.alm = alm
+        self.apm = apm
         self.aid = id * 1000
     
 
     def set_intensity(self, intensity):
-        self.alm.put(self.aid + intensity)
+        self.apm.put(self.aid + intensity)
         self.intensity = intensity
 
 
@@ -52,3 +44,17 @@ class ArduinoLightError(Exception):
     def __init__(self, message="There is an error with an ArduinoLight"):
         self.message = message
         super().__init__(self.message)
+
+
+# Does not work
+class RaspberryLight(Light):
+
+    def __init__(self, id, pin, intensity=0):
+        super().__init__(id, intensity)
+        self.name = 'CameraLight-' + str(id)
+        self.pin = pin
+    
+
+    def set_intensity(self, intensity):
+        self.pin.ChangeDutyCycle(intensity)
+        self.intensity = intensity
