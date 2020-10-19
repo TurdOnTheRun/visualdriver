@@ -4,7 +4,7 @@ from multiprocessing import Value
 from settings import ENCODER_PIN_A, ENCODER_PIN_B, ENCODER_REV_PULSE, ENCODER_READ_INTERVAL, WHEEL_SIZE, RAIL_LENGTH
 
 
-class EncoderReader():
+class EncoderReader:
 
     def __init__(self, position, distance):
         self.position = position
