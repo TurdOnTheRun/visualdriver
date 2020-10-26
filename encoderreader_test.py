@@ -4,7 +4,7 @@ import time
 
 position = Value('d', 0.0)
 distance = Value('d', 0.0)
-er = EncoderReader(position,distance)
+er = EncoderReader(position, distance)
 
 while True:
     print(position.value, distance.value)
