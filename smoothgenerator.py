@@ -2,8 +2,8 @@ import json
 
 lights = ['bottom-1', 'bottom-2', 'top-1', 'top-2', 'top-5', 'top-6']
 
-fro = 215
-to = 45
+fro = 200
+to = 20
 
 steps = fro-to
 
@@ -15,12 +15,12 @@ time = starttime
 
 total = []
 
-brightness = 213
-while brightness >=45:
+brightness = 20
+while brightness <=200:
 	tup = ['time', time,]
 	for light in lights:
 		tup.append((light, str(brightness)))
-	brightness -= 2
+	brightness += 2
 	time += timestep
 	total.append(tup)
 
