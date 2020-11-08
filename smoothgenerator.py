@@ -15,12 +15,19 @@ time = starttime
 
 total = []
 
-brightness = 20
-while brightness <=200:
+brightness = 200
+while brightness >=20:
 	tup = ['time', time,]
+
+	strbrightness = str(brightness)
+	if len(strbrightness) == 2:
+		strbrightness = '0' + strbrightness
+	elif len(strbrightness) == 1:
+		strbrightness = '00' + strbrightness
+
 	for light in lights:
-		tup.append((light, str(brightness)))
-	brightness += 2
+		tup.append((light, str(strbrightness)))
+	brightness -= 2
 	time += timestep
 	total.append(tup)
 
