@@ -1,31 +1,27 @@
 import json
 
-from humanposerecognition import COMMANDS
+lights = ['bottom-1', 'bottom-2', 'top-1', 'top-2', 'top-5', 'top-6']
 
-print(json.dumps(COMMANDS))
+fro = 215
+to = 45
 
-# lights = ['bottom-1', 'bottom-2', 'top-1', 'top-2', 'top-5', 'top-6']
+steps = fro-to
 
-# fro = 215
-# to = 45
+starttime = 1
+enddtime = 1.8
+timestep = (enddtime-starttime) / steps
 
-# steps = fro-to
+time = starttime
 
-# starttime = 1
-# enddtime = 1.8
-# timestep = (enddtime-starttime) / steps
+total = []
 
-# time = starttime
+brightness = 213
+while brightness >=45:
+	tup = ['time', time,]
+	for light in lights:
+		tup.append((light, str(brightness)))
+	brightness -= 2
+	time += timestep
+	total.append(tup)
 
-# total = []
-
-# brightness = 45
-# while brightness <=213:
-# 	tup = ['time', time,]
-# 	for light in lights:
-# 		tup.append((light, str(brightness)))
-# 	brightness += 1
-# 	time += timestep
-# 	total.append(tup)
-
-# print(json.dumps(total))
+print(json.dumps(total))
