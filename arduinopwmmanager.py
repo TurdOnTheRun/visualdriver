@@ -29,6 +29,6 @@ class ArduinoPwmManager(Process):
             command = self.commands.get()
             if type(command) is int and command > 999 and command < 9256:
                 command = str(command)
-                self.serial.write(bytes('<' + command + ',' + command'>\n','utf-8'))
+                self.serial.write(bytes('<' + command + ',' + command + '>\n','utf-8'))
             else:
                 print('ArduinoPwmManager received invalid command:', command)
