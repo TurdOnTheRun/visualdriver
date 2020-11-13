@@ -1,34 +1,60 @@
 import json
 
-lights = ['bottom-1', 'bottom-2', 'top-1', 'top-2', 'top-5', 'top-6']
+lights = ['bottom-9', 'top-9']
 
-fro = 200
-to = 20
+MINIMUM_TIMESTEP_PER_COMMAND = 0.004
 
-steps = fro-to
+command = [1,0.8,200,20,['bottom-9','top-9']]
 
-starttime = 1
-enddtime = 1.8
-timestep = (enddtime-starttime) / steps
+fro = None
+to = None
 
-time = starttime
+if command[2] < command[3]:
+	steps = command[3] - command[2]
+	increasing = True
+else:
+	steps = command[2] - command[3]
+	increasing = False
 
-total = []
+timestep = command[1] / steps
 
-brightness = 20
-while brightness <=200:
-	tup = ['time', time,]
+if timestep < MINIMUM_TIMESTEP_PER_COMMAND:
+	print('The Timesteps are too short.')
+	exit(1)
 
-	strbrightness = str(brightness)
-	if len(strbrightness) == 2:
-		strbrightness = '0' + strbrightness
-	elif len(strbrightness) == 1:
-		strbrightness = '00' + strbrightness
+time = command[0]
+brightness = command[2]
+line = []
 
-	for light in lights:
-		tup.append((light, str(strbrightness)))
-	brightness += 4
-	time += timestep
-	total.append(tup)
+if increasing:
+	while brightness <= command[3]:
+		tup = ['time', time,]
 
-print(json.dumps(total))
+		strbrightness = str(brightness)
+		if len(strbrightness) == 2:
+			strbrightness = '0' + strbrightness
+		elif len(strbrightness) == 1:
+			strbrightness = '00' + strbrightness
+
+		for light in command[4]:
+			tup.append((light, str(strbrightness)))
+		brightness += 1
+		time += timestep
+		line.append(tup)
+else:
+	while brightness >= command[3]:
+		tup = ['time', time,]
+
+		strbrightness = str(brightness)
+		if len(strbrightness) == 2:
+			strbrightness = '0' + strbrightness
+		elif len(strbrightness) == 1:
+			strbrightness = '00' + strbrightness
+
+		for light in command[4]:
+			tup.append((light, str(strbrightness)))
+		brightness -= 1
+		time += timestep
+		line.append(tup)
+
+print(json.dumps(line))

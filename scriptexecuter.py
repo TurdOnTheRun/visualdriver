@@ -34,22 +34,14 @@ def execute_command(element,value):
 
 def setup():
     bottomComm.put(5000)
-    topComm.put(1001)
-    topComm.put(2001)
-    topComm.put(5001)
-    topComm.put(6001)
-    bottomComm.put(1000)
-    bottomComm.put(2000)
+    topComm.put(9000)
+    bottomComm.put(9000)
 
 
 def shutdown():
     bottomComm.put(5000)
-    topComm.put(1200)
-    topComm.put(2200)
-    topComm.put(5200)
-    topComm.put(6200)
-    bottomComm.put(1200)
-    bottomComm.put(2200)
+    topComm.put(9000)
+    bottomComm.put(9000)
 
 
 atexit.register(shutdown)
