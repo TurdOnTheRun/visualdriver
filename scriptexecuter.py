@@ -2,7 +2,7 @@ from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
 from multiprocessing import Value, Queue
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN
-from executer_test import COMMANDS
+from humanposerecognition import COMMANDS
 import time
 import atexit
 
@@ -21,21 +21,22 @@ bottom.start()
 def execute_command(element,value):
     if element == 'motor':
         bottomComm.put(int('5'+value))
-        print('bottom', '5'+value)
+        #print('bottom', '5'+value)
     else:
         lightid = element.split('-')[1]
         if element.startswith('top'):
             topComm.put(int(lightid + value))
-            print('top', lightid + value)
+            #print('top', lightid + value)
         else:
             bottomComm.put(int(lightid + value))
-            print('bottom', lightid + value)
+            #print('bottom', lightid + value)
 
 
 def setup():
     bottomComm.put(5000)
     topComm.put(9000)
     bottomComm.put(9000)
+    print('Setup Complete!')
 
 
 def shutdown():
@@ -56,12 +57,14 @@ try:
     i = 0
     while i < len(COMMANDS):
         command = COMMANDS[i]
+        print(command[0:2])
         if command[0] == 'time':
             if time.time() - last > command[1]:
                 for x in command[2:]:
                     execute_command(x[0],x[1])
                 i+=1
         elif command[0] == 'pos':
+            print(position.value)
             if position.value > command[1]:
                 for x in command[2:]:
                     execute_command(x[0],x[1])
@@ -69,9 +72,12 @@ try:
         elif command[0] == 'resettimer':
             last = time.time()
             i+=1
-except Exception:
+except Exception as e:
+    print('Error:', e)
     shutdown()
+    raise e
 
+print('Finishing')
 shutdown()
 
         
