@@ -1,10 +1,10 @@
 import json
 
-lights = ['bottom-9', 'top-9']
+lights = ['top-9', 'bottom-9']
 
 MINIMUM_TIMESTEP_PER_COMMAND = 0.004
 
-command = [1,0.8,200,20,['bottom-9','top-9']]
+command = [20.75,21.45,254,0,['bottom-9','top-9']]
 
 fro = None
 to = None
@@ -16,11 +16,16 @@ else:
 	steps = command[2] - command[3]
 	increasing = False
 
-timestep = command[1] / steps
+timestep = (command[1]-command[0]) / steps
+print(timestep)
 
 if timestep < MINIMUM_TIMESTEP_PER_COMMAND:
-	print('The Timesteps are too short.')
-	exit(1)
+	print('Stepsize 2')
+	stepsize = 2
+	timestep = (command[1]-command[0]) / (steps/2)
+else:
+	print('Stepsize 1')
+	stepsize = 1
 
 time = command[0]
 brightness = command[2]
@@ -38,7 +43,7 @@ if increasing:
 
 		for light in command[4]:
 			tup.append((light, str(strbrightness)))
-		brightness += 1
+		brightness += stepsize
 		time += timestep
 		line.append(tup)
 else:
@@ -53,7 +58,7 @@ else:
 
 		for light in command[4]:
 			tup.append((light, str(strbrightness)))
-		brightness -= 1
+		brightness -= stepsize
 		time += timestep
 		line.append(tup)
 
