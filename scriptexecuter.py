@@ -2,7 +2,7 @@ from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
 from multiprocessing import Value, Queue
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN
-from humanposerecognition import COMMANDS
+from executer_test import COMMANDS
 import time
 import atexit
 
@@ -21,15 +21,15 @@ bottom.start()
 def execute_command(element,value):
     if element == 'motor':
         bottomComm.put(int('5'+value))
-        # print('bottom', '5'+value)
+        print('bottom', '5'+value)
     else:
         lightid = element.split('-')[1]
         if element.startswith('top'):
             topComm.put(int(lightid + value))
-            # print('top', lightid + value)
+            print('top', lightid + value)
         else:
             bottomComm.put(int(lightid + value))
-            # print('bottom', lightid + value)
+            print('bottom', lightid + value)
 
 
 def setup():
