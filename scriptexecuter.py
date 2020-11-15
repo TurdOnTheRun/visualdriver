@@ -18,31 +18,24 @@ bottom = ArduinoPwmManager(ARDUINO_UNO_CONN, bottomComm)
 bottom.start()
 
 
-def execute_command(element,value):
-    if element == 'motor':
-        bottomComm.put(int('5'+value))
-        #print('bottom', '5'+value)
+def execute_command(arduino,command):
+    if arduino == 'bottom':
+        bottomComm.put(command)
     else:
-        lightid = element.split('-')[1]
-        if element.startswith('top'):
-            topComm.put(int(lightid + value))
-            #print('top', lightid + value)
-        else:
-            bottomComm.put(int(lightid + value))
-            #print('bottom', lightid + value)
+        topComm.put(command)
 
 
 def setup():
-    bottomComm.put(5000)
-    topComm.put(9000)
-    bottomComm.put(9000)
+    bottomComm.put((200,0,0,0))
+    topComm.put((255,0,0,0))
+    bottomComm.put((255,0,0,0))
     print('Setup Complete!')
 
 
 def shutdown():
-    bottomComm.put(5000)
-    topComm.put(9000)
-    bottomComm.put(9000)
+    bottomComm.put((200,0,0,0))
+    topComm.put((255,150,150,0))
+    bottomComm.put((255,0,0,0))
 
 
 atexit.register(shutdown)
@@ -57,7 +50,7 @@ try:
     i = 0
     while i < len(COMMANDS):
         command = COMMANDS[i]
-        print(command[0:2])
+        # print(command[0:2])
         if command[0] == 'time':
             if time.time() - last > command[1]:
                 for x in command[2:]:
