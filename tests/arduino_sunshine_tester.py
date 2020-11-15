@@ -10,7 +10,7 @@ ser = serial.Serial( "/dev/cu.usbmodem1431", baudrate=115200 , timeout=1)
 
 def send_it(id, state, tostate, steptime):
 	print(id, state, tostate, steptime)
-	command = b'<' + bytes([id]) + bytes([state]) + bytes([tostate]) + bytes([steptime]) + b'>'
+	command = b'<' + bytes([id]) + bytes([state]) + bytes([tostate]) + bytes([steptime]) + b'>\n'
 	ser.write(command)
 
 while True:
