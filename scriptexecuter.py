@@ -2,7 +2,7 @@ from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
 from multiprocessing import Value, Queue
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN
-from humanposerecognition import COMMANDS
+from phototest import COMMANDS
 import time
 import atexit
 
@@ -26,24 +26,22 @@ def execute_command(arduino,command):
 
 
 def setup():
-    bottomComm.put((200,0,0,0))
-    topComm.put((255,0,0,0))
-    bottomComm.put((255,0,0,0))
+    bottomComm.put((200,0))
+    topComm.put((100,20))
+    bottomComm.put((100,20))
     print('Setup Complete!')
 
 
 def shutdown():
-    bottomComm.put((200,0,0,0))
-    topComm.put((255,150,150,0))
-    bottomComm.put((255,0,0,0))
+    bottomComm.put((200,0))
+    topComm.put((100,50))
+    bottomComm.put((100,0))
 
 
 atexit.register(shutdown)
 
-
-#setup()
-time.sleep(15)
-
+setup()
+time.sleep(10)
 
 try:
     last = time.time()

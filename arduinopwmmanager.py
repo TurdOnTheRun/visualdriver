@@ -28,13 +28,11 @@ class ArduinoPwmManager(Process):
     def run(self):
         while True:
             command = self.commands.get()
-            id = command[0]
-            state = command[1]
-            tostate = command[2]
-            steptime = command[3]
-            if type(id) is int and type(state) is int and type(tostate) is int and type(steptime) is int:
-                command = b'<' + bytes([id]) + bytes([state]) + bytes([tostate]) + bytes([steptime]) + b'>\n'
-                self.serial.write(command)
-                time.sleep(0.004)
-            else:
-                print('ArduinoPwmManager received invalid command:', command)
+            commandstring = b'<'
+            for comm in command:
+                commandstring += bytes([comm])
+            commandstring += b'>\n'
+            self.serial.write(commandstring)
+            time.sleep(0.004)
+#            else:
+#                print('ArduinoPwmManager received invalid command:', command)
