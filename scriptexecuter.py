@@ -2,7 +2,7 @@ from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
 from multiprocessing import Value, Queue
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN
-from phototest import COMMANDS
+from uma import SCRIPT
 import time
 import atexit
 
@@ -18,16 +18,16 @@ bottom = ArduinoPwmManager(ARDUINO_UNO_CONN, bottomComm)
 bottom.start()
 
 
-def execute_command(arduino,command):
+def execute_step(arduino,step):
     if arduino == 'bottom':
-        bottomComm.put(command)
+        bottomComm.put(step)
     else:
-        topComm.put(command)
+        topComm.put(step)
 
 
 def setup():
     bottomComm.put((200,0))
-    topComm.put((100,20))
+    topComm.put((100,0))
     bottomComm.put((100,20))
     print('Setup Complete!')
 
@@ -41,26 +41,26 @@ def shutdown():
 atexit.register(shutdown)
 
 setup()
-time.sleep(10)
+time.sleep(5)
 
 try:
     last = time.time()
     i = 0
-    while i < len(COMMANDS):
-        command = COMMANDS[i]
-        # print(command[0:2])
-        if command[0] == 'time':
-            if time.time() - last > command[1]:
-                for x in command[2:]:
-                    execute_command(x[0],x[1])
+    while i < len(SCRIPT):
+        step = SCRIPT[i]
+        # print(step[0:2])
+        if step[0] == 'time':
+            if time.time() - last > step[1]:
+                for x in step[2:]:
+                    execute_step(x[0],x[1])
                 i+=1
-        elif command[0] == 'pos':
+        elif step[0] == 'pos':
             print(position.value)
-            if position.value > command[1]:
-                for x in command[2:]:
-                    execute_command(x[0],x[1])
+            if position.value > step[1]:
+                for x in step[2:]:
+                    execute_step(x[0],x[1])
                 i+=1
-        elif command[0] == 'resettimer':
+        elif step[0] == 'resettimer':
             last = time.time()
             i+=1
 except Exception as e:
