@@ -3,7 +3,7 @@ BBB = 58
 
 SCRIPT = [
     ['time',0,['top',[101,TBB,2]],['bottom',[101,BBB,2]]],
-    #['time',2.3,['bottom',[200,60]]],
+    ['time',2.3,['bottom',[200,55]]],
 
     # FIRST WAVES
     ['time',39.76,['top',[101,TBB+150,6]],['bottom',[101,BBB+60,13]]],
@@ -66,10 +66,10 @@ SCRIPT = [
     ['time',107.52,['top',[101,TBB,10]],['bottom',[101,BBB,17]]],
 
     ['time',109.08,['top',[101,TBB+155,5]],['bottom',[101,BBB+80,9]]],
-    ['time',109.8,['top',[101,TBB,5]],['bottom',[101,BBB,7]]],
+    ['time',109.8,['top',[101,TBB,7]],['bottom',[101,BBB,9]]],
 
     ['time',112.72,['top',[101,TBB+155,6]],['bottom',[101,BBB+60,15]]],
-    ['time',113.6,['top',[101,TBB,5]],['bottom',[101,BBB,8]]],
+    ['time',113.6,['top',[101,TBB,6]],['bottom',[101,BBB,9]]],
 
     ['time',116.56,['top',[101,TBB+155,6]],['bottom',[101,BBB+80,11]]],
     ['time',117.4,['top',[101,TBB,6]],['bottom',[101,BBB,10]]],
@@ -78,10 +78,10 @@ SCRIPT = [
     ['time',121.24,['top',[101,TBB,5]],['bottom',[101,BBB,12]]],
 
     ['time',124.28,['top',[101,TBB+155,6]],['bottom',[101,BBB+80,11]]],
-    ['time',121.24,['top',[101,TBB,5]],['bottom',[101,BBB,9]]],
+    ['time',125.16,['top',[101,TBB,5]],['bottom',[101,BBB,9]]],
 
     ['time',128.12,['top',[101,TBB+155,6]],['bottom',[101,BBB+60,15]]],
-    ['time',129,['top',[101,TBB,4]],['bottom',[101,BBB,10]]],
+    ['time',129,['top',[101,TBB,6]],['bottom',[101,BBB,11]]],
 
 
 
@@ -90,14 +90,14 @@ SCRIPT = [
     ['time',135.2,['top',[101,TBB+155,19]],['bottom',[101,BBB+120,24]]],
 
     ['time',137.2,['top',[101,TBB,13]],['bottom',[101,BBB,17]]],
-    ['time',139.28,['top',[101,TBB+150]],['bottom',[101,BBB+80]]],
+    ['time',139.28,['top',[101,TBB+150,4]],['bottom',[101,BBB+80,8]]],
     ['time',140,['top',[101,TBB,13]],['bottom',[101,BBB,25]]],
 
     ['time',142.92,['top',[101,TBB+150,13]],['bottom',[101,BBB+120,16]]],
     ['time',144.92,['top',[101,TBB,10]],['bottom',[101,BBB,13]]],
 
     ['time',147.32,['top',[101,TBB+150,3]],['bottom',[101,BBB+80,6]]],
-    ['time',144.92,['top',[101,TBB,11]],['bottom',[101,BBB,20]]],
+    ['time',147.8,['top',[101,TBB,11]],['bottom',[101,BBB,20]]],
 
     ['time',150.72,['top',[101,TBB+150,6]],['bottom',[101,BBB+60,15]]],
     ['time',151.64,['top',[101,TBB,13]],['bottom',[101,BBB,33]]],
