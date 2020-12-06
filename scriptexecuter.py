@@ -28,7 +28,7 @@ def execute_step(arduino,step):
 def setup():
     bottomComm.put((200,0))
     topComm.put((100,0))
-    bottomComm.put((100,20))
+    bottomComm.put((100,0))
     print('Setup Complete!')
 
 
