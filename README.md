@@ -11,7 +11,7 @@ Description of Bytes:
 1.  TypeId and LightId
 1.  State to set
 
-### 010 to 019: Linear Dimming Light Control
+### 010 to 019: Linear Fade Single Light Control
 
 Example Input: 011250030 --> Set light 1 to 250 with a steptime of 30
 
@@ -22,6 +22,16 @@ Description of Bytes:
 1.  State to set
 1.  Steptime --> Milliseconds per step
 
+### 020 to 029: Strobe Single Light Control
+
+Example Input: 021250030 --> Set light 1 to a 250 strobe with 30 millisecond beats
+
+Number of Bytes: 3
+
+Description of Bytes: 
+1.  TypeId and LightId
+1.  State to strobe at
+1.  Beattime --> Milliseconds per beat
 
 
 ## Virtual Environment
