@@ -5,6 +5,7 @@ INPUT = 'testscript.csv'
 OUTPUT = 'testscript.json'
 FPS = 25
 
+
 TRIGGERTYPES = ['time','pos']
 COMMANDTYPES = ['instant', 'linear', 'strobe']
 TOPLIGHTS = ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','ta']
@@ -154,9 +155,24 @@ def get_comms(commandtype, comms, timeframe):
 
 	return parsedcomms
 
+def clean_comms(comms):
+	cleanedComms = []
+	errorMessage = 'Invalid Command: '
 
-def abort(index, message, e=None):
-	print('Failure in Line', index)
+	for comm in comms:
+		if type(comm) == int and comm >= 0 and comm <= 255:
+			if comm == 60:
+				comm = 61
+			if comm == 62:
+				comm = 63
+			cleanedComms.append(comm)
+		else:
+			abort(errorMessage + str(comm))
+
+	return cleanedComms
+
+
+def abort(message, e=None):
 	print(message)
 	if e:
 		raise e
@@ -176,46 +192,48 @@ if __name__ == "__main__":
 
 		if index == 0:
 			continue
+		
+		print(str(index) + ': ', end='')
 
 		elements = line.strip().split(',')
 		triggertype = elements[0]
-		fromvalue = elements[1]
-		tovalue = elements[2]
+		fromtime = elements[1]
+		totime = elements[2]
 		commandtype = elements[3]
 		timeframe = None
 
-		print(triggertype, fromvalue, tovalue, commandtype)
+		print(triggertype, fromtime, totime, commandtype, '-', end='')
 
 		if triggertype not in TRIGGERTYPES:
-			abort(index, 'Invalid Triggertype')
+			abort('Invalid Triggertype')
 		
 		if commandtype not in COMMANDTYPES:
-			abort(index, 'Invalid Commandtype')
+			abort('Invalid Commandtype')
 
 		try:
-			fromvalue = parse_trigger_value(triggertype, fromvalue)
+			fromtime = parse_trigger_value(triggertype, fromtime)
 		except Exception as e:
-			abort(index, 'Unable to parse fromvalue', e)
+			abort('Unable to parse fromtime', e)
 
 		if commandtype == 'linear':
 			try:
-				tovalue = parse_trigger_value(triggertype, tovalue)
-				timeframe = tovalue - fromvalue
+				totime = parse_trigger_value(triggertype, totime)
+				timeframe = totime - fromtime
 			except Exception as e:
-				abort(index, 'Unable to parse tovalue', e)
+				abort('Unable to parse totime', e)
 
-		elif tovalue:
-			abort(index, 'Unnecessary definition of tovalue')
+		elif totime:
+			abort('Unnecessary definition of totime')
 
 		i = 4
 
-		l = [triggertype, fromvalue]
+		l = [triggertype, fromtime]
 
 		comms = elements[4:]
 		comms = list(filter(lambda a: a != '', comms))
-
-		l += get_comms(commandtype, comms, timeframe)
-
+		comms = get_comms(commandtype, comms, timeframe)
+		comms = clean_comms(comms)
+		l += comms
 		script.append(l)
 
 
