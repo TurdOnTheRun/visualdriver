@@ -1,13 +1,13 @@
 
 import json
 
-INPUT = 'testscript.csv'
-OUTPUT = 'testscript.json'
+INPUT = './silver.csv'
+OUTPUT = './silver.json'
 FPS = 25
 
 
 TRIGGERTYPES = ['time','pos']
-COMMANDTYPES = ['instant', 'linear', 'strobe']
+COMMANDTYPES = ['instant', 'linear', 'strobe', 'instanttolinear']
 TOPLIGHTS = ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','ta']
 BOTTOMLIGHTS = ['b0','b1','b2','ba']
 
@@ -38,6 +38,8 @@ def get_byte_representation(commandtype, lightid):
 			return 201
 		if commandtype == 'strobe':
 			return 202
+		if commandtype == 'instanttolinear':
+			return 203
 	else:
 		light = int(lightid[-1])
 		if commandtype == 'instant':
@@ -46,6 +48,8 @@ def get_byte_representation(commandtype, lightid):
 			return 10 + light
 		if commandtype == 'strobe':
 			return 20 + light
+		if commandtype == 'instanttolinear':
+			return 30 + light
 
 
 def get_instant_comms(comms):
@@ -71,7 +75,7 @@ def get_instant_comms(comms):
 			exit(-1)
 		
 		lightid = get_byte_representation('instant', lightid)
-		c.append([lightid,int(state)])
+		c.append(clean_bytes([lightid,int(state)]))
 
 		parsedcomms.append(c)
 	
@@ -79,9 +83,6 @@ def get_instant_comms(comms):
 
 
 def get_linear_comms(comms, timeframe):
-
-
-	import pdb;pdb.set_trace()
 
 	parsedcomms = []
 
@@ -106,7 +107,7 @@ def get_linear_comms(comms, timeframe):
 		
 		lightid = get_byte_representation('linear', lightid)
 		steptime = int(round(1000 * timeframe/(abs(fromstate-tostate))))
-		c.append([lightid,int(tostate),steptime])
+		c.append(clean_bytes([lightid,int(tostate),steptime]))
 
 		parsedcomms.append(c)
 	
@@ -137,7 +138,39 @@ def get_strobe_comms(comms):
 			exit(-1)
 		
 		lightid = get_byte_representation('strobe', lightid)
-		c.append([lightid,int(state),int(strobebeat)])
+		c.append(clean_bytes([lightid,int(state),int(strobebeat)]))
+
+		parsedcomms.append(c)
+	
+	return parsedcomms
+
+
+def get_instanttolinear_comms(comms, timeframe):
+
+	parsedcomms = []
+
+	i = 0
+
+	# While loop for every commandtype
+	while i < len(comms):
+		lightid = comms[i]
+		state1 = int(comms[i+1])
+		state2 = int(comms[i+2])
+		i += 3
+
+		c = []
+
+		if lightid.startswith('t'):
+			c.append('top')
+		elif lightid.startswith('b'):
+			c.append('bottom')
+		else:
+			print('Lightid not implemented yet')
+			exit(-1)
+		
+		lightid = get_byte_representation('instanttolinear', lightid)
+		steptime = int(round(1000 * timeframe/(abs(state1-state2))))
+		c.append(clean_bytes([lightid,int(state1),int(state2),steptime]))
 
 		parsedcomms.append(c)
 	
@@ -152,19 +185,20 @@ def get_comms(commandtype, comms, timeframe):
 		parsedcomms = get_linear_comms(comms, timeframe)
 	elif commandtype == 'strobe':
 		parsedcomms = get_strobe_comms(comms)
-
+	elif commandtype == 'instanttolinear':
+		parsedcomms = get_instanttolinear_comms(comms, timeframe)
 	return parsedcomms
 
-def clean_comms(comms):
+def clean_bytes(comms):
 	cleanedComms = []
 	errorMessage = 'Invalid Command: '
 
 	for comm in comms:
 		if type(comm) == int and comm >= 0 and comm <= 255:
-			if comm == 60:
-				comm = 61
-			if comm == 62:
-				comm = 63
+			if comm == 251:
+				comm = 250
+			if comm == 252:
+				comm = 253
 			cleanedComms.append(comm)
 		else:
 			abort(errorMessage + str(comm))
@@ -202,7 +236,7 @@ if __name__ == "__main__":
 		commandtype = elements[3]
 		timeframe = None
 
-		print(triggertype, fromtime, totime, commandtype, '-', end='')
+		print(triggertype, fromtime, totime, commandtype, '- ', end='')
 
 		if triggertype not in TRIGGERTYPES:
 			abort('Invalid Triggertype')
@@ -215,7 +249,7 @@ if __name__ == "__main__":
 		except Exception as e:
 			abort('Unable to parse fromtime', e)
 
-		if commandtype == 'linear':
+		if commandtype in ['linear', 'instanttolinear']:
 			try:
 				totime = parse_trigger_value(triggertype, totime)
 				timeframe = totime - fromtime
@@ -225,16 +259,14 @@ if __name__ == "__main__":
 		elif totime:
 			abort('Unnecessary definition of totime')
 
-		i = 4
-
 		l = [triggertype, fromtime]
 
 		comms = elements[4:]
 		comms = list(filter(lambda a: a != '', comms))
 		comms = get_comms(commandtype, comms, timeframe)
-		comms = clean_comms(comms)
 		l += comms
 		script.append(l)
+		print('Done')
 
 
 with open(OUTPUT, 'w') as outfile:
