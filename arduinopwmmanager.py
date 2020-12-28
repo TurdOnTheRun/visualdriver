@@ -2,6 +2,8 @@ from multiprocessing import Process
 import serial
 import time
 
+startByte = bytes([251])
+endByte = bytes([252])
 
 class ArduinoPwmManager(Process):
 
@@ -28,10 +30,10 @@ class ArduinoPwmManager(Process):
     def run(self):
         while True:
             command = self.commands.get()
-            commandstring = b'<'
+            commandstring = startByte
             for comm in command:
                 commandstring += bytes([comm])
-            commandstring += b'>\n'
+            commandstring += endByte
             self.serial.write(commandstring)
             time.sleep(0.004)
 #            else:

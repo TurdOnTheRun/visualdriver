@@ -2,9 +2,14 @@ from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
 from multiprocessing import Value, Queue
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN
-from uma import SCRIPT
 import time
 import atexit
+import json
+
+INPUT = './scripts/silver.json'
+f = open(INPUT,) 
+SCRIPT = json.load(f)
+f.close()
 
 topComm = Queue()
 bottomComm = Queue()
@@ -26,16 +31,16 @@ def execute_step(arduino,step):
 
 
 def setup():
+    bottomComm.put((220,0))
+    topComm.put((200,0))
     bottomComm.put((200,0))
-    topComm.put((100,0))
-    bottomComm.put((100,0))
     print('Setup Complete!')
 
 
 def shutdown():
+    bottomComm.put((220,0))
+    topComm.put((200,50))
     bottomComm.put((200,0))
-    topComm.put((100,50))
-    bottomComm.put((100,0))
 
 
 atexit.register(shutdown)
