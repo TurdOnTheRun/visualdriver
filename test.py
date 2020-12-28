@@ -16,14 +16,10 @@ while True:
     value = input("Please enter a command:\n")
     try:
         commands = value.split(',')
-        id = int(commands[0])
-        command = [id,]
-        if len(commands) > 1:
-            state = int(commands[1])
-            command.append(state)
-        if len(commands) > 2:
-            steptime = int(commands[2])
-            command.append(steptime)
+        command = []
+        for c in commands:
+            command.append(int(c))
+        
     except ValueError:
         print('Invalid Command')
     if command:

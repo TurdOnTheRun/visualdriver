@@ -74,6 +74,7 @@ except Exception as e:
     raise e
 
 print('Finishing')
+time.sleep(3)
 shutdown()
 
         
