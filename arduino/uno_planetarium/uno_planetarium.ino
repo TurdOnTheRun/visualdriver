@@ -1,3 +1,4 @@
+#include <SerialInterpreter.h>
 #include <Light.h>
 #include <PWM.h>
 
@@ -285,13 +286,14 @@ UnoLight lights[numberoflights] = {
   UnoLight(3, light3),
 };
 
-const byte buffSize = 40;
-byte inputBuffer[buffSize];
-const char startMarker = '<';
-const char endMarker = '>';
-byte bytesRecvd = 0;
-boolean readInProgress = false;
-boolean newData = false;
+SerialInterpreter interpreter = SerialInterpreter();
+
+//const byte buffSize = 40;
+//byte inputBuffer[buffSize];
+//const char startMarker = '<';
+//const char endMarker = '>';
+//byte bytesRecvd = 0;
+//boolean readInProgress = false;
 
 void setup(){
   //SETUP USB SERIAL  
@@ -302,7 +304,7 @@ void setup(){
 
   motor.init();
   initLights();
-  setAll(0,20,10);
+  setAll(0,20,0,10);
 }
 
 void loop(){
@@ -313,61 +315,47 @@ void loop(){
 
 void readSerial() {
   // receive data from Python and save it into inputBuffer
-  while(Serial.available() > 0 && newData == false) {
+  while(Serial.available() > 0) {
     
     byte x = Serial.read();
 
     // the order of these IF clauses is significant
-      
-    if (x == endMarker) {
-      readInProgress = false;
-      inputBuffer[bytesRecvd] = 0;
-      newData = true;
+    bool isEnd = interpreter.processByte(x);
+    
+    if(isEnd){
       parseData();
-      newData = false;
     }
     
-    if(readInProgress) {
-      inputBuffer[bytesRecvd] = x;
-      bytesRecvd ++;
-      if (bytesRecvd == buffSize) {
-        bytesRecvd = buffSize - 1;
-      }
-    }
-    
-    if (x == startMarker) {
-      bytesRecvd = 0; 
-      readInProgress = true;
-    }
   }
 }
 
 void parseData() {
   // split the data into its parts
 
-  byte id = inputBuffer[0];
+  byte id = interpreter.inputBuffer[0];
   //Serial.println(id);
   byte lightid;
   byte type;
-  byte state;
+  byte state1;
+  byte state2;
   byte steptime;
 
   boolean all = false;
   byte alltype;
 
-  if (id == 200) {
-    state = inputBuffer[1];
-    steptime = inputBuffer[2];
-    motor.setto(state,steptime);
+  if (id == 220) {
+    state1 = interpreter.inputBuffer[1];
+    steptime = interpreter.inputBuffer[2];
+    motor.setto(state1,steptime);
     return;
-  } else if (id == 210) {
+  } else if (id == 221) {
     motor.changedirection();
     return;
   }
 
-  if(id > 99 && id < 110){
+  if(id > 199 && id < 220){
     all = true;
-    alltype = id % 10;
+    alltype = id - 200;
     id = alltype*10;
   } 
   
@@ -375,34 +363,43 @@ void parseData() {
     //Direct    
     lightid = id % 10;
     type = 0;
-    state = inputBuffer[1];
-    steptime=0;
+    state1 = interpreter.inputBuffer[1];
+    steptime = 0;
   } 
   else if(id < 20) {
     //Linear    
     lightid = id % 10;
     type = 1;
-    state = inputBuffer[1];
-    steptime = inputBuffer[2];
+    state1 = interpreter.inputBuffer[1];
+    steptime = interpreter.inputBuffer[2];
   }
   else if(id < 30) {
     //Strobe  
     lightid = id % 10;
     type = 2;
-    state = inputBuffer[1];
-    steptime = inputBuffer[2];
+    state1 = interpreter.inputBuffer[1];
+    steptime = interpreter.inputBuffer[2];
+  }
+  else if(id < 40) {
+    //Direct to Linear  
+    lightid = id % 10;
+    type = 3;
+    state1 = interpreter.inputBuffer[1];
+    state2 = interpreter.inputBuffer[2];
+    steptime = interpreter.inputBuffer[3];
   }
 
-  //Serial.println(type);
-  //Serial.println(state);
-  //Serial.println(steptime);
+//  Serial.println(id);
+//  Serial.println(state);
+//  Serial.println(steptime);
+//  Serial.println();
   
   if(all){
     //Serial.println("all");
-    setAll(alltype,state,steptime);
+    setAll(alltype,state1,state2,steptime);
   } else {
     //Serial.println(lightid);
-    setLight(lightid,type,state,steptime);
+    setLight(lightid,type,state1,state2,steptime);
   }
 
 }
@@ -419,146 +416,12 @@ void updateLights() {
   };
 }
 
-void setAll(byte type, byte tostate, byte steptime) {
+void setAll(byte type, byte state1, byte state2, byte steptime) {
   for(int i = 0; i < numberoflights; ++i) {
-    lights[i].setto(type,tostate,steptime);
+    lights[i].setto(type,state1,state2,steptime);
   };
 }
 
-void setLight(byte id, byte type, byte tostate, byte steptime) {
-  lights[id].setto(type,tostate,steptime);
+void setLight(byte id, byte type, byte state1, byte state2, byte steptime) {
+  lights[id].setto(type,state1,state2,steptime);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//void executeCommands() {
-//  if(newDataAvailable) {
-//    //lights can have lightId 1-8 (8 lights total)
-//    //lightId 9 applies intensity to all lights       
-//    //1000 <= code <= 9255
-//    if (code > 999 && code < 9256) {
-//      int id = (code / 1000U) % 10;
-//      if ((id > 0 && id < 4) || id == 9){
-//        int intensity = code - (id * 1000);
-//        if (intensity > -1 && intensity < 256){
-//          setlight(id, intensity);
-//        }
-//      }
-//      // Id 5 sets the speed of the motor      
-//      else if (id == 5){
-//        int x = code - (id * 1000);
-//        if (x > -1 && x < MAXIMUM_SPEED){
-//          setSpeed(x);
-//        } else if (x == 555) {
-//          setForwards();
-//        } else if (x == 666) {
-//          setBackwards();
-//        } else if (x == 777) {
-//          changeDirections();
-//        }
-//      }
-//    }
-//    newDataAvailable = false;
-//  }
-//}
-//
-//void setAll(int intensity){
-//  pwmWrite(light1, intensity);
-//  pwmWrite(light2, intensity);
-//  pwmWrite(light3, intensity);
-//}
-//
-//void setlight(int lightId, int intensity){
-//  switch(lightId){
-//    case 1:
-//      pwmWrite(light1, intensity);
-//      break;
-//    case 2:
-//      pwmWrite(light2, intensity);
-//      break;
-//    case 3:
-//      pwmWrite(light3, intensity);
-//      break;
-//    case 9:
-//      setAll(intensity);
-//      break;
-//  }
-//}
-//
-//void setSpeed(int x){
-//  if (x > SPEED){
-//    if (x - SPEED > MAXIMAL_SPEED_DIFFERENCE){
-//      for(int i=SPEED; i<=x; i++){
-//        analogWrite(NOTOUT,0);
-//        analogWrite(OUT,i);
-//        SPEED = i;
-//        delay(10);
-//      } 
-//    } else {
-//        analogWrite(NOTOUT,0);
-//        analogWrite(OUT,x);
-//        SPEED = x;
-//      }
-//  } else if (x < SPEED){
-//      if (SPEED - x > MAXIMAL_SPEED_DIFFERENCE){
-//        for(int i=SPEED; i>=x; i--){
-//          analogWrite(NOTOUT,0);
-//          analogWrite(OUT,i);
-//          SPEED = i;
-//          delay(10);
-//        }
-//      } else {
-//        analogWrite(NOTOUT,0);
-//        analogWrite(OUT,x);
-//        SPEED = x;
-//      }
-//  }
-//}
-//
-//void setForwards(){
-//  if (OUT != LPWM_pin){
-//    changeDirections();
-//  }
-//}
-//
-//void setBackwards(){
-//  if (OUT == LPWM_pin){
-//    changeDirections();
-//  }
-//}
-//
-//void changeDirections(){
-//    int tempSpeed = SPEED;
-//    int tempOut = OUT;
-//    setSpeed(0);
-//    OUT = NOTOUT;
-//    NOTOUT = tempOut;
-//    setSpeed(tempSpeed);
-//}
-//
-//void toStop(){
-//  setSpeed(0);
-//}

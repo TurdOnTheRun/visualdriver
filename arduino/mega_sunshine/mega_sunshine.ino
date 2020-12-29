@@ -1,4 +1,5 @@
 #include <Light.h>
+#include <SerialInterpreter.h>
 
 //
 //class Light {
@@ -150,13 +151,14 @@ Light lights[numberoflights] = {
 
 byte baseBrightness = 200;
 
-const byte buffSize = 40;
-byte inputBuffer[buffSize];
-const char startMarker = '<';
-const char endMarker = '>';
-byte bytesRecvd = 0;
-boolean readInProgress = false;
-boolean newData = false;
+//const byte buffSize = 40;
+//byte interpreter.inputBuffer[buffSize];
+//const char startMarker = '<';
+//const char endMarker = '>';
+//byte bytesRecvd = 0;
+//boolean readInProgress = false;
+
+SerialInterpreter interpreter = SerialInterpreter();
 
 void setup() {
   //SETUP BLUETOOTH
@@ -176,7 +178,7 @@ void setup() {
   TCCR4B |= prescaler;
 
   initLights();
-  setAll(1,200,40);
+  setAll(1,200,0,40);
 }
 
 void loop() {
@@ -185,52 +187,36 @@ void loop() {
 }
 
 void readSerial() {
-  // receive data from Python and save it into inputBuffer
-  while(Serial1.available() > 0 && newData == false) {
+  // receive data from Python and save it into interpreter.inputBuffer
+  while(Serial1.available() > 0) {
     
     byte x = Serial1.read();
-
-    // the order of these IF clauses is significant
-      
-    if (x == endMarker) {
-      readInProgress = false;
-      inputBuffer[bytesRecvd] = 0;
-      newData = true;
+    bool isEnd = interpreter.processByte(x);
+    
+    if(isEnd){
       parseData();
-      newData = false;
     }
     
-    if(readInProgress) {
-      inputBuffer[bytesRecvd] = x;
-      bytesRecvd ++;
-      if (bytesRecvd == buffSize) {
-        bytesRecvd = buffSize - 1;
-      }
-    }
-    
-    if (x == startMarker) {
-      bytesRecvd = 0; 
-      readInProgress = true;
-    }
   }
 }
 
 void parseData() {
   // split the data into its parts
 
-  byte id = inputBuffer[0];
+  byte id = interpreter.inputBuffer[0];
   //Serial.println(id);
   byte lightid;
   byte type;
-  byte state;
+  byte state1;
+  byte state2;
   byte steptime;
 
   boolean all = false;
   byte alltype;
 
-  if(id > 99 && id < 110){
+  if(id > 199 && id < 220){
     all = true;
-    alltype = id % 10;
+    alltype = id - 200;
     id = alltype*10;
   } 
   
@@ -238,22 +224,30 @@ void parseData() {
     //Direct    
     lightid = id % 10;
     type = 0;
-    state = inputBuffer[1];
-    steptime=0;
+    state1 = interpreter.inputBuffer[1];
+    steptime = 0;
   } 
   else if(id < 20) {
     //Linear    
     lightid = id % 10;
     type = 1;
-    state = inputBuffer[1];
-    steptime = inputBuffer[2];
+    state1 = interpreter.inputBuffer[1];
+    steptime = interpreter.inputBuffer[2];
   }
   else if(id < 30) {
     //Strobe  
     lightid = id % 10;
     type = 2;
-    state = inputBuffer[1];
-    steptime = inputBuffer[2];
+    state1 = interpreter.inputBuffer[1];
+    steptime = interpreter.inputBuffer[2];
+  }
+  else if(id < 40) {
+    //Direct to Linear  
+    lightid = id % 10;
+    type = 3;
+    state1 = interpreter.inputBuffer[1];
+    state2 = interpreter.inputBuffer[2];
+    steptime = interpreter.inputBuffer[3];
   }
 
 //  Serial.println(id);
@@ -263,10 +257,10 @@ void parseData() {
   
   if(all){
     //Serial.println("all");
-    setAll(alltype,state,steptime);
+    setAll(alltype,state1,state2,steptime);
   } else {
     //Serial.println(lightid);
-    setLight(lightid,type,state,steptime);
+    setLight(lightid,type,state1,state2,steptime);
   }
 }
 
@@ -282,12 +276,12 @@ void updateLights() {
   };
 }
 
-void setAll(byte type, byte tostate, byte steptime) {
+void setAll(byte type, byte state1, byte state2, byte steptime) {
   for(int i = 0; i < numberoflights; ++i) {
-    lights[i].setto(type,tostate,steptime);
+    lights[i].setto(type,state1,state2,steptime);
   };
 }
 
-void setLight(byte id, byte type, byte tostate, byte steptime) {
-  lights[id].setto(type,tostate,steptime);
+void setLight(byte id, byte type, byte state1, byte state2, byte steptime) {
+  lights[id].setto(type,state1,state2,steptime);
 }

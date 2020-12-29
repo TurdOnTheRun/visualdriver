@@ -24,7 +24,7 @@ class Light {
     void init();
     void setstate(byte newstate);
     void update();
-    void setto(byte type, byte tostate, byte steptime);
+    void setto(byte type, byte state1, byte state2, byte steptime);
     bool rising();
     bool changing();
     byte getid();

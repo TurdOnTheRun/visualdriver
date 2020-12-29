@@ -74,31 +74,42 @@ void Light::update()
   }
 }
 
-void Light::setto(byte type, byte tostate, byte steptime)
+void Light::setto(byte type, byte state1, byte state2, byte steptime)
 {
   if(type == 0){
-    setstate(tostate);
-    _tostate = tostate;
+    setstate(state1);
+    _tostate = state1;
   }
   else if(type == 1){
     if(steptime == 0){
-      setstate(tostate);
-      _tostate = tostate;
+      setstate(state1);
+      _tostate = state1;
     } else {
       _steptime = steptime;
-      _tostate = tostate;
+      _tostate = state1;
       _laststep = millis();
     }
   }
   else if(type == 2){
-    if(_state == tostate){
+    if(_state == state1){
       setstate(0);
-      _tostate = tostate;
+      _tostate = state1;
     } else {
-      setstate(tostate);
+      setstate(state1);
       _tostate = 0;
     }
     _steptime = steptime;
+  }
+  else if(type == 3){
+    if(steptime == 0){
+      setstate(state2);
+      _tostate = state2;
+    } else {
+      setstate(state1);
+      _steptime = steptime;
+      _tostate = state2;
+      _laststep = millis();
+    }
   }
   _type = type;
 }
