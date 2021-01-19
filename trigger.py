@@ -20,14 +20,14 @@ class Trigger:
         sleep(triggertime)
         self.servo.ChangeDutyCycle(self.standbyDuty)
         sleep(1)
-        GPIO.output(TRIGGER_PIN, False)
-        self.servo.ChangeDutyCycle(0)
+#         GPIO.output(TRIGGER_PIN, False)
+#         self.servo.ChangeDutyCycle(0)
     
     def setAngle(self, angle, triggertime=1):
         duty = angle / 18 + 2
         GPIO.output(TRIGGER_PIN, True)
         self.servo.ChangeDutyCycle(duty)
         sleep(triggertime)
-        GPIO.output(TRIGGER_PIN, False)
-        self.servo.ChangeDutyCycle(0)
+#         GPIO.output(TRIGGER_PIN, False)
+#         self.servo.ChangeDutyCycle(0)
         
