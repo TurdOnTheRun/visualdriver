@@ -1,14 +1,15 @@
 from trigger import Trigger
+from settings import SONY_TRIGGER
 
-trigger = Trigger(84, 90)
+trigger = Trigger(SONY_TRIGGER[0],SONY_TRIGGER[1])
 
 while True:
-    value = input("Please enter an angle:\n")
+    value = input("Please enter an exposuretime:\n")
     try:
-        angle = int(value)
-        if angle == -1:
-            trigger.trigger(0.5)
-        else:
-            trigger.setAngle(angle)
+        angle = float(value)
+        if angle >= 0 and angle <= 20:
+#             trigger.setPulseWidth(angle)
+#         else:
+            trigger.trigger(angle)
     except ValueError:
         print('Invalid Command')

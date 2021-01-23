@@ -1,33 +1,39 @@
-import RPi.GPIO as GPIO
+import pigpio
 from time import sleep
-from settings import TRIGGER_PIN
+from settings import TRIGGER_PIN, MG995_PULSEWIDTHS
 
 
 class Trigger:
     
-    def __init__(self, triggerAngle, standbyAngle):
-        self.triggerDuty = triggerAngle / 18 + 2
-        self.standbyDuty = standbyAngle / 18 + 2
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(TRIGGER_PIN, GPIO.OUT)
-        self.servo=GPIO.PWM(TRIGGER_PIN, 50)
-        self.servo.start(0)
-        self.setAngle(standbyAngle)
+    def __init__(self, triggerPW, standbyPW):
+        self.triggerPW = self.trimPulseWidth(triggerPW)
+        self.standbyPW = self.trimPulseWidth(standbyPW)
+        self.pi = pigpio.pi()
+        if not self.pi.connected:
+            print('Failed to set up Pig Trigger')
+            exit()
+        self.setPulseWidth(standbyPW)
     
     def trigger(self, triggertime=1):
-        GPIO.output(TRIGGER_PIN, True)
-        self.servo.ChangeDutyCycle(self.triggerDuty)
+        self.pi.set_servo_pulsewidth(TRIGGER_PIN, self.triggerPW)
         sleep(triggertime)
-        self.servo.ChangeDutyCycle(self.standbyDuty)
+        self.pi.set_servo_pulsewidth(TRIGGER_PIN, self.standbyPW)
         sleep(1)
-#         GPIO.output(TRIGGER_PIN, False)
-#         self.servo.ChangeDutyCycle(0)
     
-    def setAngle(self, angle, triggertime=1):
-        duty = angle / 18 + 2
-        GPIO.output(TRIGGER_PIN, True)
-        self.servo.ChangeDutyCycle(duty)
+    def setPulseWidth(self, pw, triggertime=1):
+        pw = self.trimPulseWidth(pw)
+        self.pi.set_servo_pulsewidth(TRIGGER_PIN, pw)
         sleep(triggertime)
-#         GPIO.output(TRIGGER_PIN, False)
-#         self.servo.ChangeDutyCycle(0)
+    
+    def trimPulseWidth(self, pw):
+        if pw < MG995_PULSEWIDTHS[0]:
+            pw = MG995_PULSEWIDTHS[0]
+        elif pw > MG995_PULSEWIDTHS[1]:
+            pw = MG995_PULSEWIDTHS[1]
+        return pw
+    
+    def shutdown():
+        pi.set_servo_pulsewidth(TRIGGER_PIN, 0)
+        pi.stop()
+
         
