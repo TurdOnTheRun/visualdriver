@@ -7,7 +7,8 @@ FPS = 25
 
 
 TRIGGERTYPES = ['time','pos']
-COMMANDTYPES = ['instant', 'linear', 'strobe', 'instanttolinear']
+COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear']
+SPECIALCOMMANDTYPES = ['ms', 'md', 'tb']
 TOPLIGHTS = ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','ta']
 BOTTOMLIGHTS = ['b0','b1','b2','ba']
 
@@ -50,6 +51,48 @@ def get_byte_representation(commandtype, lightid):
 			return 20 + light
 		if commandtype == 'instanttolinear':
 			return 30 + light
+
+
+def get_special_comms(comms):
+
+	parsedcomms = []
+
+	i = 0
+
+	# While loop for every commandtype
+	while i < len(comms):
+		comm = comms[i]
+		if comm not in SPECIALCOMMANDTYPES:
+			print('Command "' + comm + '" not implemented yet')
+			exit(-1)
+		# Motor Commands
+		if comm.startswith('m'):
+			c = ['bottom']
+			if comm == 'ms':
+				commid = 220
+				speed = comms[i+1]
+				steptime = comms[i+2]
+				c.append(clean_bytes([commid,int(speed),int(steptime)]))
+				i += 3
+			elif comm == 'md':
+				commid = 221
+				c.append(clean_bytes([commid,]))
+				i += 1
+		# Trigger Commands
+		elif comm.startswith('t'):
+			c = ['raspy']
+			if comm == 'tb':
+				commid = 1
+				deciseconds = comms[i+1]
+				c.append(clean_bytes([1,int(deciseconds)]))
+				i += 2
+		else:
+			print('Special Command "' + comm + '" not implemented yet')
+			exit(-1)
+
+		parsedcomms.append(c)
+	
+	return parsedcomms
 
 
 def get_instant_comms(comms):
@@ -179,7 +222,9 @@ def get_instanttolinear_comms(comms, timeframe):
 
 def get_comms(commandtype, comms, timeframe):
 
-	if commandtype == 'instant':
+	if commandtype == 'special':
+		parsedcomms = get_special_comms(comms)
+	elif commandtype == 'instant':
 		parsedcomms = get_instant_comms(comms)
 	elif commandtype == 'linear':
 		parsedcomms = get_linear_comms(comms, timeframe)

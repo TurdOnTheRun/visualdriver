@@ -1,18 +1,28 @@
+from multiprocessing import Process
 import pigpio
 from time import sleep
 from settings import TRIGGER_PIN, MG995_PULSEWIDTHS
 
 
-class Trigger:
+class Trigger(Process):
     
-    def __init__(self, triggerPW, standbyPW):
+    def __init__(self, triggerPW, standbyPW, commands):
+        super().__init__()
+        self.daemon = True
         self.triggerPW = self.trimPulseWidth(triggerPW)
         self.standbyPW = self.trimPulseWidth(standbyPW)
+        self.commands = commands
         self.pi = pigpio.pi()
         if not self.pi.connected:
             print('Failed to set up Pig Trigger')
             exit()
         self.setPulseWidth(standbyPW)
+
+    def run(self):
+        while True:
+            command = self.commands.get()
+            if type(command) == int or type(command) == float:
+                self.trigger(command)
     
     def trigger(self, triggertime=1):
         self.pi.set_servo_pulsewidth(TRIGGER_PIN, self.triggerPW)
@@ -32,8 +42,8 @@ class Trigger:
             pw = MG995_PULSEWIDTHS[1]
         return pw
     
-    def shutdown():
-        pi.set_servo_pulsewidth(TRIGGER_PIN, 0)
-        pi.stop()
+    def shutdown(self):
+        self.pi.set_servo_pulsewidth(TRIGGER_PIN, 0)
+        self.pi.stop()
 
         

@@ -1,7 +1,8 @@
 from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
+from trigger import Trigger
 from multiprocessing import Value, Queue
-from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN
+from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 import time
 import atexit
 import json
@@ -13,6 +14,7 @@ f.close()
 
 topComm = Queue()
 bottomComm = Queue()
+triggerComm = Queue()
 position = Value('d', 0.0)
 distance = Value('d', 0.0)
 er = EncoderReader(position, distance)
@@ -21,13 +23,20 @@ top = ArduinoPwmManager(ARDUINO_MEGA_CONN, topComm)
 top.start()
 bottom = ArduinoPwmManager(ARDUINO_UNO_CONN, bottomComm)
 bottom.start()
+trigger = Trigger(SONY_TRIGGER[0], SONY_TRIGGER[1], triggerComm)
+trigger.start()
 
 
-def execute_step(arduino,step):
-    if arduino == 'bottom':
+def execute_step(executer,step):
+    if executer == 'bottom':
         bottomComm.put(step)
-    else:
+    elif executer == 'top':
         topComm.put(step)
+    elif executer == 'raspy':
+        if step[0] == 1:
+            triggerComm.put(step[1])
+    else:
+        print('Executer ' + executer + ' not implemented!')
 
 
 def setup():

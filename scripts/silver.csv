@@ -29,4 +29,4 @@ time,00.25.10,,strobe,ta,255,90,ba,200,90
 time,00.26.03,00.27.07,instanttolinear,ta,0,255,ba,0,200
 time,00.27.07,00.27.23,instanttolinear,ta,0,100,ba,0,100
 time,00.27.23,00.30.12,instanttolinear,ta,0,255,ba,0,255
-time,00.30.12,,instant,ta,0,ba,0,,
+time,00.30.12,,instant,ta,100,ba,100,,
