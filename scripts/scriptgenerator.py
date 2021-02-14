@@ -84,7 +84,7 @@ def get_special_comms(comms):
 			if comm == 'tb':
 				commid = 1
 				deciseconds = comms[i+1]
-				c.append(clean_bytes([1,int(deciseconds)]))
+				c.append(clean_bytes([commid,int(deciseconds)]))
 				i += 2
 		else:
 			print('Special Command "' + comm + '" not implemented yet')
