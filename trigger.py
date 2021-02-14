@@ -28,7 +28,7 @@ class Trigger(Process):
         self.pi.set_servo_pulsewidth(TRIGGER_PIN, self.triggerPW)
         sleep(triggertime)
         self.pi.set_servo_pulsewidth(TRIGGER_PIN, self.standbyPW)
-        sleep(1)
+        sleep(0.6)
     
     def setPulseWidth(self, pw, triggertime=1):
         pw = self.trimPulseWidth(pw)
