@@ -6,7 +6,7 @@ OUTPUT = './phototests/phototest10.json'
 FPS = 25
 
 
-TRIGGERTYPES = ['time','pos']
+TRIGGERTYPES = ['fps','seconds','pos']
 COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear']
 SPECIALCOMMANDTYPES = ['ms', 'md', 'tb']
 TOPLIGHTS = ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','ta']
@@ -18,15 +18,17 @@ def fpstime_to_seconds(fpstime):
 	fpstime = fpstime.split('.')
 	if len(fpstime) == 3:
 		fpstime = int(fpstime[0])*60 + int(fpstime[1]) + int(fpstime[2])*(1.0/FPS)
-	else:
+	elif len(fpstime) == 2:
 		fpstime = int(fpstime[0]) + int(fpstime[1]) * (1.0/FPS)
+	else:
+		fpstime = int(fpstime[0]) * (1.0/FPS)
 	return fpstime
 
 
 def parse_trigger_value(triggertype, value):
-	if triggertype == 'time':
+	if triggertype == 'fps':
 		value = fpstime_to_seconds(value)
-	elif triggertype == 'pos':
+	elif triggertype == 'pos' or triggertype == 'seconds':
 		value = float(value)
 	return value
 
@@ -303,6 +305,9 @@ if __name__ == "__main__":
 
 		elif totime:
 			abort('Unnecessary definition of totime')
+		
+		if triggertype in ['fps','seconds']:
+			triggertype = 'time'
 
 		l = [triggertype, fromtime]
 
