@@ -7,7 +7,7 @@ import time
 import atexit
 import json
 
-INPUT = './scripts/silver.json'
+INPUT = './scripts/phototests/circle8.json'
 f = open(INPUT,) 
 SCRIPT = json.load(f)
 f.close()
@@ -37,7 +37,7 @@ def execute_step(executer,step):
         topComm.put(step)
     elif executer == 'raspy':
         if step[0] == 1:
-            triggerComm.put(step[1])
+            triggerComm.put(step[1]/10)
         elif step[0] == 2:
             timereset = True
     else:
@@ -78,7 +78,7 @@ try:
                         last = time.time()
                 i+=1
         elif step[0] == 'pos':
-            print(position.value)
+            #print(position.value)
             if position.value > step[1]:
                 for x in step[2:]:
                     timereset = execute_step(x[0],x[1])
