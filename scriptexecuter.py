@@ -28,6 +28,9 @@ trigger.start()
 
 
 def execute_step(executer,step):
+
+    timereset = None
+
     if executer == 'bottom':
         bottomComm.put(step)
     elif executer == 'top':
@@ -35,8 +38,12 @@ def execute_step(executer,step):
     elif executer == 'raspy':
         if step[0] == 1:
             triggerComm.put(step[1])
+        elif step[0] == 2:
+            timereset = True
     else:
         print('Executer ' + executer + ' not implemented!')
+    
+    return timereset
 
 
 def setup():
@@ -66,17 +73,18 @@ try:
         if step[0] == 'time':
             if time.time() - last > step[1]:
                 for x in step[2:]:
-                    execute_step(x[0],x[1])
+                    timereset = execute_step(x[0],x[1])
+                    if timereset:
+                        last = time.time()
                 i+=1
         elif step[0] == 'pos':
             print(position.value)
             if position.value > step[1]:
                 for x in step[2:]:
-                    execute_step(x[0],x[1])
+                    timereset = execute_step(x[0],x[1])
+                    if timereset:
+                        last = time.time()
                 i+=1
-        elif step[0] == 'resettimer':
-            last = time.time()
-            i+=1
 except Exception as e:
     print('Error:', e)
     shutdown()

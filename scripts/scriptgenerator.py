@@ -1,14 +1,14 @@
 
 import json
 
-INPUT = './phototests/phototest10.csv'
-OUTPUT = './phototests/phototest10.json'
+INPUT = './phototests/circle8.csv'
+OUTPUT = './phototests/circle8.json'
 FPS = 25
 
 
 TRIGGERTYPES = ['fps','seconds','pos']
 COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear']
-SPECIALCOMMANDTYPES = ['ms', 'md', 'tb']
+SPECIALCOMMANDTYPES = ['ms', 'md', 'tb', 'tr']
 TOPLIGHTS = ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','ta']
 BOTTOMLIGHTS = ['b0','b1','b2','ba']
 
@@ -88,6 +88,10 @@ def get_special_comms(comms):
 				deciseconds = comms[i+1]
 				c.append(clean_bytes([commid,int(deciseconds)]))
 				i += 2
+			elif comm == 'tr':
+				commid = 2
+				c.append(clean_bytes([commid,]))
+				i += 1
 		else:
 			print('Special Command "' + comm + '" not implemented yet')
 			exit(-1)
