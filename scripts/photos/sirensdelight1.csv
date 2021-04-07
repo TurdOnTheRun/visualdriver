@@ -1,0 +1,15 @@
+Trigger Type,Trigger From,Trigger To,Command Type,,,,
+seconds,0,,special,tb,220,,
+seconds,0,,special,tr,,,
+seconds,0,,instant,ta,120,ba,120
+seconds,1,,instant,ta,10,ba,10
+seconds,1,,special,ms,60,30,
+pos,0.25,,special,ms,0,50,
+pos,0.25,,special,tr,,,
+pos,0.25,,instant,ta,120,ba,120
+seconds,1,,instant,ta,10,ba,10
+seconds,1,,special,ms,60,30,
+pos,0.5,,special,ms,0,50,
+pos,0.5,,special,tr,,,
+pos,0.5,,instant,ta,120,ba,120
+seconds,1,,instant,ta,0,ba,0
