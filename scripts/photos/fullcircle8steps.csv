@@ -45,9 +45,3 @@ pos,0.875,,instant,ta,0,ba,0
 pos,0.875,,special,tr,,,
 seconds,1,,instant,ta,15,ba,15
 seconds,2,,instant,ta,0,ba,0
-seconds,2,,special,ms,60,20,
-pos,1,,special,ms,0,30,
-pos,1,,instant,ta,0,ba,0
-pos,1,,special,tr,,,
-seconds,1,,instant,ta,15,ba,15
-seconds,2,,instant,ta,0,ba,0
