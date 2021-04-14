@@ -7,7 +7,7 @@ import time
 import atexit
 import json
 
-INPUT = './scripts/phototests/circle8.json'
+INPUT = './scripts/photos/fullcircle8steps.json'
 f = open(INPUT,) 
 SCRIPT = json.load(f)
 f.close()

@@ -1,5 +1,5 @@
 Trigger Type,Trigger From,Trigger To,Command Type,,,,
-seconds,0,,special,tb,360,,
+seconds,0,,special,tb,345,,
 seconds,0,,special,tr,,,
 seconds,0,,instant,ta,15,ba,15
 seconds,1,,instant,ta,0,ba,0
