@@ -8,7 +8,7 @@ FPS = 25
 
 TRIGGERTYPES = ['fps','seconds','pos']
 COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear']
-SPECIALCOMMANDTYPES = ['ms', 'md', 'tb', 'tr']
+SPECIALCOMMANDTYPES = ['ms', 'md', 'tb', 'tr','TRIGGER_DOWN', 'TRIGGER_UP']
 TOPLIGHTS = ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','ta']
 BOTTOMLIGHTS = ['b0','b1','b2','ba']
 
@@ -84,14 +84,25 @@ def get_special_comms(comms):
 		elif comm.startswith('t'):
 			c = ['raspy']
 			if comm == 'tb':
+				# trigger button
 				commid = 1
 				deciseconds = comms[i+1]
 				c.append([commid,int(deciseconds)])
 				i += 2
 			elif comm == 'tr':
+				# time reset
 				commid = 2
 				c.append([commid,])
 				i += 1
+			elif comm == 'TRIGGER_DOWN':
+				commid = 3
+				c.append([commid,])
+				i += 1
+			elif comm == 'TRIGGER_UP':
+				commid = 4
+				c.append([commid,])
+				i += 1
+
 		else:
 			print('Special Command "' + comm + '" not implemented yet')
 			exit(-1)

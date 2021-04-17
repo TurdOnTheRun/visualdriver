@@ -40,6 +40,10 @@ def execute_step(executer,step):
             triggerComm.put(step[1]/10)
         elif step[0] == 2:
             timereset = True
+        elif step[0] == 3:
+            triggerComm.put('DOWN')
+        elif step[0] == 4:
+            triggerComm.put('UP')
     else:
         print('Executer ' + executer + ' not implemented!')
     

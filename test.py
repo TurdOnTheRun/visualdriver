@@ -23,6 +23,12 @@ while True:
     if value == "trigger":
         triggerComm.put(1)
         continue
+    if value == "down":
+        triggerComm.put('DOWN')
+        continue
+    if value == "up":
+        triggerComm.put('UP')
+        continue
     
     try:
         commands = value.split(',')

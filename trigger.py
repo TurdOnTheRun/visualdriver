@@ -23,12 +23,23 @@ class Trigger(Process):
             command = self.commands.get()
             if type(command) == int or type(command) == float:
                 self.trigger(command)
+            elif type(command) == str:
+                if command == 'DOWN':
+                    self.setDown()
+                elif command == 'UP':
+                    self.setUp()
     
     def trigger(self, triggertime=1):
-        self.pi.set_servo_pulsewidth(TRIGGER_PIN, self.triggerPW)
+        self.setDown()
         sleep(triggertime)
-        self.pi.set_servo_pulsewidth(TRIGGER_PIN, self.standbyPW)
+        self.setUp()
         sleep(0.6)
+
+    def setDown(self):
+        self.pi.set_servo_pulsewidth(TRIGGER_PIN, self.triggerPW)
+
+    def setUp(self):
+        self.pi.set_servo_pulsewidth(TRIGGER_PIN, self.standbyPW)
     
     def setPulseWidth(self, pw, triggertime=1):
         pw = self.trimPulseWidth(pw)

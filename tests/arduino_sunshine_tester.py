@@ -4,6 +4,8 @@ import time
 time_now = lambda: int(round(time.time() * 1000))
 
 BAUDRATE = 115200
+startByte = bytes([251])
+endByte = bytes([252])
 
 ser = serial.Serial( "/dev/cu.HC-06-SPPDev", baudrate=BAUDRATE )
 # ser = serial.Serial( "/dev/cu.usbmodem1431", baudrate=115200 , timeout=1)
@@ -11,9 +13,9 @@ ser = serial.Serial( "/dev/cu.HC-06-SPPDev", baudrate=BAUDRATE )
 def send_it(id, state, steptime):
 	print(id, state, steptime)
 	if steptime:
-		command = b'<' + bytes([id]) + bytes([state]) + bytes([steptime]) + b'>\n'
+		command = startByte + bytes([id]) + bytes([state]) + bytes([steptime]) + endByte
 	else:
-		command = b'<' + bytes([id]) + bytes([state]) + b'>\n'
+		command = startByte + bytes([id]) + bytes([state]) + endByte
 	ser.write(command)
 
 while True:
