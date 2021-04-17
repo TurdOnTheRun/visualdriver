@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './photos/fullcircle4stepstoponly.csv'
-OUTPUT = './photos/fullcircle4stepstoponly.json'
+INPUT = './revolver/fullcircle4stepstoponly.csv'
+OUTPUT = './revolver/fullcircle4stepstoponly.json'
 FPS = 25
 
 
@@ -81,7 +81,7 @@ def get_special_comms(comms):
 				c.append(clean_bytes([commid,]))
 				i += 1
 		# Trigger Commands
-		elif comm.startswith('t'):
+		elif comm.lower().startswith('t'):
 			c = ['raspy']
 			if comm == 'tb':
 				# trigger button
