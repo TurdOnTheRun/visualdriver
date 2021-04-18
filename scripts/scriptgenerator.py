@@ -7,7 +7,7 @@ FPS = 25
 
 
 TRIGGERTYPES = ['fps','seconds','pos']
-COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear']
+COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear', 'schnuppe', 'lightning', 'machinegun']
 SPECIALCOMMANDTYPES = ['ms', 'md', 'tb', 'tr','TRIGGER_DOWN', 'TRIGGER_UP']
 TOPLIGHTS = ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','ta']
 BOTTOMLIGHTS = ['b0','b1','b2','ba']
