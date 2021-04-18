@@ -1,0 +1,8 @@
+Trigger Type,Trigger From,Trigger To,Command Type,,,,,,,,
+seconds,0,,special,ms,60,30,,,,,
+seconds,0,,instant,ba,50,,,,,,
+pos,0.9,,instant,ba,0,,,,,,
+pos,0.9,,special,TRIGGER_DOWN,,,,,,,
+pos,1,,machinegun,ta,255,3,3,ba,140,3,3
+pos,1.2,,special,TRIGGER_UP,,,,,,,
+seconds,1.8,,special,ms,0,40,,,,,
