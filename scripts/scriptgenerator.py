@@ -43,6 +43,14 @@ def get_byte_representation(commandtype, lightid):
 			return 202
 		if commandtype == 'instanttolinear':
 			return 203
+		if commandtype == 'lightning':
+			return 204
+		if commandtype == 'stutter':
+			return 205
+		if commandtype == 'schnuppe':
+			return 206
+		if commandtype == 'machinegun':
+			return 207
 	else:
 		light = int(lightid[-1])
 		if commandtype == 'instant':
@@ -53,6 +61,14 @@ def get_byte_representation(commandtype, lightid):
 			return 20 + light
 		if commandtype == 'instanttolinear':
 			return 30 + light
+		if commandtype == 'lightning':
+			return 40 + light
+		if commandtype == 'stutter':
+			return 50 + light
+		if commandtype == 'schnuppe':
+			return 60 + light
+		if commandtype == 'machinegun':
+			return 70 + light
 
 
 def get_special_comms(comms):
@@ -237,6 +253,131 @@ def get_instanttolinear_comms(comms, timeframe):
 	return parsedcomms
 
 
+def get_lightning_comms(comms):
+
+	parsedcomms = []
+
+	i = 0
+
+	# While loop for every commandtype
+	while i < len(comms):
+		lightid = comms[i]
+		state = comms[i+1]
+		exposure = comms[i+2]
+		i += 3
+
+		c = []
+
+		if lightid.startswith('t'):
+			c.append('top')
+		elif lightid.startswith('b'):
+			c.append('bottom')
+		else:
+			print('Lightid not implemented yet')
+			exit(-1)
+		
+		lightid = get_byte_representation('lightning', lightid)
+		c.append(clean_bytes([lightid,int(state),int(exposure)]))
+
+		parsedcomms.append(c)
+	
+	return parsedcomms
+
+
+def get_stutter_comms(comms):
+
+	parsedcomms = []
+
+	i = 0
+
+	# While loop for every commandtype
+	while i < len(comms):
+		lightid = comms[i]
+		state = comms[i+1]
+		exposure = comms[i+2]
+		i += 3
+
+		c = []
+
+		if lightid.startswith('t'):
+			c.append('top')
+		elif lightid.startswith('b'):
+			c.append('bottom')
+		else:
+			print('Lightid not implemented yet')
+			exit(-1)
+		
+		lightid = get_byte_representation('stutter', lightid)
+		c.append(clean_bytes([lightid,int(state),int(exposure)]))
+
+		parsedcomms.append(c)
+	
+	return parsedcomms
+
+
+def get_schnuppe_comms(comms):
+
+	parsedcomms = []
+
+	i = 0
+
+	# While loop for every commandtype
+	while i < len(comms):
+		lightid = comms[i]
+		state = comms[i+1]
+		exposure = comms[i+2]
+		i += 3
+
+		c = []
+
+		if lightid.startswith('t'):
+			c.append('top')
+		elif lightid.startswith('b'):
+			c.append('bottom')
+		else:
+			print('Lightid not implemented yet')
+			exit(-1)
+		
+		lightid = get_byte_representation('schnuppe', lightid)
+		c.append(clean_bytes([lightid,int(state),int(exposure)]))
+
+		parsedcomms.append(c)
+	
+	return parsedcomms
+
+
+def get_machinegun_comms(comms):
+
+	parsedcomms = []
+
+	i = 0
+
+	# While loop for every commandtype
+	while i < len(comms):
+		lightid = comms[i]
+		state = comms[i+1]
+		steps = comms[i+2]
+		exposure = comms[i+3]
+		i += 4
+
+		c = []
+
+		if lightid.startswith('t'):
+			c.append('top')
+		elif lightid.startswith('b'):
+			c.append('bottom')
+		else:
+			print('Lightid not implemented yet')
+			exit(-1)
+		
+		lightid = get_byte_representation('machinegun', lightid)
+		c.append(clean_bytes([lightid,int(state),int(steps),int(exposure)]))
+
+		parsedcomms.append(c)
+	
+	return parsedcomms
+
+
 def get_comms(commandtype, comms, timeframe):
 
 	if commandtype == 'special':
@@ -249,6 +390,14 @@ def get_comms(commandtype, comms, timeframe):
 		parsedcomms = get_strobe_comms(comms)
 	elif commandtype == 'instanttolinear':
 		parsedcomms = get_instanttolinear_comms(comms, timeframe)
+	elif commandtype == 'lightning':
+		parsedcomms = get_lightning_comms(comms)
+	elif commandtype == 'stutter':
+		parsedcomms = get_stutter_comms(comms)
+	elif commandtype == 'schnuppe':
+		parsedcomms = get_schnuppe_comms(comms)
+	elif commandtype == 'machinegun':
+		parsedcomms = get_machinegun_comms(comms)
 	return parsedcomms
 
 def clean_bytes(comms):
