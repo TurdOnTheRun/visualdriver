@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './revolver/full_8step_toponly_crisp.csv'
-OUTPUT = './revolver/full_8step_toponly_crisp.json'
+INPUT = './revolver/full_4step_toponly_crisp.csv'
+OUTPUT = './revolver/full_4step_toponly_crisp.json'
 FPS = 25
 
 
