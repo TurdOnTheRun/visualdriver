@@ -1,0 +1,20 @@
+Trigger Type,Trigger From,Trigger To,Command Type,,
+seconds,0,,special,TRIGGER_DOWN,
+seconds,0,,special,tr,
+seconds,0,,instant,ta,100
+seconds,1,,instant,ta,0
+seconds,4,,instant,ta,100
+seconds,5,,instant,ta,0
+seconds,8,,instant,ta,100
+seconds,9,,instant,ta,0
+seconds,12,,instant,ta,100
+seconds,13,,instant,ta,0
+seconds,16,,instant,ta,100
+seconds,17,,instant,ta,0
+seconds,20,,instant,ta,100
+seconds,21,,instant,ta,0
+seconds,24,,instant,ta,100
+seconds,25,,instant,ta,0
+seconds,28,,instant,ta,100
+seconds,29,,instant,ta,0
+seconds,29,,special,TRIGGER_UP,
