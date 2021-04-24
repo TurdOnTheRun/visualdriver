@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './video/fullturn_strobe_phasing_asynch.csv'
-OUTPUT = './video/fullturn_strobe_phasing_asynch.json'
+INPUT = './photo/spirits/F11-16_ISO100_250ms_3secspirit.csv'
+OUTPUT = './photo/spirits/F11-16_ISO100_250ms_3secspirit.json'
 FPS = 25
 
 
