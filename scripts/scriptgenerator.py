@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './video/fullturn_strobe_phasing_gaps_asynch.csv'
-OUTPUT = './video/fullturn_strobe_phasing_gaps_asynch.json'
+INPUT = './video/strobe/rotating_strobe_appeardisappearlightningtest.csv'
+OUTPUT = './video/strobe/rotating_strobe_appeardisappearlightningtest.json'
 FPS = 25
 
 
@@ -433,10 +433,10 @@ def get_comms(commandtype, comms, timeframe):
 		parsedcomms = get_instanttolinear_comms(comms, timeframe)
 	elif commandtype == 'lightning':
 		parsedcomms = get_lightning_comms(comms)
-	elif commandtype == 'stutter':
-		parsedcomms = get_stutter_comms(comms)
-	elif commandtype == 'schnuppe':
-		parsedcomms = get_schnuppe_comms(comms)
+	elif commandtype == 'lightningdisappear':
+		parsedcomms = get_lightningdisappear_comms(comms)
+	elif commandtype == 'lightningappear':
+		parsedcomms = get_lightningappear_comms(comms)
 	elif commandtype == 'machinegun':
 		parsedcomms = get_machinegun_comms(comms)
 	elif commandtype == 'acceleratingstrobe':
