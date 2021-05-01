@@ -7,7 +7,7 @@ FPS = 25
 
 
 TRIGGERTYPES = ['fps','seconds','pos']
-COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear', 'schnuppe', 'lightning', 'machinegun']
+COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear', 'lightning', 'lightningdisappear', 'lightningappear', 'machinegun', 'acceleratingstrobe']
 SPECIALCOMMANDTYPES = ['ms', 'md', 'tb', 'tr','TRIGGER_DOWN', 'TRIGGER_UP']
 TOPLIGHTS = ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','ta']
 BOTTOMLIGHTS = ['b0','b1','b2','ba']
@@ -45,12 +45,14 @@ def get_byte_representation(commandtype, lightid):
 			return 203
 		if commandtype == 'lightning':
 			return 204
-		if commandtype == 'stutter':
+		if commandtype == 'lightningdisappear':
 			return 205
-		if commandtype == 'schnuppe':
+		if commandtype == 'lightningappear':
 			return 206
 		if commandtype == 'machinegun':
 			return 207
+		if commandtype == 'acceleratingstrobe':
+			return 208
 	else:
 		light = int(lightid[-1])
 		if commandtype == 'instant':
@@ -63,12 +65,14 @@ def get_byte_representation(commandtype, lightid):
 			return 30 + light
 		if commandtype == 'lightning':
 			return 40 + light
-		if commandtype == 'stutter':
+		if commandtype == 'lightningdisappear':
 			return 50 + light
-		if commandtype == 'schnuppe':
+		if commandtype == 'lightningappear':
 			return 60 + light
 		if commandtype == 'machinegun':
 			return 70 + light
+		if commandtype == 'acceleratingstrobe':
+			return 80 + light
 
 
 def get_special_comms(comms):
@@ -284,7 +288,7 @@ def get_lightning_comms(comms):
 	return parsedcomms
 
 
-def get_stutter_comms(comms):
+def get_lightningdisappear_comms(comms):
 
 	parsedcomms = []
 
@@ -293,9 +297,11 @@ def get_stutter_comms(comms):
 	# While loop for every commandtype
 	while i < len(comms):
 		lightid = comms[i]
-		state = comms[i+1]
-		exposure = comms[i+2]
-		i += 3
+		state1 = comms[i+1]
+		state2 = comms[i+2]
+		steptime = comms[i+3]
+		exposure = comms[i+4]
+		i += 5
 
 		c = []
 
@@ -307,15 +313,15 @@ def get_stutter_comms(comms):
 			print('Lightid not implemented yet')
 			exit(-1)
 		
-		lightid = get_byte_representation('stutter', lightid)
-		c.append(clean_bytes([lightid,int(state),int(exposure)]))
+		lightid = get_byte_representation('lightningdisappear', lightid)
+		c.append(clean_bytes([lightid,int(state1),int(state2),int(steptime),int(exposure)]))
 
 		parsedcomms.append(c)
 	
 	return parsedcomms
 
 
-def get_schnuppe_comms(comms):
+def get_lightningappear_comms(comms):
 
 	parsedcomms = []
 
@@ -324,9 +330,11 @@ def get_schnuppe_comms(comms):
 	# While loop for every commandtype
 	while i < len(comms):
 		lightid = comms[i]
-		state = comms[i+1]
-		exposure = comms[i+2]
-		i += 3
+		state1 = comms[i+1]
+		state2 = comms[i+2]
+		steptime = comms[i+3]
+		exposure = comms[i+4]
+		i += 5
 
 		c = []
 
@@ -338,8 +346,8 @@ def get_schnuppe_comms(comms):
 			print('Lightid not implemented yet')
 			exit(-1)
 		
-		lightid = get_byte_representation('schnuppe', lightid)
-		c.append(clean_bytes([lightid,int(state),int(exposure)]))
+		lightid = get_byte_representation('lightningappear', lightid)
+		c.append(clean_bytes([lightid,int(state1),int(state2),int(steptime),int(exposure)]))
 
 		parsedcomms.append(c)
 	
@@ -378,6 +386,39 @@ def get_machinegun_comms(comms):
 	return parsedcomms
 
 
+def get_acceleratingstrobe_comms(comms):
+
+	parsedcomms = []
+
+	i = 0
+
+	# While loop for every commandtype
+	while i < len(comms):
+		lightid = comms[i]
+		state = comms[i+1]
+		steptime = comms[i+2]
+		darktime = comms[i+3]
+		darktimestep = comms[i+4]
+		i += 5
+
+		c = []
+
+		if lightid.startswith('t'):
+			c.append('top')
+		elif lightid.startswith('b'):
+			c.append('bottom')
+		else:
+			print('Lightid not implemented yet')
+			exit(-1)
+		
+		lightid = get_byte_representation('acceleratingstrobe', lightid)
+		c.append(clean_bytes([lightid,int(state),int(steptime),int(darktime),int(darktimestep)]))
+
+		parsedcomms.append(c)
+	
+	return parsedcomms
+
+
 def get_comms(commandtype, comms, timeframe):
 
 	if commandtype == 'special':
@@ -398,7 +439,10 @@ def get_comms(commandtype, comms, timeframe):
 		parsedcomms = get_schnuppe_comms(comms)
 	elif commandtype == 'machinegun':
 		parsedcomms = get_machinegun_comms(comms)
+	elif commandtype == 'acceleratingstrobe':
+		parsedcomms = get_acceleratingstrobe_comms(comms)
 	return parsedcomms
+
 
 def clean_bytes(comms):
 	cleanedComms = []
