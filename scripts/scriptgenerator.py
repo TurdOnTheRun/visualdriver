@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './video/strobe/rotating_strobe_appeardisappearlightningtest.csv'
-OUTPUT = './video/strobe/rotating_strobe_appeardisappearlightningtest.json'
+INPUT = './generators/morphrandom_10_t0t1t4t5_1.csv'
+OUTPUT = './generators/morphrandom_10_t0t1t4t5_1.json'
 FPS = 25
 
 
