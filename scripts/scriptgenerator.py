@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/quickstrobe_TEST.csv'
-OUTPUT = './generators/quickstrobe_TEST.json'
+INPUT = './generators/quickstrobe_theone.csv'
+OUTPUT = './generators/quickstrobe_theone.json'
 FPS = 25
 
 
