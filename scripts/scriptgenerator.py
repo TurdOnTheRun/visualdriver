@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/morphrandom_10_t0t1t4t5_1.csv'
-OUTPUT = './generators/morphrandom_10_t0t1t4t5_1.json'
+INPUT = './generators/quickstrobe_TEST.csv'
+OUTPUT = './generators/quickstrobe_TEST.json'
 FPS = 25
 
 

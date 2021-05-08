@@ -15,8 +15,7 @@ baserow = ['seconds', 0, '', 'lightning']
 
 lights = ['t0', 't1', 't4', 't5']
 lightintensity = 255
-lightninglenghtrange = (41,50)
-overlaprange = (20,30)
+steptime = (40,60)
 
 lastlight = ''
 
@@ -31,17 +30,18 @@ while seconds < length:
     light = random.choice(lightoptions)
     row.append(light)
     row.append(lightintensity)
-    row.append(random.randint(lightninglenghtrange[0],lightninglenghtrange[1]))
+    lightingtime = random.randint(steptime[0],steptime[1])
+    row.append(lightingtime)
     rows.append(row)
-    overlap = random.randint(overlaprange[0],overlaprange[1])
-    seconds = seconds + overlap/1000
+    darktime = random.randint(steptime[0],steptime[1])
+    seconds = seconds + (lightingtime + darktime)/1000
     lastlight = light
 
 rows.append(['seconds', seconds, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', seconds, '', 'special', 'ms', 0, 30])
     
 
-with open("morphrandom_" + str(length) + '_' + ''.join(lights) + '_1.csv', "w") as f:
+with open("randomlyspacedquickstrobe_" + str(length) + '_' + ''.join(lights) + '_1.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')
