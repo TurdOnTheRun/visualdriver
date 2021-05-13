@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './video/looping/looping_morphrandom.csv'
-OUTPUT = './video/looping/looping_morphrandom.json'
+INPUT = './video/looping/looping_fadin_fadeout_12.csv'
+OUTPUT = './video/looping/looping_fadin_fadeout_12.json'
 FPS = 25
 
 
