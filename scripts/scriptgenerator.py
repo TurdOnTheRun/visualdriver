@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/randomlyspacedquickstrobe_TEST2.csv'
-OUTPUT = './generators/randomlyspacedquickstrobe_TEST2.json'
+INPUT = './video/looping/looping_morphrandom.csv'
+OUTPUT = './video/looping/looping_morphrandom.json'
 FPS = 25
 
 
