@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './video/looping/looping_fadin_fadeout_16.csv'
-OUTPUT = './video/looping/looping_fadin_fadeout_16.json'
+INPUT = './generators/goran/fade_in_1.csv'
+OUTPUT = './generators/goran/fade_in_80.json'
 FPS = 25
 
 
