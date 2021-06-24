@@ -9,6 +9,7 @@ length = 10
 steptime = 0.01
 
 finalLightIntensity = 255
+startSpeed = 28
 finalSpeed = 80
 
 rows = [
@@ -29,7 +30,7 @@ while seconds < length:
     motor = motorrow.copy()
     ease = easeInSine(seconds/10)
     intensity = round(ease * finalLightIntensity)
-    speed = round(ease * finalSpeed)
+    speed = startSpeed + round(ease * (finalSpeed - startSpeed))
     print(intensity,speed)
     light[1] = seconds
     light[5] = intensity
@@ -48,8 +49,8 @@ while seconds < length:
 
     seconds = seconds + steptime
 
-rows.append(['seconds', seconds, '', 'instant', 'ta', 0, 'ba', 0])
-rows.append(['seconds', seconds, '', 'special', 'ms', 0, 30])
+rows.append(['seconds', seconds + 5, '', 'instant', 'ta', 0, 'ba', 0])
+rows.append(['seconds', seconds + 5, '', 'special', 'ms', 0, 30])
     
 
 with open("fade_in" + '_1.csv', "w") as f:
