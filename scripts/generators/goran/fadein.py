@@ -13,7 +13,8 @@ def easeInQuint(x):
 length = 10
 steptime = 0.02
 
-finalLightIntensity = 255
+topLightIntensity = 255
+bottomLightIntensity = 32
 startSpeed = 28
 finalSpeed = 80
 
@@ -34,24 +35,31 @@ while seconds < length:
     light = lightrow.copy()
     motor = motorrow.copy()
     ease = easeInQuint(seconds/length)
-    intensity = round(ease * finalLightIntensity)
-    if intensity == 0:
-        intensity = 1
+    topIntensity = round(ease * topLightIntensity)
+    bottomIntensity = round(ease * bottomLightIntensity)
+    if topIntensity == 0:
+        topIntensity = 1
+    if topIntensity > 255:
+        topIntensity = 255
+    if bottomIntensity == 0:
+        bottomIntensity = 1
+    if bottomIntensity > 32:
+        bottomIntensity = 32
     speed = startSpeed + round(seconds/length * (finalSpeed - startSpeed))
-    print(intensity,speed)
+    print(topIntensity,bottomIntensity,speed)
     light[1] = seconds
-    light[5] = intensity
-    light[7] = intensity
+    light[5] = topIntensity
+    light[7] = bottomIntensity
 
     motor[1] = seconds
     motor[5] = speed
 
-    if lastIntensity != intensity:
+    if lastIntensity != topIntensity:
         rows.append(light)
     if lastSpeed != speed:
         rows.append(motor)
     
-    lastIntensity = intensity
+    lastIntensity = topIntensity
     lastSpeed = speed
 
     seconds = seconds + steptime
