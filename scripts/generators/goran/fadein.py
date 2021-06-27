@@ -45,7 +45,7 @@ while seconds < length:
         bottomIntensity = 1
     if bottomIntensity > 32:
         bottomIntensity = 32
-    speed = startSpeed + round(seconds/length * (finalSpeed - startSpeed))
+    speed = startSpeed + round(easeInSine(seconds/length) * (finalSpeed - startSpeed))
     print(topIntensity,bottomIntensity,speed)
     light[1] = seconds
     light[5] = topIntensity
