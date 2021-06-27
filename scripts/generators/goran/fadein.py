@@ -5,8 +5,13 @@ import decimal
 def easeInSine(x):
     return 1 - math.cos((x * math.pi) / 2)
 
+
+def easeInQuint(x):
+    return x * x * x * x
+
+
 length = 10
-steptime = 0.01
+steptime = 0.02
 
 finalLightIntensity = 255
 startSpeed = 28
@@ -28,9 +33,11 @@ lastSpeed = -1
 while seconds < length:
     light = lightrow.copy()
     motor = motorrow.copy()
-    ease = easeInSine(seconds/10)
+    ease = easeInQuint(seconds/length)
     intensity = round(ease * finalLightIntensity)
-    speed = startSpeed + round(ease * (finalSpeed - startSpeed))
+    if intensity == 0:
+        intensity = 1
+    speed = startSpeed + round(seconds/length * (finalSpeed - startSpeed))
     print(intensity,speed)
     light[1] = seconds
     light[5] = intensity
@@ -53,7 +60,7 @@ rows.append(['seconds', seconds + 5, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', seconds + 5, '', 'special', 'ms', 0, 30])
     
 
-with open("fade_in" + '_1.csv', "w") as f:
+with open("fade_in" + '_2.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')

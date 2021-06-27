@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/goran/fade_in_1.csv'
-OUTPUT = './generators/goran/fade_in_80.json'
+INPUT = './generators/goran/fade_in_2.csv'
+OUTPUT = './generators/goran/fade_in_80_2.json'
 FPS = 25
 
 
