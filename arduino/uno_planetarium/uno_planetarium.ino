@@ -304,7 +304,7 @@ void setup(){
 
   motor.init();
   initLights();
-  setAll(0,20,0,10);
+  setAll(7,100,3,255,0,0,0);
 }
 
 void loop(){
@@ -339,6 +339,9 @@ void parseData() {
   byte state1;
   byte state2;
   byte steptime;
+  byte set1;
+  byte set2;
+  byte set3;
 
   boolean all = false;
   byte alltype;
@@ -388,6 +391,48 @@ void parseData() {
     state2 = interpreter.inputBuffer[2];
     steptime = interpreter.inputBuffer[3];
   }
+  else if(id < 50) {
+    //Shutter  
+    lightid = id % 10;
+    type = 4;
+    state1 = interpreter.inputBuffer[1];
+    steptime = interpreter.inputBuffer[2];
+  }
+  else if(id < 60) {
+    // Lightning Disappear  
+    lightid = id % 10;
+    type = 5;
+    state1 = interpreter.inputBuffer[1];
+    state2 = interpreter.inputBuffer[2];
+    steptime = interpreter.inputBuffer[3];
+    set1 = interpreter.inputBuffer[4];
+  }
+  else if(id < 70) {
+    // Lighning Appear  
+    lightid = id % 10;
+    type = 6;
+    state1 = interpreter.inputBuffer[1];
+    state2 = interpreter.inputBuffer[2];
+    steptime = interpreter.inputBuffer[3];
+    set1 = interpreter.inputBuffer[4];
+  }
+  else if(id < 80) {
+    //Machine Gun  
+    lightid = id % 10;
+    type = 7;
+    state1 = interpreter.inputBuffer[1];
+    state2 = interpreter.inputBuffer[2];
+    steptime = interpreter.inputBuffer[3];
+  }
+  else if(id < 90) {
+    //Accelerating Strobe  
+    lightid = id % 10;
+    type = 8;
+    state1 = interpreter.inputBuffer[1];
+    steptime = interpreter.inputBuffer[2];
+    set1 = interpreter.inputBuffer[3];
+    set2 = interpreter.inputBuffer[4];
+  }
 
 //  Serial.println(id);
 //  Serial.println(state);
@@ -396,10 +441,10 @@ void parseData() {
   
   if(all){
     //Serial.println("all");
-    setAll(alltype,state1,state2,steptime);
+    setAll(alltype,state1,state2,steptime,set1,set2,set3);
   } else {
     //Serial.println(lightid);
-    setLight(lightid,type,state1,state2,steptime);
+    setLight(lightid,type,state1,state2,steptime,set1,set2,set3);
   }
 
 }
@@ -416,12 +461,12 @@ void updateLights() {
   };
 }
 
-void setAll(byte type, byte state1, byte state2, byte steptime) {
+void setAll(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3) {
   for(int i = 0; i < numberoflights; ++i) {
-    lights[i].setto(type,state1,state2,steptime);
+    lights[i].setto(type,state1,state2,steptime,set1,set2,set3);
   };
 }
 
-void setLight(byte id, byte type, byte state1, byte state2, byte steptime) {
-  lights[id].setto(type,state1,state2,steptime);
+void setLight(byte id, byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3) {
+  lights[id].setto(type,state1,state2,steptime,set1,set2,set3);
 }
