@@ -16,7 +16,7 @@ steptime = 0.02
 topLightIntensity = 255
 bottomLightIntensity = 32
 startSpeed = 28
-finalSpeed = 80
+finalSpeed = 110
 
 rows = [
     ['seconds', 0, '', 'instant', 'ta', 0, 'ba', 0],
@@ -68,7 +68,7 @@ rows.append(['seconds', seconds + 5, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', seconds + 5, '', 'special', 'ms', 0, 30])
     
 
-with open("fade_in" + '_2.csv', "w") as f:
+with open("fade_in" + '_110.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')
