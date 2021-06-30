@@ -13,8 +13,7 @@ def easeInQuint(x):
 length = 10
 steptime = 0.02
 
-topLightIntensity = 255
-bottomLightIntensity = 32
+lightIntensity = 255
 startSpeed = 28
 finalSpeed = 110
 
@@ -35,31 +34,26 @@ while seconds < length:
     light = lightrow.copy()
     motor = motorrow.copy()
     ease = easeInQuint(seconds/length)
-    topIntensity = round(ease * topLightIntensity)
-    bottomIntensity = round(ease * bottomLightIntensity)
-    if topIntensity == 0:
-        topIntensity = 1
-    if topIntensity > 255:
-        topIntensity = 255
-    if bottomIntensity == 0:
-        bottomIntensity = 1
-    if bottomIntensity > 32:
-        bottomIntensity = 32
+    intensity = round(ease * lightIntensity)
+    if intensity == 0:
+        intensity = 1
+    if intensity > 255:
+        intensity = 255
     speed = startSpeed + round(easeInSine(seconds/length) * (finalSpeed - startSpeed))
-    print(topIntensity,bottomIntensity,speed)
+    print(intensity,speed)
     light[1] = seconds
-    light[5] = topIntensity
-    light[7] = bottomIntensity
+    light[5] = intensity
+    light[7] = intensity
 
     motor[1] = seconds
     motor[5] = speed
 
-    if lastIntensity != topIntensity:
+    if lastIntensity != intensity:
         rows.append(light)
     if lastSpeed != speed:
         rows.append(motor)
     
-    lastIntensity = topIntensity
+    lastIntensity = intensity
     lastSpeed = speed
 
     seconds = seconds + steptime
@@ -68,7 +62,7 @@ rows.append(['seconds', seconds + 5, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', seconds + 5, '', 'special', 'ms', 0, 30])
     
 
-with open("fade_in" + '_110.csv', "w") as f:
+with open("fade_in" + '_110_bottomfix.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')
