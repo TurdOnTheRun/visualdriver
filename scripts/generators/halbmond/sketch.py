@@ -13,10 +13,10 @@ def easeOutQuint(x):
     return (x - 1) * (x - 1) * (x - 1) * (x - 1) * (x - 1) * -1
 
 def easeInCube(x):
-    return x * x * x * x
+    return x * x * x
 
 def easeOutCube(x):
-    return (x - 1) * (x - 1) * (x - 1) * (x - 1) * (x - 1) * -1
+    return (x - 1) * (x - 1) * (x - 1) * -1
 
 
 finalPosition = 5.5
@@ -48,19 +48,20 @@ dimmPosition = 0
 
 while position < finalPosition:
 
-    print(round(position%1, 4))
+    print(round(position%1, 3))
 
-    if not dimmUp and round(position%1, 4) == 0.75:
+    if not dimmUp and round(position%1, 3) == 0.75:
         dimmDown = False
         dimmUp = True
         dimmPosition = position
 
-    if not dimmDown and round(position%1, 4) == 0:
+    if not dimmDown and (round(position%1, 3) == 0 or round(position%1, 3) == 1):
         dimmDown = True
         dimmUp = False
+        position = round(position)
         dimmPosition = position
     
-    if round(position%1, 4) == 0.25:
+    if round(position%1, 3) == 0.25:
         dimmDown = False
         dimmUp = False
 
