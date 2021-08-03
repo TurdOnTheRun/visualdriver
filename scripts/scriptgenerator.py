@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/goran/fade_in_110_bottomfix.csv'
-OUTPUT = './generators/goran/fade_in_110_bottomfix.json'
+INPUT = './generators/halbmond/halbmond_cube.csv'
+OUTPUT = './generators/halbmond/halbmond_cube.json'
 FPS = 25
 
 
