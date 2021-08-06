@@ -52,7 +52,7 @@ rows = [
     ['seconds', 0.5, '', 'special', 'ms', startSpeed, 30],
 ]
 
-position = 0.75
+position = 0.55
 lightrow = ['pos', 0, '', 'instant']
 frontpart = ['ba', 0]
 toppart = ['t1', 0]
