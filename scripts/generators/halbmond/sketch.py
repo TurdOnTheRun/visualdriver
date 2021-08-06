@@ -63,12 +63,12 @@ while position < finalPosition:
 
     print(round(position%1, 3))
 
-    if not dimmUp and round(position%1, 3) == 1-halfsize:
+    if not dimmUp and round(position%1, 3) == round(1-halfsize,2):
         dimmDown = False
         dimmUp = True
         dimmPosition = position
 
-    if round(position%1, 3) == 0.5 + topHalfsize:
+    if round(position%1, 3) == round(0.5 + topHalfsize,2):
         topDown = False
         topUp = False
 
@@ -82,7 +82,7 @@ while position < finalPosition:
         dimmDown = False
         dimmUp = False
 
-    if not topUp and round(position%1, 3) == 0.5 - topHalfsize:
+    if not topUp and round(position%1, 3) == round(0.5 - topHalfsize,2):
         topDown = False
         topUp = True
         topDimmPosition = position
