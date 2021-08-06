@@ -45,14 +45,14 @@ topLastIntensity = -1
 
 rows = [
     ['index'],
-    ['seconds', 0.5, '', 'instant', 't1', 255, 'ba', intensity],
+    ['seconds', 0.5, '', 'instant', 't1', 0, 'ba', intensity],
     ['seconds', 0.5, '', 'special', 'ms', startSpeed, 30],
 ]
 
 position = 0.75
 lightrow = ['pos', 0, '', 'instant']
 frontpart = ['ba', 0]
-toppart = ['ta', 0]
+toppart = ['t1', 0]
 # motorrow = ['seconds', 0, '', 'special', 'ms', 0, 10]
 
 
