@@ -33,6 +33,7 @@ dimmPosition = 0
 intensity = 0
 maxIntensity = 255
 lastIntensity = -1
+halfsize = 0.4
 
 
 topUp = False
@@ -41,6 +42,8 @@ topDimmPosition = 0
 topIntensity = 0
 topMaxIntensity = 255
 topLastIntensity = -1
+topHalfsize = 0.4
+
 
 
 rows = [
@@ -60,11 +63,12 @@ while position < finalPosition:
 
     print(round(position%1, 3))
 
-    if not dimmUp and round(position%1, 3) == 0.75:
+    if not dimmUp and round(position%1, 3) == 1-halfsize:
         dimmDown = False
         dimmUp = True
         dimmPosition = position
 
+    if round(position%1, 3) == 0.5 + topHalfsize:
         topDown = False
         topUp = False
 
@@ -74,10 +78,11 @@ while position < finalPosition:
         position = round(position)
         dimmPosition = position
     
-    if round(position%1, 3) == 0.25:
+    if round(position%1, 3) == halfsize:
         dimmDown = False
         dimmUp = False
 
+    if not topUp and round(position%1, 3) == 0.5 - topHalfsize:
         topDown = False
         topUp = True
         topDimmPosition = position
@@ -97,14 +102,14 @@ while position < finalPosition:
     
             if dimmUp:
                 print('up')
-                print((position-dimmPosition)/(1/4))
-                ease = easeInCube((position-dimmPosition)/(1/4))
+                print((position-dimmPosition)/halfsize)
+                ease = easeInCube((position-dimmPosition)/halfsize)
                 intensity = round(ease * maxIntensity)
 
             if dimmDown:
                 print('down')
-                print((position-dimmPosition)/(1/4))
-                ease = easeOutCube((position-dimmPosition)/((1/4)))
+                print((position-dimmPosition)/halfsize)
+                ease = easeOutCube((position-dimmPosition)/halfsize)
                 intensity = round(ease * maxIntensity)
 
             if intensity > 255:
@@ -119,14 +124,14 @@ while position < finalPosition:
         
             if topUp:
                 print('topup')
-                print((position-topDimmPosition)/(1/4))
-                ease = easeInCube((position-topDimmPosition)/(1/4))
+                print((position-topDimmPosition)/topHalfsize)
+                ease = easeInCube((position-topDimmPosition)/topHalfsize)
                 topIntensity = round(ease * topMaxIntensity)
 
             if topDown:
                 print('topdown')
-                print((position-topDimmPosition)/(1/4))
-                ease = easeOutCube((position-topDimmPosition)/((1/4)))
+                print((position-topDimmPosition)/topHalfsize)
+                ease = easeOutCube((position-topDimmPosition)/topHalfsize)
                 topIntensity = round(ease * topMaxIntensity)
 
             if topIntensity > 255:
@@ -137,7 +142,9 @@ while position < finalPosition:
                 part[1] = topIntensity
                 light += part
         
+        print('Is:')
         print(intensity)
+        print(topIntensity)
         print()
 
         if len(light) > 4:
