@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/halbmond/halbmond_cube.csv'
-OUTPUT = './generators/halbmond/halbmond_cube.json'
+INPUT = './generators/halbmond/halbmond_cube_top.csv'
+OUTPUT = './generators/halbmond/halbmond_cube_top.json'
 FPS = 25
 
 
