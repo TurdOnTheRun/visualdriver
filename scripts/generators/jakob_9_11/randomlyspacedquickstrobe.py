@@ -1,7 +1,7 @@
 import random
 
 # Seconds
-length = 10
+length = 9
 
 rows = [
     ['seconds', 0, '', 'ta', 0, 'ba', 0],

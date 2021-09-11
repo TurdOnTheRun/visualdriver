@@ -7,13 +7,12 @@ finalPosition = 2.5
 
 startSpeed = 80
 finalSpeed = 110
-stepSize = 40
+stepSize = 50
 
 rows = [
     ['index'],
     ['seconds', 0.5, '', 'instant', 't0', 0, 'ba', 0],
-    ['seconds', 0.5, '', 'special', 'ms', startSpeed, 30],
-    ['pos', 0.0625, '', 'special', 'ms', finalSpeed, stepSize]
+    ['seconds', 0.5, '', 'special', 'ms', finalSpeed, stepSize],
 ]
 
 position = 0
@@ -27,8 +26,8 @@ bottomlightinsity = 100
 steptime = (40,60)
 # motorrow = ['seconds', 0, '', 'special', 'ms', 0, 10]
 
-partitions = 16
-position = round((2/partitions),4)
+partitions = 48
+position = round((1/partitions),4)
 
 while position < finalPosition:
 
