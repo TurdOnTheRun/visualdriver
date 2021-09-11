@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/jakob_9_11/randomlyspacedquickstrobe_9_t0t1t4t5ba_1.csv'
-OUTPUT = './generators/jakob_9_11/randomlyspacedquickstrobe_9_t0t1t4t5ba_1.json'
+INPUT = './generators/jakob_9_11/randomlyspacedquickstrobe_9_t0t1t4t5_2.csv'
+OUTPUT = './generators/jakob_9_11/randomlyspacedquickstrobe_9_t0t1t4t5_2.json'
 FPS = 25
 
 

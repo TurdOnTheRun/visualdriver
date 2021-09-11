@@ -13,10 +13,10 @@ seconds = 0
 
 baserow = ['seconds', 0, '', 'lightning']
 
-lights = ['t0', 't1', 't4', 't5', 'ba']
+lights = ['t0', 't1', 't4', 't5']
 toplightintensity = 255
 bottomlightinsity = 100
-steptime = (50,50)
+steptime = (45,55)
 
 lastlight = ''
 
@@ -46,7 +46,7 @@ rows.append(['seconds', seconds, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', seconds, '', 'special', 'ms', 0, 30])
     
 
-with open("randomlyspacedquickstrobe_" + str(length) + '_' + ''.join(lights) + '_1.csv', "w") as f:
+with open("randomlyspacedquickstrobe_" + str(length) + '_' + ''.join(lights) + '_2.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')
