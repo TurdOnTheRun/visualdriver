@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/lightmapping/lineartest.csv'
-OUTPUT = './generators/lightmapping/lineartest.json'
+INPUT = './generators/091021/morphrandom_9_t0t1t4t5_1.csv'
+OUTPUT = './generators/091021/morphrandom_9_t0t1t4t5_1.json'
 FPS = 25
 
 
