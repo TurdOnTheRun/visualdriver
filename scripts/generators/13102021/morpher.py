@@ -1,15 +1,22 @@
+# Longer gaps
+# less frequent blinking
+# new lighting
+
+
+
+
 import random
 
 
 ms = 0
-morphduration = 1500
-nomorphduration = 500
+morphduration = 2000
+nomorphduration = 800
 iterations = 4
 startpos = 0.5
 
-lightninglenghtrange = (16,20)
-overlaprange = (5,10)
-averagetime = 11
+lightninglenghtrange = (32,40)
+overlaprange = (10,16)
+averagetime = 23
 
 baserow = ['seconds', 0, '', 'lightning']
 
