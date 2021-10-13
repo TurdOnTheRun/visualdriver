@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/091021/morphrandom_9_t0t1t4t5_1.csv'
-OUTPUT = './generators/091021/morphrandom_9_t0t1t4t5_1.json'
+INPUT = './generators/13102021/morpher_t0t1t4t5_1.csv'
+OUTPUT = './generators/13102021/morpher_t0t1t4t5_1.json'
 FPS = 25
 
 
