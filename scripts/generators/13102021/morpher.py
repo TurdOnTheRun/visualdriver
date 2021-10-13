@@ -14,9 +14,9 @@ nomorphduration = 800
 iterations = 4
 startpos = 0.5
 
-lightninglenghtrange = (32,40)
-overlaprange = (10,16)
-averagetime = 23
+lightninglenghtrange = (24,32)
+overlaprange = (8,14)
+averagetime = 21
 
 baserow = ['seconds', 0, '', 'lightning']
 
