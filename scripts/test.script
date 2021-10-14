@@ -1,8 +1,0 @@
-'time', 2, 'instant', 2:22:23,, 100
-
-triggertype, triggervalue, commandtype, fromtime, totime, lightid, value, lightid, value, lightid, value,...
-
-lightid = m  --> motorspeed
-
-000 - 199 Single Light Control; 19 ids (60-69 is left out)
-200 - 219 All Light Control; 19 ids (206 is left out)

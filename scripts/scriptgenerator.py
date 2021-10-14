@@ -1,13 +1,13 @@
 
 import json
 
-INPUT = './video/fullturn_strobe_phasing_gaps_asynch.csv'
-OUTPUT = './video/fullturn_strobe_phasing_gaps_asynch.json'
+INPUT = './generators/13102021/morpher_t0t1t4t5_1.csv'
+OUTPUT = './generators/13102021/morpher_t0t1t4t5_1.json'
 FPS = 25
 
 
 TRIGGERTYPES = ['fps','seconds','pos']
-COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear', 'lightning', 'lightningdisappear', 'lightningappear', 'machinegun', 'acceleratingstrobe']
+COMMANDTYPES = ['special', 'instant', 'linear', 'strobe', 'instanttolinear', 'lightning', 'lightningdisappear', 'lightningappear', 'machinegun', 'acceleratingstrobe', 'bezierdimm', 'lightningbezierdimm']
 SPECIALCOMMANDTYPES = ['ms', 'md', 'tb', 'tr','TRIGGER_DOWN', 'TRIGGER_UP']
 TOPLIGHTS = ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','ta']
 BOTTOMLIGHTS = ['b0','b1','b2','ba']
@@ -53,6 +53,10 @@ def get_byte_representation(commandtype, lightid):
 			return 207
 		if commandtype == 'acceleratingstrobe':
 			return 208
+		if commandtype == 'bezierdimm':
+			return 210
+		if commandtype == 'lightningbezierdimm':
+			return 211
 	else:
 		light = int(lightid[-1])
 		if commandtype == 'instant':
@@ -73,6 +77,10 @@ def get_byte_representation(commandtype, lightid):
 			return 70 + light
 		if commandtype == 'acceleratingstrobe':
 			return 80 + light
+		if commandtype == 'bezierdimm':
+			return 100 + light
+		if commandtype == 'lightningbezierdimm':
+			return 110 + light
 
 
 def get_special_comms(comms):
@@ -419,6 +427,79 @@ def get_acceleratingstrobe_comms(comms):
 	return parsedcomms
 
 
+def get_bezierdimm_comms(comms):
+
+	parsedcomms = []
+
+	i = 0
+
+	# While loop for every commandtype
+	while i < len(comms):
+		lightid = comms[i]
+		state1 = comms[i+1]
+		state2 = comms[i+2]
+		steptime = comms[i+3]
+		set1 = comms[i+4]
+		set2 = comms[i+5]
+		set3 = comms[i+6]
+		set4 = comms[i+7]
+		i += 8
+
+		c = []
+
+		if lightid.startswith('t'):
+			c.append('top')
+		elif lightid.startswith('b'):
+			c.append('bottom')
+		else:
+			print('Lightid not implemented yet')
+			exit(-1)
+		
+		lightid = get_byte_representation('bezierdimm', lightid)
+		c.append(clean_bytes([lightid,int(state1),int(state2),int(steptime),int(set1),int(set2),int(set3),int(set4)]))
+
+		parsedcomms.append(c)
+	
+	return parsedcomms
+
+
+def get_lightningbezierdimm_comms(comms):
+
+	parsedcomms = []
+
+	i = 0
+
+	# While loop for every commandtype
+	while i < len(comms):
+		lightid = comms[i]
+		state1 = comms[i+1]
+		state2 = comms[i+2]
+		steptime = comms[i+3]
+		set1 = comms[i+4]
+		set2 = comms[i+5]
+		set3 = comms[i+6]
+		set4 = comms[i+7]
+		lightning = comms[i+8]
+		i += 9
+
+		c = []
+
+		if lightid.startswith('t'):
+			c.append('top')
+		elif lightid.startswith('b'):
+			c.append('bottom')
+		else:
+			print('Lightid not implemented yet')
+			exit(-1)
+		
+		lightid = get_byte_representation('lightningbezierdimm', lightid)
+		c.append(clean_bytes([lightid,int(state1),int(state2),int(steptime),int(set1),int(set2),int(set3),int(set4),int(lightning)]))
+
+		parsedcomms.append(c)
+	
+	return parsedcomms
+
+
 def get_comms(commandtype, comms, timeframe):
 
 	if commandtype == 'special':
@@ -433,14 +514,18 @@ def get_comms(commandtype, comms, timeframe):
 		parsedcomms = get_instanttolinear_comms(comms, timeframe)
 	elif commandtype == 'lightning':
 		parsedcomms = get_lightning_comms(comms)
-	elif commandtype == 'stutter':
-		parsedcomms = get_stutter_comms(comms)
-	elif commandtype == 'schnuppe':
-		parsedcomms = get_schnuppe_comms(comms)
+	elif commandtype == 'lightningdisappear':
+		parsedcomms = get_lightningdisappear_comms(comms)
+	elif commandtype == 'lightningappear':
+		parsedcomms = get_lightningappear_comms(comms)
 	elif commandtype == 'machinegun':
 		parsedcomms = get_machinegun_comms(comms)
 	elif commandtype == 'acceleratingstrobe':
 		parsedcomms = get_acceleratingstrobe_comms(comms)
+	elif commandtype == 'bezierdimm':
+		parsedcomms = get_bezierdimm_comms(comms)
+	elif commandtype == 'lightningbezierdimm':
+		parsedcomms = get_lightningbezierdimm_comms(comms)
 	return parsedcomms
 
 
