@@ -19,6 +19,9 @@ void Light::init()
 
 void Light::setstate(byte newstate)
 {
+  if(newstate == 1){
+    newstate = 2;
+  }
   analogWrite(_pin, newstate);
   _state = newstate;
   _laststep = millis();
@@ -48,7 +51,8 @@ void Light::update()
           
           if(newstate >= _tostate || newstate > 255){
             setstate(_tostate);
-            // For Lighning Appear (6)
+            // For Lightning Appear (6)
+            // Set how long light should stay at _tostate
             if(_set1 > 0){
               _steptime = _set1;
               _tostate = 0;
@@ -140,11 +144,58 @@ void Light::update()
         }
       } break;
 
+      case 10: {
+        //  Linear Dimming & Direct to Linear
+        int steps = (int) round(passed/_steptime);
+
+        if(steps == 0){
+          break;
+        }
+    
+        _bezierstep = _bezierstep + steps;
+        
+        if(rising()){
+          
+          if(_bezierstep >= 250){
+            setstate(_tostate);
+            if(_set5 > 0){
+              _steptime = _set5;
+              _tostate = 0;
+              _type = 4;
+            }
+          } else {
+            int newstate;
+            float bz = bezier(_bezierstep);
+            newstate = (int) round(_fromstate + bz * (_tostate - _fromstate));
+            setstate(lowByte(newstate));
+          }
+          
+        } else {
+          
+          if (_bezierstep >= 250){
+            setstate(_tostate);
+          } else {
+            int newstate;
+            float bz = bezier(_bezierstep);
+            newstate = (int) round(_fromstate - bz * (_fromstate - _tostate));
+            setstate(lowByte(newstate));
+          }
+        }
+      } break;
+
+      case 11: {
+        // Lightning Bezier Disappear
+        _steptime = _set5;
+        // Set to 0 so it doesn't catch in linear as a Lighning Appear
+        _set5 = 0;
+        _type = 10;
+        _laststep = millis();
+      } break;
     }
   }
 }
 
-void Light::setto(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3)
+void Light::setto(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5)
 {
   if(type == 0){
     // Direct_steps
@@ -202,7 +253,7 @@ void Light::setto(byte type, byte state1, byte state2, byte steptime, byte set1,
     _tostate = state2;
   }
   else if(type == 6){
-    // Lighning Appear
+    // Lightning Appear
     setstate(state1);
     _steptime = steptime;
     // milliseconds on
@@ -234,7 +285,82 @@ void Light::setto(byte type, byte state1, byte state2, byte steptime, byte set1,
     // darktime decrease
     _set2 = set2;
   }
+  else if(type == 10){
+    // Bezier Dimm
+    if(steptime == 0){
+      setstate(state2);
+      _tostate = state2;
+      type = 0;
+    } else {
+      _steptime = steptime;
+      _fromstate = state1;
+      _tostate = state2;
+      _set1 = set1;
+      _set2 = set2;
+      _set3 = set3;
+      _set4 = set4;
+      _bezierstep = 0;
+      setstate(state1);
+    }
+  }
+  else if(type == 11){
+    _fromstate = state1;
+    _tostate = state2;
+    _set1 = set1;
+    _set2 = set2;
+    _set3 = set3;
+    _set4 = set4;
+    _bezierstep = 0;
+    if(_fromstate < _tostate){
+      // Lightning Bezier Appear
+      // bezier steptime
+      _steptime = steptime;
+      // milliseconds on
+      _set5 = set5;
+      type = 10;
+    } else if(_fromstate > _tostate) {
+      // Lightning Bezier Disappear
+      // milliseconds on
+      _steptime = set5;
+      // bezier steptime
+      _set5 = steptime;
+    } else {
+      steptime = set5;
+      type = 4;
+    }
+    setstate(state1);
+  }
   _type = type;
+}
+
+float Light::lerp(float n1, float n2, float perc)
+{
+  float diff = n2 - n1;
+  return n1 + ( diff * perc );
+}
+
+float Light::bezier(byte step)
+{ 
+  // There are a total of 250 steps
+  float i = 0.004 * step;
+
+  // The Green Lines
+  float xa = lerp( 0 , _set1 , i );
+  float ya = lerp( 0 , _set2 , i );
+  float xb = lerp( _set1 , _set3 , i );
+  float yb = lerp( _set2 , _set4 , i );
+  float xc = lerp( _set3 , 100 , i );
+  float yc = lerp( _set4 , 100 , i );
+
+  // The Blue Line
+  float xm = lerp( xa , xb , i );
+  float ym = lerp( ya , yb , i );
+  float xn = lerp( xb , xc , i );
+  float yn = lerp( yb , yc , i );
+
+  // The Black Dot
+  float y = lerp( ym , yn , i ) / 100;
+  return y;
 }
 
 bool Light::changing()

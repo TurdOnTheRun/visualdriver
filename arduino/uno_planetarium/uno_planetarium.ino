@@ -2,133 +2,10 @@
 #include <Light.h>
 #include <PWM.h>
 
-//class Light {
-//  private:
-//    byte id;
-//    byte pin;
-//    byte state;
-//    byte tostate;
-//    byte steptime;
-//    byte type = 1;
-//    unsigned long laststep;
-//    int32_t frequency = 50000; //frequency (in Hz)
-//    
-//  public:
-//
-//    Light(byte id, byte pin) {
-//      this->pin = pin;
-//      this->id = id;
-//    }
-//
-//    void init() {
-//      pinMode(pin, OUTPUT);
-//      //sets the frequency for the specified pin
-//      SetPinFrequencySafe(pin, frequency);
-//    }
-//
-//    void update() {
-//      
-//      if (changing()){
-//        
-//        unsigned long passed = millis() - laststep;
-//        if (passed < steptime){
-//          return;
-//        }
-//      
-//        if(type != 2){
-//          //  Linear, etc.
-//          int steps = (int) round(passed/steptime);
-//  
-//          int newstate;
-//          
-//          if (rising()){
-//            
-//            newstate = ((int)state)+steps;
-//            
-//            if (newstate >= tostate || newstate > 255){
-//              setstate(tostate);
-//            } else {
-//              setstate(lowByte(newstate));
-//            }
-//            
-//          } else {
-//            
-//            newstate = ((int)state)-steps;
-//            
-//            if (newstate <= tostate || newstate < 0){
-//              setstate(tostate);
-//            } else {
-//              setstate(lowByte(newstate));
-//            }
-//            
-//          }
-//        } 
-//        else {
-//          //  Strobe
-//          if(state == 0){
-//            setstate(tostate);
-//            tostate = 0;
-//          } else {
-//            tostate = state;
-//            setstate(0);
-//          }
-//        }
-//      }
-//    }
-//
-//    void setstate(byte newstate) {
-//      pwmWrite(pin, newstate);
-//      state = newstate;
-//      laststep = millis();
-//    }
-//
-//    void setto(byte type_in, byte tostate_in, byte steptime_in) {
-//      if(type_in == 0){
-//        setstate(tostate_in);
-//        tostate = tostate_in;
-//      }
-//      else if(type_in == 1){
-//        if(steptime_in == 0){
-//          setstate(tostate_in);
-//          tostate = tostate_in;
-//        } else {
-//          steptime = steptime_in;
-//          tostate = tostate_in;
-//          laststep = millis();
-//        }
-//      }
-//      else if(type_in == 2){
-//        if(state == tostate_in){
-//          setstate(0);
-//          tostate = tostate_in;
-//        } else {
-//          setstate(tostate_in);
-//          tostate = 0;
-//        }
-//        steptime = steptime_in;
-//      }
-//      
-//      type = type_in;
-//    }
-//
-//    bool rising() {
-//      return (state < tostate);
-//    }
-//
-//    bool changing() {
-//      return !(state == tostate);
-//    }
-//
-//    byte getid() {
-//      return id;
-//    };
-//
-//};
-
 
 class UnoLight: public Light {
   private:
-    int32_t _frequency = 50000; //frequency (in Hz)
+    int32_t _frequency = 31000; //frequency (in Hz)
     
   public:
     UnoLight(byte id, byte pin):Light(id, pin){};
@@ -288,13 +165,6 @@ UnoLight lights[numberoflights] = {
 
 SerialInterpreter interpreter = SerialInterpreter();
 
-//const byte buffSize = 40;
-//byte inputBuffer[buffSize];
-//const char startMarker = '<';
-//const char endMarker = '>';
-//byte bytesRecvd = 0;
-//boolean readInProgress = false;
-
 void setup(){
   //SETUP USB SERIAL  
   Serial.begin(115200);
@@ -304,7 +174,7 @@ void setup(){
 
   motor.init();
   initLights();
-  setAll(7,100,3,255,0,0,0);
+  setAll(7,100,3,255,0,0,0,0,0);
 }
 
 void loop(){
@@ -342,6 +212,8 @@ void parseData() {
   byte set1;
   byte set2;
   byte set3;
+  byte set4;
+  byte set5;
 
   boolean all = false;
   byte alltype;
@@ -404,16 +276,20 @@ void parseData() {
     type = 5;
     state1 = interpreter.inputBuffer[1];
     state2 = interpreter.inputBuffer[2];
+    // steptime for dimming    
     steptime = interpreter.inputBuffer[3];
+    // lightning time in ms   
     set1 = interpreter.inputBuffer[4];
   }
   else if(id < 70) {
-    // Lighning Appear  
+    // Lightning Appear  
     lightid = id % 10;
     type = 6;
     state1 = interpreter.inputBuffer[1];
     state2 = interpreter.inputBuffer[2];
+    // steptime for dimming
     steptime = interpreter.inputBuffer[3];
+    // lightning time in ms
     set1 = interpreter.inputBuffer[4];
   }
   else if(id < 80) {
@@ -433,6 +309,33 @@ void parseData() {
     set1 = interpreter.inputBuffer[3];
     set2 = interpreter.inputBuffer[4];
   }
+  else if(id < 100) {}
+  else if(id < 110) {
+    //Bezier Dimm  
+    lightid = id % 10;
+    type = 10;
+    state1 = interpreter.inputBuffer[1];
+    state2 = interpreter.inputBuffer[2];
+    steptime = interpreter.inputBuffer[3];
+    set1 = interpreter.inputBuffer[4];
+    set2 = interpreter.inputBuffer[5];
+    set3 = interpreter.inputBuffer[6];
+    set4 = interpreter.inputBuffer[7];
+  }
+  else if(id < 111) {
+    //Lightning Bezier Appear/Disappear  
+    lightid = id % 10;
+    type = 11;
+    state1 = interpreter.inputBuffer[1];
+    state2 = interpreter.inputBuffer[2];
+    steptime = interpreter.inputBuffer[3];
+    set1 = interpreter.inputBuffer[4];
+    set2 = interpreter.inputBuffer[5];
+    set3 = interpreter.inputBuffer[6];
+    set4 = interpreter.inputBuffer[7];
+    //lightning time in ms    
+    set5 = interpreter.inputBuffer[8];
+  }
 
 //  Serial.println(id);
 //  Serial.println(state);
@@ -441,10 +344,10 @@ void parseData() {
   
   if(all){
     //Serial.println("all");
-    setAll(alltype,state1,state2,steptime,set1,set2,set3);
+    setAll(alltype,state1,state2,steptime,set1,set2,set3,set4,set5);
   } else {
     //Serial.println(lightid);
-    setLight(lightid,type,state1,state2,steptime,set1,set2,set3);
+    setLight(lightid,type,state1,state2,steptime,set1,set2,set3,set4,set5);
   }
 
 }
@@ -461,12 +364,12 @@ void updateLights() {
   };
 }
 
-void setAll(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3) {
+void setAll(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5) {
   for(int i = 0; i < numberoflights; ++i) {
-    lights[i].setto(type,state1,state2,steptime,set1,set2,set3);
+    lights[i].setto(type,state1,state2,steptime,set1,set2,set3,set4,set5);
   };
 }
 
-void setLight(byte id, byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3) {
-  lights[id].setto(type,state1,state2,steptime,set1,set2,set3);
+void setLight(byte id, byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5) {
+  lights[id].setto(type,state1,state2,steptime,set1,set2,set3,set4,set5);
 }
