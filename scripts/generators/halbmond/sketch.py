@@ -40,6 +40,8 @@ topUp = False
 topDown = False
 topDimmPosition = 0
 topIntensity = 0
+
+topMinimum = 100
 topMaxIntensity = 255
 topLastIntensity = -1
 topHalfsize = 0.4
@@ -126,13 +128,13 @@ while position < finalPosition:
                 print('topup')
                 print((position-topDimmPosition)/topHalfsize)
                 ease = easeInCube((position-topDimmPosition)/topHalfsize)
-                topIntensity = round(ease * topMaxIntensity)
+                topIntensity = topMinimum + round(ease * (topMaxIntensity - topMinimum))
 
             if topDown:
                 print('topdown')
                 print((position-topDimmPosition)/topHalfsize)
                 ease = easeOutCube((position-topDimmPosition)/topHalfsize)
-                topIntensity = round(ease * topMaxIntensity)
+                topIntensity = topMinimum + round(ease * (topMaxIntensity - topMinimum))
 
             if topIntensity > 255:
                 topIntensity = 255
@@ -159,7 +161,7 @@ rows.append(['pos', finalPosition, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', finalPosition, '', 'special', 'ms', 0, 30])
     
 
-with open("halbmond" + '_cube_top_short.csv', "w") as f:
+with open("halbmond" + '_cube_top_minimum_short.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')
