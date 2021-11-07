@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/13102021/morpher_t0t1t4t5_1.csv'
-OUTPUT = './generators/13102021/morpher_t0t1t4t5_1.json'
+INPUT = './generators/halbmond/halbmond_cube_top_short.csv'
+OUTPUT = './generators/halbmond/halbmond_cube_top_short.json'
 FPS = 25
 
 

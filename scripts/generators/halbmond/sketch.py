@@ -19,7 +19,7 @@ def easeOutCube(x):
     return (x - 1) * (x - 1) * (x - 1) * -1
 
 
-finalPosition = 5.5
+finalPosition = 3.5
 step = 0.002
 
 startSpeed = 80
@@ -159,7 +159,7 @@ rows.append(['pos', finalPosition, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', finalPosition, '', 'special', 'ms', 0, 30])
     
 
-with open("halbmond" + '_cube_top.csv', "w") as f:
+with open("halbmond" + '_cube_top_short.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')
