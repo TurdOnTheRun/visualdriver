@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/halbmond/halbmond_probe.csv'
-OUTPUT = './generators/halbmond/halbmond_probe.json'
+INPUT = './photo/testing/4step_bottomonly_22_100iso_70light_1sec.csv'
+OUTPUT = './photo/testing/4step_bottomonly_22_100iso_70light_1sec.json'
 FPS = 25
 
 
