@@ -2,7 +2,7 @@ import random
 
 # Seconds
 dancinglength = 5
-schattensteps = 12
+schattensteps = 20
 # milliseconds
 schattentime = 350
 
@@ -33,7 +33,7 @@ rows.append(['seconds', seconds, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', seconds, '', 'special', 'ms', 0, 30])
     
 
-with open('schattenbezier.csv', "w") as f:
+with open('schattenbezier_20.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')

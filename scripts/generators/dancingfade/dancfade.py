@@ -17,7 +17,7 @@ lightintensity = 255
 lastlight = ''
 steptime = (40,60)
 maximumsteptime = 150
-blinksatstart = 20
+blinksatstart = 30
 blinksperspeed = 1
 blinks = 0
 
@@ -52,23 +52,23 @@ while blinksatstart or (not done and blinks <= blinksperspeed):
     else:
         if blinks == blinksperspeed:
             if reverse:
-                steptime = (steptime[0] - 3, steptime[1] - 3)
+                steptime = (steptime[0] - 4, steptime[1] - 4)
             else:
-                steptime = (steptime[0] + 3, steptime[1] + 3)
+                steptime = (steptime[0] + 4, steptime[1] + 4)
             blinks = 0
         else:
             blinks += 1
     if steptime[1] >= maximumsteptime:
         reverse = True
     if not done and reverse and steptime[1] <= 60:
-        blinksatstart = 20
+        blinksatstart = 30
         done = True
 
 rows.append(['seconds', seconds, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', seconds, '', 'special', 'ms', 0, 30])
     
 
-with open('dancingfade.csv', "w") as f:
+with open('dancingfade_startendlong_transitionshort.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')
