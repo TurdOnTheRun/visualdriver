@@ -14,17 +14,19 @@ disappearrow = ['seconds', 0, '', 'lightningdisappear', 'ta', 80, 0, 1, 80]
 
 lights = ['t0', 't1', 't4', 't5']
 lightintensity = 255
-steptime = (20,30)
-maximumsteptime = 80
-blinksatstart = 8
+lastlight = ''
+steptime = (40,60)
+maximumsteptime = 150
+blinksatstart = 20
 blinksperspeed = 1
 blinks = 0
 
-schattensteps = 5
+done = False
+reverse = False
 
-lastlight = ''
+# import pdb; pdb.set_trace()
 
-while blinksatstart or (steptime[1] < maximumsteptime and blinks <= blinksperspeed):
+while blinksatstart or (not done and blinks <= blinksperspeed):
     row = baserow.copy()
     row[1] = seconds
     lightoptions = lights.copy()
@@ -49,19 +51,18 @@ while blinksatstart or (steptime[1] < maximumsteptime and blinks <= blinksperspe
             blinksatstart = None
     else:
         if blinks == blinksperspeed:
-            steptime = (steptime[0] + 1, steptime[1] + 1)
+            if reverse:
+                steptime = (steptime[0] - 3, steptime[1] - 3)
+            else:
+                steptime = (steptime[0] + 3, steptime[1] + 3)
             blinks = 0
         else:
             blinks += 1
-
-seconds += (350 - steptime[1]) /1000
-
-# this could be a "complex effect" object
-for i in range(schattensteps):
-    row = disappearrow.copy()
-    row[1] = seconds
-    seconds += (disappearrow[5]*disappearrow[7]+disappearrow[8]+350)/1000
-    rows.append(row)
+    if steptime[1] >= maximumsteptime:
+        reverse = True
+    if not done and reverse and steptime[1] <= 60:
+        blinksatstart = 20
+        done = True
 
 rows.append(['seconds', seconds, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', seconds, '', 'special', 'ms', 0, 30])
