@@ -18,6 +18,7 @@ lastlight = ''
 steptime = (40,60)
 maximumsteptime = 150
 blinksatstart = 30
+blinksatcenter = None
 blinksperspeed = 1
 blinks = 0
 
@@ -26,7 +27,7 @@ reverse = False
 
 # import pdb; pdb.set_trace()
 
-while blinksatstart or (not done and blinks <= blinksperspeed):
+while blinksatstart or (not done and blinks <= blinksperspeed) or blinksatcenter:
     row = baserow.copy()
     row[1] = seconds
     lightoptions = lights.copy()
@@ -49,6 +50,12 @@ while blinksatstart or (not done and blinks <= blinksperspeed):
         else:
             blinks = 0
             blinksatstart = None
+    elif blinksatcenter:
+        if blinks < blinksatcenter:
+            blinks += 1
+        else:
+            blinks = 0
+            blinksatcenter = 0
     else:
         if blinks == blinksperspeed:
             if reverse:
@@ -59,7 +66,10 @@ while blinksatstart or (not done and blinks <= blinksperspeed):
         else:
             blinks += 1
     if steptime[1] >= maximumsteptime:
-        reverse = True
+        if blinksatcenter is None:
+            blinksatcenter = 5
+        elif blinksatcenter == 0:
+            reverse = True
     if not done and reverse and steptime[1] <= 60:
         blinksatstart = 30
         done = True
@@ -68,7 +78,7 @@ rows.append(['seconds', seconds, '', 'instant', 'ta', 0, 'ba', 0])
 rows.append(['seconds', seconds, '', 'special', 'ms', 0, 30])
     
 
-with open('dancingfade_startendlong_transitionshort.csv', "w") as f:
+with open('dancingfade_startendlong_transitionshort_longercenter.csv', "w") as f:
     for row in rows:
         f.write(','.join([str(x) for x in row]))
         f.write('\n')
