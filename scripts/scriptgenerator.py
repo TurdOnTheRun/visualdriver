@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/schattentanz_bezier/schattenbezier_20_topbottom.csv'
-OUTPUT = './generators/schattentanz_bezier/schattenbezier_20_topbottom.json'
+INPUT = './generators/dancingfade/dancingfade_startendlong_transitionshort_longercenter.csv'
+OUTPUT = './generators/dancingfade/dancingfade_startendlong_transitionshort_longercenter.json'
 FPS = 25
 
 

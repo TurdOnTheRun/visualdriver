@@ -67,7 +67,7 @@ while blinksatstart or (not done and blinks <= blinksperspeed) or blinksatcenter
             blinks += 1
     if steptime[1] >= maximumsteptime:
         if blinksatcenter is None:
-            blinksatcenter = 5
+            blinksatcenter = 3
         elif blinksatcenter == 0:
             reverse = True
     if not done and reverse and steptime[1] <= 60:
