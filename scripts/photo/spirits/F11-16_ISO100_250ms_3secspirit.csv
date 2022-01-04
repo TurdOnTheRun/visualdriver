@@ -1,0 +1,7 @@
+Trigger Type,Trigger From,Trigger To,Command Type,,,,,,
+seconds,0,,instant,ta,0,ba,0,,
+seconds,1,,special,TRIGGER_DOWN,,,,,
+seconds,2,,lightning,ta,250,250,ba,250,250
+seconds,7,,instant,ta,30,ba,20,,
+seconds,10,,instant,ta,0,ba,0,,
+seconds,10,,special,TRIGGER_UP,,,,,
