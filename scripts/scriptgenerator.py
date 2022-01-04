@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './generators/dancingfade/dancingfade_startendlong_transitionshort_longercenter.csv'
-OUTPUT = './generators/dancingfade/dancingfade_startendlong_transitionshort_longercenter.json'
+INPUT = './video/dimmtests/dimmtest100.csv'
+OUTPUT = './video/dimmtests/dimmtest100.json'
 FPS = 25
 
 
