@@ -1,40 +1,95 @@
-from multiprocessing import Queue
+from multiprocessing import Queue, Value
+import pickle
 import time
+from driver.testscript import EVENTS, POSITIONEVENTS, TIMEEVENTS
 
-from effects import *
+from events import *
 from agents import *
 from conditions import *
-from testarduino import ArduinoPwmManager
 
-TIMEEVENTS = [
-    Instant(Time(2), TopAll, 100),
-    Instant(Time(4), TopAll, 0),
-    Instant(Time(8), TopAll, 50)
-]
-TIMEEVENTSINDEX = 0
+from arduinopwmmanager import ArduinoPwmManager
+from encoderreader import EncoderReader
+from trigger import Trigger
+from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
+
+
+with open('filename.pickle', 'rb') as handle:
+    EVENTS = pickle.load(handle)
+
+TIMEEVENTS = EVENTS.get('time', [])
+POSITIONEVENTS = EVENTS.get('position', [])
 
 if __name__ == '__main__':
 
     topQueue = Queue()
-    top = ArduinoPwmManager(topQueue)
+    top = ArduinoPwmManager(ARDUINO_MEGA_CONN, topQueue)
     top.start()
+
+    bottomQueue = Queue()
+    bottom = ArduinoPwmManager(ARDUINO_UNO_CONN, bottomQueue)
+    bottom.start()
+
+    triggerQueue = Queue()
+    trigger = Trigger(SONY_TRIGGER[0], SONY_TRIGGER[1], triggerQueue)
+    trigger.start()
+
+    position = Value('d', 0.0)
+    distance = Value('d', 0.0)
+    er = EncoderReader(position, distance)
+
+    print('Setting Up...')
+    time.sleep(3)
+    bottomQueue.put((220,0))
+    topQueue.put((200,0))
+    bottomQueue.put((200,0))
+    time.sleep(2)
+    print('Setup Complete!')
+
+    timeEventsIndex = 0
+    positionEventsIndex = 0
 
     try:
         last = time.time()
 
         while True:
 
-            nextTimeEvent = TIMEEVENTS[TIMEEVENTSINDEX]
+            events = []
+
+            nextTimeEvent = [timeEventsIndex]
             if nextTimeEvent.condition.met(time.time() - last):
-                if nextTimeEvent.agent.controller == TOP_CONTROLLER:
-                    topQueue.put(nextTimeEvent.command)
-                # elif nextTimeEvent.agent.controller == BOTTOM_CONTROLLER:
-                TIMEEVENTSINDEX += 1
+                events.append(nextTimeEvent)
+                timeEventsIndex += 1
+            
+            nextPositionEvent = POSITIONEVENTS[positionEventsIndex]
+            if nextPositionEvent.condition.met(position.value):
+                events.append(nextPositionEvent)
+                positionEventsIndex += 1
+
+            for event in events:
+                if event.agent.controller == TOP_CONTROLLER:
+                    topQueue.put(event.command)
+                elif event.agent.controller == BOTTOM_CONTROLLER:
+                    bottomQueue.put(event.command)
+                elif event.agent.controller == MAIN_CONTROLLER:
+                    if event.type == TIME_RESET_TYPE:
+                        last = time.time()
+                    elif event.type == TIME_ADD_EVENT_TYPE:
+                        TIMEEVENTS += event.events
                 
-            if TIMEEVENTSINDEX == len(TIMEEVENTS):
+            if timeEventsIndex == len(TIMEEVENTS) and positionEventsIndex == len(TIMEEVENTS):
                 time.sleep(2)
                 break
 
     except Exception as e:
+        bottomQueue.put((220,0))
+        topQueue.put((200,50))
+        bottomQueue.put((200,0))
         print('Error:', e)
-        raise e
+        time.sleep(2)
+        exit(-1)
+
+print('Finishing')
+time.sleep(1)
+bottomQueue.put((220,0))
+topQueue.put((200,50))
+bottomQueue.put((200,0))

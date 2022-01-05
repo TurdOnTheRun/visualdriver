@@ -1,7 +1,10 @@
-from agents import LIGHT_AGENT_TYPE
+from agents import LIGHT_AGENT_TYPE, Main
 
 ARDUINO_COMMUNICATION_START_BYTE = 251
 ARDUINO_COMMUNICATION_STOP_BYTE = 252
+
+TIME_RESET_TYPE = 0
+TIME_ADD_EVENT_TYPE = 1
 
 
 class Event:
@@ -16,7 +19,7 @@ class Event:
         if error:
             raise error
         else:
-            exit(-1)
+            raise Exception
 
 
 class ArduinoEvent(Event):
@@ -70,28 +73,36 @@ class Instant(ArduinoEvent):
             return self.clean_bytes([self.agent.id, self.state])
     
 
-
 class Flash(ArduinoEvent):
 
-    def __init__(self, conditionType, conditionValue, agent, state, millisecondsOn):
+    def __init__(self, condition, agent, state, millisecondsOn):
         self.check_state(state)
         self.state = state
         self.millisecondsOn = millisecondsOn
-        super().__init__(conditionType, conditionValue, agent)
+        self.check_is_light_agent(agent)
+        super().__init__(condition, agent)
         self.command = self.make_command()
     
 
     def make_command(self):
-        if self.id == -1:
+        if self.agent.all:
             return self.clean_bytes([204, self.state, self.millisecondsOn])
         else:
-            return self.clean_bytes([40 + self.id, self.state, self.millisecondsOn])
+            return self.clean_bytes([40 + self.agent.id, self.state, self.millisecondsOn])
     
 
-    def execute(self, conditionType, conditionValue):
-        if conditionType != self.conditionType:
-            self.abort('Event called with wrong condition type')
-        elif self.conditionValue <= conditionValue:
-            return self.command
-        else:
-            return None
+class TimeReset(Event):
+
+    def __init__(self, condition):
+        self.type = TIME_RESET_TYPE
+        super().__init__(condition, Main)
+
+
+class TimeAddEvents(Event):
+
+    def __init__(self, condition, events):
+        self.type = TIME_ADD_EVENT_TYPE
+        if not events or type(events) != list:
+            self.abort('Events in TimeAddEvents is empty or not a list')
+        self.events = events
+        super().__init__(condition, Main)
