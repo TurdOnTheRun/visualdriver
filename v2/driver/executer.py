@@ -1,7 +1,6 @@
 from multiprocessing import Queue, Value
 import pickle
 import time
-from driver.testscript import EVENTS, POSITIONEVENTS, TIMEEVENTS
 
 from events import *
 from agents import *
@@ -14,10 +13,10 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 
 
 with open('filename.pickle', 'rb') as handle:
-    EVENTS = pickle.load(handle)
+    eventDict = pickle.load(handle)
 
-TIMEEVENTS = EVENTS.get('time', [])
-POSITIONEVENTS = EVENTS.get('position', [])
+timeEvents = eventDict.get('time', [])
+positionEvents = eventDict.get('position', [])
 
 if __name__ == '__main__':
 
@@ -55,15 +54,17 @@ if __name__ == '__main__':
 
             events = []
 
-            nextTimeEvent = [timeEventsIndex]
-            if nextTimeEvent.condition.met(time.time() - last):
-                events.append(nextTimeEvent)
-                timeEventsIndex += 1
+            if timeEventsIndex < len(timeEvents):
+                nextTimeEvent = timeEvents[timeEventsIndex]
+                if nextTimeEvent.condition.met(time.time() - last):
+                    events.append(nextTimeEvent)
+                    timeEventsIndex += 1
             
-            nextPositionEvent = POSITIONEVENTS[positionEventsIndex]
-            if nextPositionEvent.condition.met(position.value):
-                events.append(nextPositionEvent)
-                positionEventsIndex += 1
+            if positionEventsIndex < len(positionEvents):
+                nextPositionEvent = positionEvents[positionEventsIndex]
+                if nextPositionEvent.condition.met(position.value):
+                    events.append(nextPositionEvent)
+                    positionEventsIndex += 1
 
             for event in events:
                 if event.agent.controller == TOP_CONTROLLER:
@@ -74,9 +75,9 @@ if __name__ == '__main__':
                     if event.type == TIME_RESET_TYPE:
                         last = time.time()
                     elif event.type == TIME_ADD_EVENT_TYPE:
-                        TIMEEVENTS += event.events
+                        timeEvents += event.events
                 
-            if timeEventsIndex == len(TIMEEVENTS) and positionEventsIndex == len(TIMEEVENTS):
+            if timeEventsIndex == len(timeEvents) and positionEventsIndex == len(positionEvents):
                 time.sleep(2)
                 break
 
