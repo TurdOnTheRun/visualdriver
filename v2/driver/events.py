@@ -1,4 +1,4 @@
-from agents import LIGHT_AGENT_TYPE, Main
+from agents import LIGHT_AGENT_TYPE, Main, Bottom
 
 ARDUINO_COMMUNICATION_START_BYTE = 251
 ARDUINO_COMMUNICATION_STOP_BYTE = 252
@@ -65,9 +65,8 @@ class Instant(ArduinoEvent):
         super().__init__(condition, agent)
         self.command = self.make_command()
     
-
     def make_command(self):
-        if self.agent.all:
+        if self.agent.id == -1:
             return self.clean_bytes([200, self.state])
         else:
             return self.clean_bytes([self.agent.id, self.state])
@@ -83,13 +82,92 @@ class Flash(ArduinoEvent):
         super().__init__(condition, agent)
         self.command = self.make_command()
     
-
     def make_command(self):
-        if self.agent.all:
+        if self.agent.id == -1:
             return self.clean_bytes([204, self.state, self.millisecondsOn])
         else:
             return self.clean_bytes([40 + self.agent.id, self.state, self.millisecondsOn])
+
+
+class InstantBezier(ArduinoEvent):
+    def __init__(self, condition, agent, state1, state2, millisecondsStep, ax, ay, bx, by):
+        self.check_state(state1)
+        self.check_state(state2)
+        # The bezier point coordinates must also be within 0 - 100
+        self.check_state(ax)
+        self.check_state(ay)
+        self.check_state(bx)
+        self.check_state(by)
+        self.state1 = state1
+        self.state2 = state2
+        self.ax = ax
+        self.ay = ay
+        self.bx = bx
+        self.by = by
+        # millisecondsStep (ms) of 100 bezier steps (Dimmtime = 100 * millisecondsStep)
+        self.millisecondsStep = millisecondsStep
+        self.check_is_light_agent(agent)
+        super().__init__(condition, agent)
+        self.command = self.make_command()
     
+    def make_command(self):
+        if self.agent.id == -1:
+            return self.clean_bytes([210, self.state1, self.state2, self.ax, self.ay, self.bx, self.by, self.millisecondsStep])
+        else:
+            return self.clean_bytes([100 + self.agent.id, self.state1, self.state2, self.ax, self.ay, self.bx, self.by, self.millisecondsStep])
+
+
+class FlashBezier(ArduinoEvent):
+    def __init__(self, condition, agent, state1, state2, millisecondsStep, ax, ay, bx, by, millisecondsOn):
+        self.check_state(state1)
+        self.check_state(state2)
+        # The bezier point coordinates must also be within 0 - 100
+        self.check_state(ax)
+        self.check_state(ay)
+        self.check_state(bx)
+        self.check_state(by)
+        self.state1 = state1
+        self.state2 = state2
+        self.ax = ax
+        self.ay = ay
+        self.bx = bx
+        self.by = by
+        # millisecondsStep (ms) of 100 bezier steps (Dimmtime = 100 * millisecondsStep)
+        self.millisecondsStep = millisecondsStep
+        self.millisecondsOn = millisecondsOn
+        self.check_is_light_agent(agent)
+        super().__init__(condition, agent)
+        self.command = self.make_command()
+
+    def make_command(self):
+        if self.agent.id == -1:
+            return self.clean_bytes([211, self.state1, self.state2, self.ax, self.ay, self.bx, self.by, self.millisecondsStep, self.millisecondsOn])
+        else:
+            return self.clean_bytes([110 + self.agent.id, self.state1, self.state2, self.ax, self.ay, self.bx, self.by, self.millisecondsStep, self.millisecondsOn])
+    
+
+class MotorSpeed(ArduinoEvent):
+
+    def __init__(self, condition, state, millisecondsStep):
+        self.check_state(state)
+        self.state = state
+        self.millisecondsStep = millisecondsStep
+        super().__init__(condition, Bottom)
+        self.command = self.make_command()
+
+    def make_command(self):
+        return self.clean_bytes([220, self.state, self.millisecondsStep])
+
+
+class MotorChangeDirection(ArduinoEvent):
+
+    def __init__(self, condition):
+        super().__init__(condition, Bottom)
+        self.command = self.make_command()
+    
+    def make_command(self):
+        return self.clean_bytes([221,])
+
 
 class TimeReset(Event):
 
