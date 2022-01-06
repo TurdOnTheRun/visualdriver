@@ -12,8 +12,23 @@ from trigger import Trigger
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 
 
-with open('filename.pickle', 'rb') as handle:
-    eventDict = pickle.load(handle)
+# with open('filename.pickle', 'rb') as handle:
+#     eventDict = pickle.load(handle)
+
+eventDict = {
+    'position': [
+        TimeEventsBlock(At(0)),
+        MotorSpeed(At(0), 60, 30),
+        MotorSpeed(At(0.5), 0, 30),
+        TimeReset(At(0.5)),
+        TimeEventsUnblock(At(0.5)),
+        MotorSpeed(At(1), 0, 30)
+    ],
+    'time': [
+        MotorChangeDirection(At(2)),
+        MotorSpeed(At(2), 60, 30)
+    ]
+}
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
