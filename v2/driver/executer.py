@@ -45,7 +45,9 @@ if __name__ == '__main__':
     print('Setup Complete!')
 
     timeEventsIndex = 0
+    timeEventsBlocked = False
     positionEventsIndex = 0
+    positionEventsBlocked = False
 
     try:
         last = time.time()
@@ -54,13 +56,13 @@ if __name__ == '__main__':
 
             events = []
 
-            if timeEventsIndex < len(timeEvents):
+            if not timeEventsBlocked and timeEventsIndex < len(timeEvents):
                 nextTimeEvent = timeEvents[timeEventsIndex]
                 if nextTimeEvent.condition.met(time.time() - last):
                     events.append(nextTimeEvent)
                     timeEventsIndex += 1
             
-            if positionEventsIndex < len(positionEvents):
+            if not positionEventsBlocked and positionEventsIndex < len(positionEvents):
                 nextPositionEvent = positionEvents[positionEventsIndex]
                 if nextPositionEvent.condition.met(position.value):
                     events.append(nextPositionEvent)
@@ -74,8 +76,15 @@ if __name__ == '__main__':
                 elif event.agent.controller == MAIN_CONTROLLER:
                     if event.type == TIME_RESET_TYPE:
                         last = time.time()
-                    elif event.type == TIME_ADD_EVENT_TYPE:
-                        timeEvents += event.events
+                    elif event.type == ADD_EVENTS_TYPE:
+                        timeEvents += event.events.get('time', [])
+                        positionEvents += event.events.get('position', [])
+                    elif event.type == POSITION_RESET_TYPE:
+                        position.value = 0
+                    elif event.type == TIME_EVENTS_BLOCK_TYPE:
+                        timeEventsBlocked = True
+                    elif event.type == TIME_EVENTS_UNBLOCK_TYPE:
+                        timeEventsBlocked = False
                 
             if timeEventsIndex == len(timeEvents) and positionEventsIndex == len(positionEvents):
                 time.sleep(2)

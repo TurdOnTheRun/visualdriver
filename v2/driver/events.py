@@ -1,10 +1,16 @@
 from agents import LIGHT_AGENT_TYPE, Main, Bottom
+from conditions import At
+import random
+
 
 ARDUINO_COMMUNICATION_START_BYTE = 251
 ARDUINO_COMMUNICATION_STOP_BYTE = 252
 
 TIME_RESET_TYPE = 0
-TIME_ADD_EVENT_TYPE = 1
+ADD_EVENTS_TYPE = 1
+POSITION_RESET_TYPE = 2
+TIME_EVENTS_BLOCK_TYPE = 3
+TIME_EVENTS_UNBLOCK_TYPE = 4
 
 
 class Event:
@@ -176,11 +182,95 @@ class TimeReset(Event):
         super().__init__(condition, Main)
 
 
-class TimeAddEvents(Event):
+class TimeEventsBlock(Event):
+
+    def __init__(self, condition):
+        self.type = TIME_EVENTS_BLOCK_TYPE
+        super().__init__(condition, Main)
+
+
+class TimeEventsUnblock(Event):
+
+    def __init__(self, condition):
+        self.type = TIME_EVENTS_UNBLOCK_TYPE
+        super().__init__(condition, Main)
+
+
+class EventsAdd(Event):
 
     def __init__(self, condition, events):
-        self.type = TIME_ADD_EVENT_TYPE
-        if not events or type(events) != list:
-            self.abort('Events in TimeAddEvents is empty or not a list')
+        self.type = ADD_EVENTS_TYPE
+        if not events or type(events) != dict:
+            self.abort('Events in TimeAddEvents is empty or not a dict')
         self.events = events
         super().__init__(condition, Main)
+
+
+class PositionReset(Event):
+
+    def __init__(self, condition):
+        self.type = POSITION_RESET_TYPE
+        super().__init__(condition, Main)
+
+
+def schattentanzRandomBezier(motorspeed, rounds, swooshsPerRound, agentsAndStates, millisecondsStep, millisecondsOn, currentPosition=0, accelerationArc=0):
+
+    randintrange = (0,100)
+
+    positionEvents = []
+
+    if currentPosition == 0:
+        positionEvents.append(PositionReset(At(0)))
+    
+    positionEvents.append(MotorSpeed(At(0), motorspeed, 30))
+    currentPosition += accelerationArc
+
+    for i in range(rounds):
+        for j in range(swooshsPerRound):
+            ax = random.randint(randintrange[0], randintrange[1])
+            ay = random.randint(randintrange[0], randintrange[1])
+            bx = random.randint(randintrange[0], randintrange[1])
+            by = random.randint(randintrange[0], randintrange[1])
+            for a in agentsAndStates:
+                positionEvents.append(FlashBezier(At(currentPosition), a[0], a[1], 0, millisecondsStep, ax, ay, bx, by, millisecondsOn))
+            currentPosition += 1/swooshsPerRound
+    
+    return {
+        'position': positionEvents
+    }
+
+# Resets Time
+def dancingInTheVoid(motorspeed, duration, millisecondSteptimeRange, agentsAndStates, currentPosition=0, accelerationArc=0):
+
+    positionEvents = []
+    timeEvents = []
+    
+    timeEvents.append(TimeEventsBlock(At(0)))
+    if currentPosition == 0:
+        positionEvents.append(PositionReset(At(0)))
+    
+    positionEvents.append(MotorSpeed(At(0), motorspeed, 30))
+    currentPosition += accelerationArc
+    positionEvents.append(TimeReset(At(currentPosition)))
+    positionEvents.append(TimeEventsUnblock(At(0)))
+
+    currentTime = 0
+    lastIndex = 0
+    agentIndexes = list(range(len(agentsAndStates)))
+
+    while currentTime < duration:
+        indexes = agentIndexes.copy()
+        indexes.remove(lastIndex)
+        i = random.choice(indexes)
+        randomAgent = agentsAndStates[i]
+        flashTime = random.randint(millisecondSteptimeRange)
+        timeEvents.append(Flash(At(currentTime), randomAgent[0], randomAgent[1], flashTime))
+        darkTime = random.randint(millisecondSteptimeRange)
+        currentTime += (flashTime + darkTime)/1000
+        lastIndex = i
+
+    return {
+        'position': positionEvents,
+        'time': timeEvents
+    }
+
