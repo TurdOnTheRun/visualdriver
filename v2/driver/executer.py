@@ -15,20 +15,23 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 # with open('filename.pickle', 'rb') as handle:
 #     eventDict = pickle.load(handle)
 
-eventDict = {
-    'position': [
-        # TimeEventsBlock(At(0)),
-        # MotorSpeed(At(0), 60, 30),
-        # MotorSpeed(At(0.5), 0, 30),
-        # TimeReset(At(0.5)),
-        # TimeEventsUnblock(At(0.5)),
-        # MotorSpeed(At(1), 0, 30)
-    ],
-    'time': [
-        FlashBezier(At(2), TopAll, 100, 0, 2, 72, 33, 32, 72, 100),
-        # MotorSpeed(At(2), 60, 30)
-    ]
-}
+# eventDict = {
+#     'position': [
+#         # TimeEventsBlock(At(0)),
+#         # MotorSpeed(At(0), 60, 30),
+#         # MotorSpeed(At(0.5), 0, 30),
+#         # TimeReset(At(0.5)),
+#         # TimeEventsUnblock(At(0.5)),
+#         # MotorSpeed(At(1), 0, 30)
+#     ],
+#     'time': [
+#         FlashBezier(At(2), TopAll, 100, 0, 2, 72, 33, 32, 72, 100),
+#         # MotorSpeed(At(2), 60, 30)
+#     ]
+# }
+
+eventDict = schattentanzRandomBezier(60, 2, 12, [(TopAll, 70)], 1, 80, accelerationArc=0.5)
+# eventDict = dancingInTheVoid(60, 20, (40,60), [(Top1, 255),(Top2, 255), (Top4, 255), (Top5, 255)], accelerationArc=0.5)
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
