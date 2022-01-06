@@ -118,9 +118,9 @@ class InstantBezier(ArduinoEvent):
     
     def make_command(self):
         if self.agent.id == -1:
-            return self.clean_bytes([210, self.state1, self.state2, self.ax, self.ay, self.bx, self.by, self.millisecondsStep])
+            return self.clean_bytes([210, self.state1, self.state2, self.millisecondsStep, self.ax, self.ay, self.bx, self.by])
         else:
-            return self.clean_bytes([100 + self.agent.id, self.state1, self.state2, self.ax, self.ay, self.bx, self.by, self.millisecondsStep])
+            return self.clean_bytes([100 + self.agent.id, self.state1, self.state2, self.millisecondsStep, self.ax, self.ay, self.bx, self.by])
 
 
 class FlashBezier(ArduinoEvent):
@@ -147,9 +147,9 @@ class FlashBezier(ArduinoEvent):
 
     def make_command(self):
         if self.agent.id == -1:
-            return self.clean_bytes([211, self.state1, self.state2, self.ax, self.ay, self.bx, self.by, self.millisecondsStep, self.millisecondsOn])
+            return self.clean_bytes([211, self.state1, self.state2, self.millisecondsStep, self.ax, self.ay, self.bx, self.by, self.millisecondsOn])
         else:
-            return self.clean_bytes([110 + self.agent.id, self.state1, self.state2, self.ax, self.ay, self.bx, self.by, self.millisecondsStep, self.millisecondsOn])
+            return self.clean_bytes([110 + self.agent.id, self.state1, self.state2, self.millisecondsStep, self.ax, self.ay, self.bx, self.by, self.millisecondsOn])
     
 
 class MotorSpeed(ArduinoEvent):
