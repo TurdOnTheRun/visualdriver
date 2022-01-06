@@ -17,16 +17,16 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 
 eventDict = {
     'position': [
-        TimeEventsBlock(At(0)),
-        MotorSpeed(At(0), 60, 30),
-        MotorSpeed(At(0.5), 0, 30),
-        TimeReset(At(0.5)),
-        TimeEventsUnblock(At(0.5)),
-        MotorSpeed(At(1), 0, 30)
+        # TimeEventsBlock(At(0)),
+        # MotorSpeed(At(0), 60, 30),
+        # MotorSpeed(At(0.5), 0, 30),
+        # TimeReset(At(0.5)),
+        # TimeEventsUnblock(At(0.5)),
+        # MotorSpeed(At(1), 0, 30)
     ],
     'time': [
-        MotorChangeDirection(At(2)),
-        MotorSpeed(At(2), 60, 30)
+        FlashBezier(At(2), TopAll, 100, 0, 2, 72, 33, 32, 72, 100),
+        # MotorSpeed(At(2), 60, 30)
     ]
 }
 
