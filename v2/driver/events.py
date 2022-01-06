@@ -263,9 +263,9 @@ def dancingInTheVoid(motorspeed, duration, millisecondSteptimeRange, agentsAndSt
         indexes.remove(lastIndex)
         i = random.choice(indexes)
         randomAgent = agentsAndStates[i]
-        flashTime = random.randint(millisecondSteptimeRange)
+        flashTime = random.randint(millisecondSteptimeRange[0], millisecondSteptimeRange[1])
         timeEvents.append(Flash(At(currentTime), randomAgent[0], randomAgent[1], flashTime))
-        darkTime = random.randint(millisecondSteptimeRange)
+        darkTime = random.randint(millisecondSteptimeRange[0], millisecondSteptimeRange[1])
         currentTime += (flashTime + darkTime)/1000
         lastIndex = i
 
