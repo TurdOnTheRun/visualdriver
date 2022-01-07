@@ -1,7 +1,6 @@
 from multiprocessing import Queue, Value
 import pickle
 import time
-import inspect
 
 from events import *
 from agents import *
@@ -95,8 +94,8 @@ if __name__ == '__main__':
                 if event.agent.controller != MAIN_CONTROLLER:
                     if event.hasVariable:
                         for i, com in enumerate(event.command):
-                            if inspect.isclass(type(com)):
-                                event.command[i] = com.calculate(now=now, position=positionNow)
+                            if isinstance(com, Variable):
+                                event.command[i] = com.get(now=now, position=positionNow)
                         event.command = event.clean_bytes(event.command)
                     if event.agent.controller == TOP_CONTROLLER:
                         topQueue.put(event.command)
