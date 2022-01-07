@@ -101,24 +101,29 @@ if __name__ == '__main__':
                             if isinstance(com, Variable):
                                 event.command[i] = com.get(now=now, position=positionNow)
                         event.command = event.clean_bytes(event.command)
-                        print(event.command)
+                        print(now, positionNow, event.command)
                     if event.agent.controller == TOP_CONTROLLER:
                         topQueue.put(event.command)
                     elif event.agent.controller == BOTTOM_CONTROLLER:
                         bottomQueue.put(event.command)
                 else:
                     if event.type == TIME_RESET_TYPE:
+                        print(now, positionNow, 'TIME_RESET_TYPE')
                         last = time.time()
                     elif event.type == ADD_EVENTS_TYPE:
                         timeEvents += event.events.get('time', [])
                         positionEvents += event.events.get('position', [])
                     elif event.type == POSITION_RESET_TYPE:
+                        print(now, positionNow, 'POSITION_RESET_TYPE')
                         position.value = 0
                     elif event.type == TIME_EVENTS_BLOCK_TYPE:
+                        print(now, positionNow, 'TIME_EVENTS_BLOCK_TYPE')
                         timeEventsBlocked = True
                     elif event.type == TIME_EVENTS_UNBLOCK_TYPE:
+                        print(now, positionNow, 'TIME_EVENTS_UNBLOCK_TYPE')
                         timeEventsBlocked = False
                     elif event.type == TIME_EVENTS_CLEAR_TYPE:
+                        print(now, positionNow, 'TIME_EVENTS_CLEAR_TYPE')
                         timeEvents = []
                 
             if timeEventsIndex == len(timeEvents) and positionEventsIndex == len(positionEvents):
