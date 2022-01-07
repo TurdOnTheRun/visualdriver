@@ -1,6 +1,7 @@
 from multiprocessing import Queue, Value
 import pickle
 import time
+import inspect
 
 from events import *
 from agents import *
@@ -30,9 +31,10 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 #     ]
 # }
 
-eventDict = thatFuzz(10, (400, 600), (100,200), [(Top1,100), (Top2,100), (Top3,100), (Top4,100)])
-eventDict = thatFuzz(10, (400, 600), (100,200), [(Top1,100), (Top2,100), (Top3,100), (Top4,100)], (BottomAll, 70))
-eventDict = thatFuzz(10, (41, 50), (20,30), [(Top1,100), (Top2,100), (Top3,100), (Top4,100)], (BottomAll, 70))
+eventDict = thatEvolvingFuzz(1, 10, (41, 50), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
+eventDict['position'] = [TimeEventsBlock(At(0)), MotorSpeed(At(0), 60, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
+
+
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
@@ -74,25 +76,33 @@ if __name__ == '__main__':
         while True:
 
             events = []
+            now = time.time() - last
+            positionNow = position.value
 
             if not timeEventsBlocked and timeEventsIndex < len(timeEvents):
                 nextTimeEvent = timeEvents[timeEventsIndex]
-                if nextTimeEvent.condition.met(time.time() - last):
+                if nextTimeEvent.condition.met(now):
                     events.append(nextTimeEvent)
                     timeEventsIndex += 1
             
             if not positionEventsBlocked and positionEventsIndex < len(positionEvents):
                 nextPositionEvent = positionEvents[positionEventsIndex]
-                if nextPositionEvent.condition.met(position.value):
+                if nextPositionEvent.condition.met(positionNow):
                     events.append(nextPositionEvent)
                     positionEventsIndex += 1
 
             for event in events:
-                if event.agent.controller == TOP_CONTROLLER:
-                    topQueue.put(event.command)
-                elif event.agent.controller == BOTTOM_CONTROLLER:
-                    bottomQueue.put(event.command)
-                elif event.agent.controller == MAIN_CONTROLLER:
+                if event.agent.controller != MAIN_CONTROLLER:
+                    if event.hasVariable:
+                        for i, com in enumerate(event.command):
+                            if inspect.isclass(type(com)):
+                                event.command[i] = com.calculate(now=now, position=positionNow)
+                        event.command = event.clean_bytes(event.command)
+                    if event.agent.controller == TOP_CONTROLLER:
+                        topQueue.put(event.command)
+                    elif event.agent.controller == BOTTOM_CONTROLLER:
+                        bottomQueue.put(event.command)
+                else:
                     if event.type == TIME_RESET_TYPE:
                         last = time.time()
                     elif event.type == ADD_EVENTS_TYPE:
@@ -104,6 +114,8 @@ if __name__ == '__main__':
                         timeEventsBlocked = True
                     elif event.type == TIME_EVENTS_UNBLOCK_TYPE:
                         timeEventsBlocked = False
+                    elif event.type == TIME_EVENTS_CLEAR_TYPE:
+                        timeEvents = []
                 
             if timeEventsIndex == len(timeEvents) and positionEventsIndex == len(positionEvents):
                 time.sleep(2)

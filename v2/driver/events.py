@@ -11,13 +11,15 @@ ADD_EVENTS_TYPE = 1
 POSITION_RESET_TYPE = 2
 TIME_EVENTS_BLOCK_TYPE = 3
 TIME_EVENTS_UNBLOCK_TYPE = 4
+TIME_EVENTS_CLEAR_TYPE = 5
 
 
 class Event:
 
-    def __init__(self, condition, agent=None):
+    def __init__(self, condition, agent=None, hasVariable=False):
         self.condition = condition
         self.agent = agent
+        self.hasVariable = hasVariable
     
 
     def abort(self, message, error=None):
@@ -28,10 +30,16 @@ class Event:
             raise Exception
 
 
+class Variable:
+
+    def get(self, **kwargs):
+        pass
+
+
 class ArduinoEvent(Event):
 
-    def __init__(self, condition, agent=None):
-        super().__init__(condition, agent)
+    def __init__(self, condition, agent=None, hasVariable=False):
+        super().__init__(condition, agent, hasVariable)
     
 
     def check_state(self, state):
@@ -64,35 +72,51 @@ class ArduinoEvent(Event):
 
 class Instant(ArduinoEvent):
 
-    def __init__(self, condition, agent, state):
-        self.check_state(state)
+    def __init__(self, condition, agent, state, hasVariable=False):
         self.state = state
-        self.check_is_light_agent(agent)
-        super().__init__(condition, agent)
+        super().__init__(condition, agent, hasVariable)
+        if not hasVariable:
+            self.check_init()
         self.command = self.make_command()
+    
+    def check_init(self):
+        self.check_state(self.state)
+        self.check_is_light_agent(self.agent)
     
     def make_command(self):
         if self.agent.id == -1:
-            return self.clean_bytes([200, self.state])
+            command = [200, self.state]
         else:
-            return self.clean_bytes([self.agent.id, self.state])
+            command = [self.agent.id, self.state]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
     
 
 class Flash(ArduinoEvent):
 
-    def __init__(self, condition, agent, state, millisecondsOn):
-        self.check_state(state)
+    def __init__(self, condition, agent, state, millisecondsOn, hasVariable=False):
         self.state = state
         self.millisecondsOn = millisecondsOn
-        self.check_is_light_agent(agent)
-        super().__init__(condition, agent)
+        super().__init__(condition, agent, hasVariable)
+        if not hasVariable:
+            self.check_init()
         self.command = self.make_command()
+
+    def check_init(self):
+        self.check_state(self.state)
+        self.check_is_light_agent(self.agent)
     
     def make_command(self):
         if self.agent.id == -1:
-            return self.clean_bytes([204, self.state, self.millisecondsOn])
+            command = [204, self.state, self.millisecondsOn]
         else:
-            return self.clean_bytes([40 + self.agent.id, self.state, self.millisecondsOn])
+            command = [40 + self.agent.id, self.state, self.millisecondsOn]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
 
 
 class InstantBezier(ArduinoEvent):
@@ -193,6 +217,13 @@ class TimeEventsUnblock(Event):
 
     def __init__(self, condition):
         self.type = TIME_EVENTS_UNBLOCK_TYPE
+        super().__init__(condition, Main)
+
+
+class TimeEventsClear(Event):
+
+    def __init__(self, condition):
+        self.type = TIME_EVENTS_CLEAR_TYPE
         super().__init__(condition, Main)
 
 
@@ -319,4 +350,87 @@ def thatFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndSt
     
     return {
         'time': timeEvents
+    }
+
+
+def thatEvolvingFuzz(rounds, approximateDuration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, currentTime=0, currentPosition=0):
+    """
+    Parameters
+    ----------
+    rounds : float
+        Through what position length the evolvement should take place
+    """
+
+    class Var(Variable):
+
+        def __init__(self, state, currentPosition, rounds):
+            self.startPosition = currentPosition
+            self.rounds = rounds
+            self.peak = rounds/2
+            self.state = state
+            super().__init__()
+
+        def get_pulse(self, **kwargs):
+            if kwargs['position'] - self.startPosition <= self.peak:
+                return int(self.state * (kwargs['position'] - self.startPosition) / self.peak)
+            else:
+                return int(self.state * (1 - (kwargs['position'] - self.startPosition - self.peak) / self.peak))
+
+
+        def get_increase(self, **kwargs):
+            return int(self.state * (1 - (kwargs['position'] - self.startPosition) / self.rounds))
+
+
+    
+    timeEvents = []
+    positionEvents = []
+
+    if millisecondsOnRange[0] < millisecondOverlapRange[1]:
+        print('Overlap can exceed on time.')
+
+    if currentTime == 0:
+        timeEvents.append(TimeReset(At(0)))
+
+    if currentPosition == 0:
+        positionEvents.append(PositionReset(At(0)))
+    
+    targetPosition = currentPosition + rounds
+    positionEvents.append(TimeEventsClear(At(targetPosition)))
+
+    approximateDuration += currentTime
+    lastIndex = random.randint(0, len(agentsAndStates)-1)
+    agentIndexes = list(range(len(agentsAndStates)))
+    flipping = False
+    needsSort = False
+
+    while currentTime < approximateDuration:
+        if flipAgentAndState and flipping:
+            randomAgent = flipAgentAndState
+            flipping = False
+        else:
+            indexes = agentIndexes.copy()
+            indexes.remove(lastIndex)
+            i = random.choice(indexes)
+            randomAgent = agentsAndStates[i]
+            lastIndex = i
+            if flipAgentAndState:
+                flipping = True
+        flashTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
+        var = Var(randomAgent[1], currentPosition, rounds)
+        var.get = var.get_pulse
+        if flashTime > 255:
+            timeEvents.append(Instant(At(currentTime), randomAgent[0], var, True))
+            timeEvents.append(Instant(At(currentTime + flashTime/1000), randomAgent[0], 0, True))
+            needsSort = True
+        else:
+            timeEvents.append(Flash(At(currentTime), randomAgent[0], var, flashTime, True))
+        overlap = random.randint(millisecondOverlapRange[0], millisecondOverlapRange[1])
+        currentTime = currentTime + (flashTime - overlap)/1000
+    
+    if needsSort:
+        timeEvents.sort(key=lambda x:x.condition.value)
+    
+    return {
+        'time': timeEvents,
+        'position': positionEvents
     }
