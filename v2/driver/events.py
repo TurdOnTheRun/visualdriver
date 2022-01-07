@@ -240,7 +240,7 @@ def schattentanzRandomBezier(motorspeed, rounds, swooshsPerRound, agentsAndState
     }
 
 # Resets Time
-def dancingInTheVoid(motorspeed, duration, millisecondSteptimeRange, agentsAndStates, currentPosition=0, accelerationArc=0):
+def dancingInTheVoid(duration, millisecondsOnRange, agentsAndStates, motorspeed=None, currentPosition=0, accelerationArc=0):
 
     positionEvents = []
     timeEvents = []
@@ -249,7 +249,8 @@ def dancingInTheVoid(motorspeed, duration, millisecondSteptimeRange, agentsAndSt
     if currentPosition == 0:
         positionEvents.append(PositionReset(At(0)))
     
-    positionEvents.append(MotorSpeed(At(0), motorspeed, 30))
+    if motorspeed:
+        positionEvents.append(MotorSpeed(At(0), motorspeed, 30))
     currentPosition += accelerationArc
     positionEvents.append(TimeReset(At(currentPosition)))
     positionEvents.append(TimeEventsUnblock(At(0)))
@@ -263,9 +264,9 @@ def dancingInTheVoid(motorspeed, duration, millisecondSteptimeRange, agentsAndSt
         indexes.remove(lastIndex)
         i = random.choice(indexes)
         randomAgent = agentsAndStates[i]
-        flashTime = random.randint(millisecondSteptimeRange[0], millisecondSteptimeRange[1])
+        flashTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
         timeEvents.append(Flash(At(currentTime), randomAgent[0], randomAgent[1], flashTime))
-        darkTime = random.randint(millisecondSteptimeRange[0], millisecondSteptimeRange[1])
+        darkTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
         currentTime += (flashTime + darkTime)/1000
         lastIndex = i
 
@@ -274,3 +275,39 @@ def dancingInTheVoid(motorspeed, duration, millisecondSteptimeRange, agentsAndSt
         'time': timeEvents
     }
 
+
+def thatFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, currentTime=0):
+
+    timeEvents = []
+
+    if millisecondsOnRange[0] < millisecondOverlapRange[1]:
+        print('Overlap can exceed on time.')
+
+    if currentTime == 0:
+        timeEvents.append(TimeReset(At(0)))
+    
+    duration += currentTime
+    lastIndex = random.randint(0, len(agentsAndStates))
+    agentIndexes = list(range(len(agentsAndStates)))
+    flipping = False
+
+    while currentTime < duration:
+        if flipAgentAndState and flipping:
+            randomAgent = flipAgentAndState
+            flipping = False
+        else:
+            indexes = agentIndexes.copy()
+            indexes.remove(lastIndex)
+            i = random.choice(indexes)
+            randomAgent = agentsAndStates[i]
+            lastIndex = i
+            if flipAgentAndState:
+                flipping = True
+        flashTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
+        timeEvents.append(Flash(At(currentTime), randomAgent[0], randomAgent[1], flashTime))
+        overlap = random.randint(millisecondOverlapRange[0], millisecondOverlapRange[1])
+        currentTime = currentTime + (flashTime - overlap)/1000
+    
+    return {
+        'time': timeEvents
+    }
