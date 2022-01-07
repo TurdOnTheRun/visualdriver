@@ -30,8 +30,9 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 #     ]
 # }
 
-eventDict = schattentanzRandomBezier(60, 2, 12, [(TopAll, 70)], 1, 80, accelerationArc=0.5)
-# eventDict = dancingInTheVoid(60, 20, (40,60), [(Top1, 255),(Top2, 255), (Top4, 255), (Top5, 255)], accelerationArc=0.5)
+eventDict = thatFuzz(10, (400, 600), (100,200), [(Top1,100), (Top2,100), (Top3,100), (Top4,100)])
+eventDict = thatFuzz(10, (400, 600), (100,200), [(Top1,100), (Top2,100), (Top3,100), (Top4,100)], (BottomAll, 70))
+eventDict = thatFuzz(10, (41, 50), (20,30), [(Top1,100), (Top2,100), (Top3,100), (Top4,100)], (BottomAll, 70))
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
