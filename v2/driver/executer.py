@@ -30,6 +30,9 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 #     ]
 # }
 
+
+eventDict = thatFuzz(10, (41, 50), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
+
 eventDict = thatEvolvingFuzz(1, 10, (41, 50), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
 eventDict['position'] = [TimeEventsBlock(At(0)), MotorSpeed(At(0), 60, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
 

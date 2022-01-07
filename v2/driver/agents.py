@@ -12,6 +12,9 @@ class Agent:
         self.id = id
         self.type = type
 
+    def __str__(self):
+        return 'Agent({}, {}, {})'.format(self.controller, self.id, self.type)
+
 
 TopAll = Agent(TOP_CONTROLLER, -1, LIGHT_AGENT_TYPE)
 Top1 = Agent(TOP_CONTROLLER, 0, LIGHT_AGENT_TYPE)

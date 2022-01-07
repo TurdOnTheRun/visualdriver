@@ -29,6 +29,9 @@ class Event:
         else:
             raise Exception
 
+    def __str__(self):
+        return 'Event({}, {}, {})'.format(self.condition, self.agent, self.hasVariable)
+
 
 class Variable:
 
@@ -40,6 +43,10 @@ class ArduinoEvent(Event):
 
     def __init__(self, condition, agent=None, hasVariable=False):
         super().__init__(condition, agent, hasVariable)
+
+
+    def __str__(self):
+        return 'ArduinoEvent({}, {}, {})'.format(self.condition, self.agent, self.hasVariable)
     
 
     def check_state(self, state):
@@ -78,6 +85,9 @@ class Instant(ArduinoEvent):
         if not hasVariable:
             self.check_init()
         self.command = self.make_command()
+
+    def __str__(self):
+        return 'Instant({}, {}, {}, {})'.format(self.condition, self.agent, self.state, self.hasVariable)
     
     def check_init(self):
         self.check_state(self.state)
@@ -103,6 +113,9 @@ class Flash(ArduinoEvent):
         if not hasVariable:
             self.check_init()
         self.command = self.make_command()
+
+    def __str__(self):
+        return 'Flash({}, {}, {}, {}, {})'.format(self.condition, self.agent, self.state, self.millisecondsOn, self.hasVariable)
 
     def check_init(self):
         self.check_state(self.state)
@@ -434,3 +447,9 @@ def thatEvolvingFuzz(rounds, approximateDuration, millisecondsOnRange, milliseco
         'time': timeEvents,
         'position': positionEvents
     }
+
+# from agents import *
+# eventDict = thatEvolvingFuzz(1, 10, (41, 50), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
+# for event in eventDict['time'][3:]:
+#     print(event)
+# import pdb;pdb.set_trace()
