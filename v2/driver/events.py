@@ -290,6 +290,7 @@ def thatFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndSt
     lastIndex = random.randint(0, len(agentsAndStates))
     agentIndexes = list(range(len(agentsAndStates)))
     flipping = False
+    needsSort = False
 
     while currentTime < duration:
         if flipAgentAndState and flipping:
@@ -304,9 +305,17 @@ def thatFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndSt
             if flipAgentAndState:
                 flipping = True
         flashTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
-        timeEvents.append(Flash(At(currentTime), randomAgent[0], randomAgent[1], flashTime))
+        if flashTime > 255:
+            timeEvents.append(Instant(At(currentTime), randomAgent[0], randomAgent[1]))
+            timeEvents.append(Instant(At(currentTime+flashTime), randomAgent[0], 0))
+            needsSort = True
+        else:
+            timeEvents.append(Flash(At(currentTime), randomAgent[0], randomAgent[1], flashTime))
         overlap = random.randint(millisecondOverlapRange[0], millisecondOverlapRange[1])
         currentTime = currentTime + (flashTime - overlap)/1000
+    
+    if needsSort:
+        timeEvents.sort(key=lambda x:x.condition.value)
     
     return {
         'time': timeEvents
