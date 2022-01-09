@@ -34,7 +34,7 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 
 # eventDict = thatFuzz(10, (41, 50), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
 
-eventDict = thatEvolvingFuzz(1, 20, (41, 50), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
+eventDict = thatSpatialEvolvingFuzz(0.25, 5, (55, 75), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70), iterations=6)
 eventDict['position'] = [MotorSpeed(At(0), 70, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
 eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
@@ -125,6 +125,9 @@ if __name__ == '__main__':
                     elif event.type == TIME_EVENTS_CLEAR_TYPE:
                         # print(now, positionNow, 'TIME_EVENTS_CLEAR_TYPE')
                         timeEvents = []
+                    elif event.type == TIME_EVENTS_CLEAR_TO_MARKER_TYPE:
+                        print('Markerindex:', timeEvents.index(event.marker))
+                        timeEvents = timeEvents[timeEvents.index(event.marker)+1:]
                 
             if timeEventsIndex >= len(timeEvents) and positionEventsIndex >= len(positionEvents):
                 time.sleep(2)

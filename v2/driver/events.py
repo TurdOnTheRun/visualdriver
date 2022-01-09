@@ -12,6 +12,8 @@ POSITION_RESET_TYPE = 2
 TIME_EVENTS_BLOCK_TYPE = 3
 TIME_EVENTS_UNBLOCK_TYPE = 4
 TIME_EVENTS_CLEAR_TYPE = 5
+TIME_EVENTS_CLEAR_TO_MARKER_TYPE = 6
+MARKER_TYPE = 7
 
 
 class Event:
@@ -212,6 +214,12 @@ class MotorChangeDirection(ArduinoEvent):
         return self.clean_bytes([221,])
 
 
+class Marker(Event):
+    def __init__(self, condition):
+        self.type = MARKER_TYPE
+        super().__init__(condition, Main)
+
+
 class TimeReset(Event):
 
     def __init__(self, condition):
@@ -237,6 +245,14 @@ class TimeEventsClear(Event):
 
     def __init__(self, condition):
         self.type = TIME_EVENTS_CLEAR_TYPE
+        super().__init__(condition, Main)
+
+
+class TimeEventsClearToMarker(Event):
+
+    def __init__(self, condition, marker):
+        self.type = TIME_EVENTS_CLEAR_TO_MARKER_TYPE
+        self.marker = marker
         super().__init__(condition, Main)
 
 
@@ -366,7 +382,8 @@ def thatFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndSt
     }
 
 
-def thatEvolvingFuzz(rounds, approximateDuration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, currentTime=0, currentPosition=0):
+# Resets Time
+def thatSpatialEvolvingFuzz(rounds, approximateDuration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, iterations=1, currentPosition=0):
     """
     Parameters
     ----------
@@ -400,56 +417,68 @@ def thatEvolvingFuzz(rounds, approximateDuration, millisecondsOnRange, milliseco
 
     if millisecondsOnRange[0] < millisecondOverlapRange[1]:
         print('Overlap can exceed on time.')
-
-    if currentTime == 0:
-        timeEvents.append(TimeReset(At(0)))
+        return None
 
     if currentPosition == 0:
         positionEvents.append(PositionReset(At(0)))
     
-    targetPosition = currentPosition + rounds
-    positionEvents.append(TimeEventsClear(At(targetPosition)))
-
-    approximateDuration += currentTime
-    lastIndex = random.randint(0, len(agentsAndStates)-1)
-    agentIndexes = list(range(len(agentsAndStates)))
-    flipping = False
-    needsSort = False
-
-    while currentTime < approximateDuration:
-        if flipAgentAndState and flipping:
-            randomAgent = flipAgentAndState
-            flipping = False
-        else:
-            indexes = agentIndexes.copy()
-            indexes.remove(lastIndex)
-            i = random.choice(indexes)
-            randomAgent = agentsAndStates[i]
-            lastIndex = i
-            if flipAgentAndState:
-                flipping = True
-        flashTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
-        var = Var(randomAgent[1], currentPosition, rounds)
-        var.get = var.get_pulse
-        if flashTime > 255:
-            timeEvents.append(Instant(At(currentTime), randomAgent[0], var, True))
-            timeEvents.append(Instant(At(currentTime + flashTime/1000), randomAgent[0], 0, True))
-            needsSort = True
-        else:
-            timeEvents.append(Flash(At(currentTime), randomAgent[0], var, flashTime, True))
-        overlap = random.randint(millisecondOverlapRange[0], millisecondOverlapRange[1])
-        currentTime = currentTime + (flashTime - overlap)/1000
+    for i in range(iterations):
     
-    if needsSort:
-        timeEvents.sort(key=lambda x:x.condition.value)
+        targetPosition = currentPosition + rounds
+
+        iterTimeEvents = []
+        iterTimeEvents.append(TimeReset(At(0)))
+        currentTime = 0
+
+        lastIndex = random.randint(0, len(agentsAndStates)-1)
+        agentIndexes = list(range(len(agentsAndStates)))
+        flipping = False
+        needsSort = False
+
+        while currentTime < approximateDuration:
+            if flipAgentAndState and flipping:
+                randomAgent = flipAgentAndState
+                flipping = False
+            else:
+                indexes = agentIndexes.copy()
+                indexes.remove(lastIndex)
+                i = random.choice(indexes)
+                randomAgent = agentsAndStates[i]
+                lastIndex = i
+                if flipAgentAndState:
+                    flipping = True
+            flashTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
+            var = Var(randomAgent[1], currentPosition, rounds)
+            var.get = var.get_pulse
+            if flashTime > 255:
+                iterTimeEvents.append(Instant(At(currentTime), randomAgent[0], var, True))
+                iterTimeEvents.append(Instant(At(currentTime + flashTime/1000), randomAgent[0], 0, True))
+                needsSort = True
+            else:
+                iterTimeEvents.append(Flash(At(currentTime), randomAgent[0], var, flashTime, True))
+            overlap = random.randint(millisecondOverlapRange[0], millisecondOverlapRange[1])
+            currentTime = currentTime + (flashTime - overlap)/1000
+        
+        if needsSort:
+            iterTimeEvents.sort(key=lambda x:x.condition.value)
+        
+        marker = Marker(At(approximateDuration))
+        iterTimeEvents.append(marker)
+        positionEvents.append(TimeEventsClearToMarker(At(targetPosition), marker))
+        timeEvents += iterTimeEvents
+        currentPosition = targetPosition
     
     return {
         'time': timeEvents,
         'position': positionEvents
     }
 
+
+def thatTimeEvolvingFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, iterations=1, currentTime=0, currentPosition=0):
+    pass
+
 # from agents import *
-# eventDict = thatEvolvingFuzz(1, 10, (41, 50), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
+# eventDict = thatSpatialEvolvingFuzz(0.5, 10, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70), iterations=5)
 # for event in eventDict['time'][3:]:
 #     print(event)
 # import pdb;pdb.set_trace()
