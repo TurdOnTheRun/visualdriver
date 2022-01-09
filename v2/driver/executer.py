@@ -125,9 +125,10 @@ if __name__ == '__main__':
                     elif event.type == TIME_EVENTS_CLEAR_TYPE:
                         # print(now, positionNow, 'TIME_EVENTS_CLEAR_TYPE')
                         timeEvents = []
+                        timeEventsIndex = 0
                     elif event.type == TIME_EVENTS_CLEAR_TO_MARKER_TYPE:
-                        print('Markerindex:', timeEvents.index(event.marker))
                         timeEvents = timeEvents[timeEvents.index(event.marker)+1:]
+                        timeEventsIndex = 0
                 
             if timeEventsIndex >= len(timeEvents) and positionEventsIndex >= len(positionEvents):
                 time.sleep(2)
