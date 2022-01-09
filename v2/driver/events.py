@@ -383,7 +383,7 @@ def thatFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndSt
 
 
 # Resets Time
-def thatSpatialEvolvingFuzz(rounds, approximateDuration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, iterations=1, currentPosition=0):
+def thatSpatialEvolvingFuzz(rounds, approximateDuration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, iterations=1, breakRounds=0, currentPosition=0):
     """
     Parameters
     ----------
@@ -465,8 +465,11 @@ def thatSpatialEvolvingFuzz(rounds, approximateDuration, millisecondsOnRange, mi
         marker = Marker(At(approximateDuration))
         iterTimeEvents.append(marker)
         positionEvents.append(TimeEventsClearToMarker(At(targetPosition), marker))
+        if breakRounds and i != iterations - 1:
+            iterTimeEvents.append(TimeEventsBlock(At(0)))
+            positionEvents.append(TimeEventsUnblock(At(targetPosition + breakRounds)))
         timeEvents += iterTimeEvents
-        currentPosition = targetPosition
+        currentPosition = targetPosition + breakRounds
     
     return {
         'time': timeEvents,
