@@ -422,7 +422,7 @@ def thatSpatialEvolvingFuzz(roundsAndBreaks, approximateDuration, millisecondsOn
     if currentPosition == 0:
         positionEvents.append(PositionReset(At(0)))
     
-    for it, rnb in enumerate(roundsAndBreaks):
+    for rnb in roundsAndBreaks:
 
         rounds = rnb[0]
         breakRounds = rnb[1]
@@ -472,7 +472,7 @@ def thatSpatialEvolvingFuzz(roundsAndBreaks, approximateDuration, millisecondsOn
         iterTimeEvents.append(marker)
         positionEvents.append(TimeEventsClearToMarker(At(targetPosition), marker))
 
-        if breakRounds and it != len(roundsAndBreaks) - 1:
+        if breakRounds != 0:
             iterTimeEvents.append(TimeEventsBlock(At(0)))
             positionEvents.append(TimeEventsUnblock(At(targetPosition + breakRounds)))
         timeEvents += iterTimeEvents
