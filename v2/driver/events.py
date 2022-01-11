@@ -452,7 +452,7 @@ def thatSpatialEvolvingFuzz(roundsAndBreaks, approximateDuration, millisecondsOn
                     flipping = True
             flashTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
             var = Var(randomAgent[1], currentPosition, rounds)
-            if evolveType = 'pulse':
+            if evolveType == 'pulse':
                 var.get = var.get_pulse
             else:
                 var.get = var.get_decrease
