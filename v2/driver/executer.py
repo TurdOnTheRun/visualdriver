@@ -37,9 +37,9 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 # eventDict = thatSpatialEvolvingFuzz([(0.1,0.05), (0.1,0.05), (0.1,0.1), (0.4, 0.2)], 5, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
 
 # buildUp = thatSpatialEvolvingFuzz([(0.1,0.025), (0.1,0.025), (0.1,0.05)], 5, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
-buildUp = thatSpatialEvolvingFuzz([(0.1,0.025), (0.1,0.025), (0.1,0.05)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
+buildUp = thatSpatialEvolvingFuzz([(0.1,0.025), (0.1,0.025), (0.1,0.035)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
 
-bigBumps = thatSpatialEvolvingFuzz([(0.4, 0.05), (0.4, 0)], 8, (75, 90), (20,30), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
+bigBumps = thatSpatialEvolvingFuzz([(0.3, 0.035), (0.3, 0)], 8, (110, 130), (40,50), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
 
 eventDict = buildUp
 eventDict['position'] += bigBumps['position']
