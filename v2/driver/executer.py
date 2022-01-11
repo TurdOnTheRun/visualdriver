@@ -39,7 +39,7 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 # buildUp = thatSpatialEvolvingFuzz([(0.1,0.025), (0.1,0.025), (0.1,0.05)], 5, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
 buildUp = thatSpatialEvolvingFuzz([(0.1,0.025), (0.1,0.025), (0.1,0.05)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
 
-bigBumps = thatSpatialEvolvingFuzz([(0.4, 0.5), (0.4, 0.5)], 5, (75, 90), (50,60), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
+bigBumps = thatSpatialEvolvingFuzz([(0.4, 0.5), (0.4, 0.5)], 8, (75, 90), (20,30), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
 
 eventDict = buildUp
 eventDict['position'] += bigBumps['position']
