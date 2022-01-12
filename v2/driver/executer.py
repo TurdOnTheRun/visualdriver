@@ -46,7 +46,8 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 # eventDict['position'] = [MotorSpeed(At(0), 70, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
 # eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
-eventDict = schattentanzRandomBezier(90, 3, 14, [(TopAll, 80)], 1, 80)
+# eventDict = schattentanzRandomBezier(90, 3, 14, [(TopAll, 80)], 1, 80, accelerationArc=0.5)
+eventDict = schattentanzRandomBezier(80, 1, 14, [(TopAll, 80)], 2, 80, accelerationArc=0.5)
 
 
 timeEvents = eventDict.get('time', [])
