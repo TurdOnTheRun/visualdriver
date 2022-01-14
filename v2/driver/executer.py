@@ -38,7 +38,7 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 
 # buildUp = thatSpatialEvolvingFuzz([(0.1,0.025), (0.1,0.025), (0.1,0.05)], 5, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
 
-buildUp = thatSpatialEvolvingFuzz([(0.1,0.025), (0.1,0.025), (0.1,0.025), (0.1,0.025), (0.1,0.035), (0.1,0.025), (0.1,0.035)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
+buildUp = thatSpatialEvolvingFuzz([(0.1,0.025), (0.1,0.025), (0.1,0.025), (0.1,0.025), (0.1,0.025), (0.1,0.025), (0.1,0.035)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
 bigBumps = thatSpatialEvolvingFuzz([(0.3, 0.035), (0.3, 0.035), (0.3, 0)], 8, (110, 130), (40,50), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
 eventDict = buildUp
 eventDict['position'] += bigBumps['position']
@@ -47,7 +47,7 @@ eventDict['position'] = [MotorSpeed(At(0), 70, 30), TimeEventsUnblock(At(0.5))] 
 eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
 # eventDict = schattentanzRandomBezier(90, 3, 14, [(TopAll, 80)], 1, 80, accelerationArc=0.5)
-eventDict = schattentanzRandomBezier(80, 1, 14, [(TopAll, 80)], 2, 80, accelerationArc=0.5)
+# eventDict = schattentanzRandomBezier(80, 1, 14, [(TopAll, 80)], 2, 80, accelerationArc=0.5)
 
 
 timeEvents = eventDict.get('time', [])
