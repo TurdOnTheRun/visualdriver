@@ -3,5 +3,3 @@ __pycache__
 visualdriver
 scripts/phototests/.~lock*
 scripts/.~lock*
-env/
-env
