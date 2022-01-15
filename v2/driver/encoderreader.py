@@ -1,34 +1,57 @@
+import serial
 import time
-import RPi.GPIO as GPIO
-from multiprocessing import Value
-from settings import ENCODER_PIN_A, ENCODER_PIN_B, ENCODER_REV_PULSE, ENCODER_READ_INTERVAL, WHEEL_SIZE, RAIL_LENGTH
+from multiprocessing import Process, Value
+from settings import ARDUINO_UNO_TRIGGER_ENCODER_CONN, ENCODER_REV_PULSE, ENCODER_READ_INTERVAL, WHEEL_SIZE, RAIL_LENGTH
 
 
-class EncoderReader:
+class EncoderReader(Process):
 
     def __init__(self, position, distance):
+        super().__init__()
+        self.daemon = True
+        self.serial = self.connect()
         self.position = position
         self.distance = distance
         self.distancePerPulse = (1 / ENCODER_REV_PULSE) * WHEEL_SIZE
         self.positionPerPulse = self.distancePerPulse / RAIL_LENGTH
-        self.giop_setup()
 
-    def giop_setup(self):
-        print('Setting up encoder...')
+
+    def connect(self):
+        print('Connecting to Encoder...')
         try:
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setup(ENCODER_PIN_A, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(ENCODER_PIN_A, GPIO.RISING, callback=self.pulse_interpreter)
-            GPIO.setup(ENCODER_PIN_B, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(ENCODER_PIN_B, GPIO.RISING, callback=self.pulse_interpreter)
-        except Exception as e:
-            print('Failed to set up encoder:')
+            ser = serial.Serial( ARDUINO_UNO_TRIGGER_ENCODER_CONN, baudrate=115200 )
+        except serial.SerialException as e:
+            print('Failed to connect to Encoder:', ARDUINO_UNO_TRIGGER_ENCODER_CONN)
             raise e
         else:
-            print('Encoder set up!')
-    
-    def pulse_interpreter(self, _):
-        with self.position.get_lock():
-            self.position.value += self.positionPerPulse
-        with self.distance.get_lock():
-            self.distance.value += self.distancePerPulse
+            print('Connected to Encoder!')
+        return ser
+
+
+    def run(self):
+        self.serial.flushInput()
+        while True:
+            b = self.serial.read()
+            i = int.from_bytes(b, byteorder='little', signed=True)
+            with self.position.get_lock():
+                self.position.value += self.positionPerPulse
+            with self.distance.get_lock():
+                self.distance.value += self.distancePerPulse
+
+
+# position = Value('d', 0.0)
+# distance = Value('d', 0.0)
+# er = EncoderReader(position, distance)
+# er.start()
+
+# from arduinopwmmanager import ArduinoPwmManager
+# from multiprocessing import Queue
+# q = Queue()
+# trigger = ArduinoPwmManager(ARDUINO_UNO_TRIGGER_ENCODER_CONN, q)
+# trigger.start()
+# while True:
+#     q.put((1, 90))
+#     time.sleep(2)
+#     q.put((1,120))
+#     time.sleep(2)
+# time.sleep(100)

@@ -48,12 +48,13 @@ if __name__ == '__main__':
     bottom.start()
 
     triggerQueue = Queue()
-    trigger = Trigger(SONY_TRIGGER[0], SONY_TRIGGER[1], triggerQueue)
+    trigger = ArduinoPwmManager(ARDUINO_UNO_TRIGGER_ENCODER_CONN, triggerQueue)
     trigger.start()
 
     position = Value('d', 0.0)
     distance = Value('d', 0.0)
     er = EncoderReader(position, distance)
+    er.start()
 
     print('Setting Up...')
     time.sleep(3)
