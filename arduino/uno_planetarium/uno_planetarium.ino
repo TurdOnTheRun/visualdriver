@@ -174,7 +174,7 @@ void setup(){
 
   motor.init();
   initLights();
-  setAll(7,100,3,255,0,0,0,0,0);
+  setAll(7,50,3,255,0,0,0,0,0);
 }
 
 void loop(){

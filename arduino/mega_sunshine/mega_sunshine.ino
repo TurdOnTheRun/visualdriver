@@ -6,31 +6,32 @@
 //2,3,5,6,7,8,9,10
 const byte light1 = 2;
 const byte light2 = 3;
-const byte light3 = 5;
-const byte light4 = 6;
-const byte light5 = 7;
-const byte light6 = 8;
+const byte light3 = 7;
+const byte light4 = 8;
+const byte light5 = 5;
+const byte light6 = 6;
 const byte light7 = 9;
 const byte light8 = 10;
 const byte light9 = 11;
 const byte light10 = 12;
 
-const byte numberoflights = 10;
+//const byte numberoflights = 10;
+const byte numberoflights = 4;
 
 Light lights[numberoflights] = {
   Light(1, light1),
   Light(2, light2),
   Light(3, light3),
   Light(4, light4),
-  Light(5, light5),
-  Light(6, light6),
-  Light(7, light7),
-  Light(8, light8),
-  Light(9, light9),
-  Light(10, light10),
+//  Light(5, light5),
+//  Light(6, light6),
+//  Light(7, light7),
+//  Light(8, light8),
+//  Light(9, light9),
+//  Light(10, light10),
 };
 
-byte baseBrightness = 200;
+byte baseBrightness = 82;
 
 SerialInterpreter interpreter = SerialInterpreter();
 
@@ -52,7 +53,7 @@ void setup() {
   TCCR4B |= prescaler;
 
   initLights();
-  setAll(1,100,0,40,0,0,0,0,0);
+  setAll(1,baseBrightness,0,40,0,0,0,0,0);
 }
 
 void loop() {

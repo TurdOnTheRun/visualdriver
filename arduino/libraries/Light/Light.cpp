@@ -19,10 +19,10 @@ void Light::init()
 
 void Light::setstate(byte newstate)
 {
-  if(newstate == 1){
-    newstate = 2;
+  if(newstate > 100){
+    newstate = 100;
   }
-  analogWrite(_pin, newstate);
+  analogWrite(_pin, _statemap[newstate]);
   _state = newstate;
   _laststep = millis();
 }
@@ -49,7 +49,7 @@ void Light::update()
           
           newstate = ((int)_state) + steps;
           
-          if(newstate >= _tostate || newstate > 255){
+          if(newstate >= _tostate || newstate > 100){
             setstate(_tostate);
             // For Lightning Appear (6)
             // Set how long light should stay at _tostate
@@ -156,7 +156,7 @@ void Light::update()
         
         if(rising()){
           
-          if(_bezierstep >= 250){
+          if(_bezierstep >= 100){
             setstate(_tostate);
             if(_set5 > 0){
               _steptime = _set5;
@@ -172,7 +172,7 @@ void Light::update()
           
         } else {
           
-          if (_bezierstep >= 250){
+          if (_bezierstep >= 100){
             setstate(_tostate);
           } else {
             int newstate;
@@ -249,24 +249,30 @@ void Light::setto(byte type, byte state1, byte state2, byte steptime, byte set1,
     setstate(state1);
     // milliseconds on
     _steptime = set1;
+    // steptime for dimming
     _set1 = steptime;
+    // dimm to state
     _tostate = state2;
   }
   else if(type == 6){
     // Lightning Appear
     setstate(state1);
+    // steptime for dimming
     _steptime = steptime;
     // milliseconds on
     _set1 = set1;
+    // dimm to state
     _tostate = state2;
     type = 1;
   }
   else if(type == 7){
     // Machine Gun
+    // if the current state = state1, start with off
     if(_state == state1){
       setstate(0);
       _tostate = state1;
       _set1 = state2;
+    // else start with state1 and count it as first shot
     } else {
       setstate(state1);
       _tostate = 0;
@@ -341,8 +347,8 @@ float Light::lerp(float n1, float n2, float perc)
 
 float Light::bezier(byte step)
 { 
-  // There are a total of 250 steps
-  float i = 0.004 * step;
+  // There are a total of 100 steps
+  float i = 0.01 * step;
 
   // The Green Lines
   float xa = lerp( 0 , _set1 , i );
