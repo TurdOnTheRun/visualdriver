@@ -15,7 +15,7 @@ bool SerialInterpreter::processByte(byte x)
 {
   if (x == endMarker) {
     readInProgress = false;
-    inputBuffer[bytesRecvd] = 0;
+    inputBuffer[bytesRecvd] = '\0';
     return true;
   }
 
