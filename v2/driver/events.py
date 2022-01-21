@@ -433,7 +433,7 @@ def thatSpatialEvolvingFuzz(roundsAndMaximumAndBreaks, approximateDurationPerRou
         maximumRounds = rmb[1]
         breakRounds = rmb[2]
 
-        if rounds < maximumRounds[1]:
+        if rounds < maximumRounds:
             print('MaximumRounds cannot be greater than rounds.')
             return None
     
@@ -461,7 +461,7 @@ def thatSpatialEvolvingFuzz(roundsAndMaximumAndBreaks, approximateDurationPerRou
                 if flipAgentAndState:
                     flipping = True
             flashTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
-            var = Var(randomAgent[1], currentPosition, rounds)
+            var = Var(randomAgent[1], currentPosition, rounds, maximumRounds)
             if evolveType == 'pulse':
                 var.get = var.get_pulse
             else:
