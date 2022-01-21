@@ -406,13 +406,21 @@ def thatSpatialEvolvingFuzz(roundsAndMaximumAndBreaks, approximateDurationPerRou
             if kwargs['position'] - self.startPosition <= self.peakStart:
                 return int(self.state * (kwargs['position'] - self.startPosition) / self.peakStart)
             elif kwargs['position'] - self.startPosition >= self.peakEnd:
-                return int(self.state * (1 - (kwargs['position'] - self.startPosition - self.peakEnd) / self.peakEnd))
+                return int(self.state * (1 - (kwargs['position'] - self.startPosition - self.peakEnd) / (self.rounds - self.peakEnd)))
             else:
                 return self.state
 
-
         def get_decrease(self, **kwargs):
-            return int(self.state * (1 - (kwargs['position'] - self.startPosition) / self.rounds))
+            if kwargs['position'] - self.startPosition >= self.maximumRounds:
+                return int(self.state * (1 - (kwargs['position'] - self.startPosition - self.maximumRounds) / (self.rounds - self.maximumRounds)))
+            else:
+                return self.state
+
+        def get_increase(self, **kwargs):
+            if kwargs['position'] - self.startPosition <= self.rounds - self.maximumRounds:
+                return int(self.state * (kwargs['position'] - self.startPosition) / (self.rounds - self.maximumRounds))
+            else:
+                return self.state
 
 
     
@@ -464,8 +472,10 @@ def thatSpatialEvolvingFuzz(roundsAndMaximumAndBreaks, approximateDurationPerRou
             var = Var(randomAgent[1], currentPosition, rounds, maximumRounds)
             if evolveType == 'pulse':
                 var.get = var.get_pulse
-            else:
+            elif evolveType == 'decrease':
                 var.get = var.get_decrease
+            else:
+                var.get = var.get_increase
             if flashTime > 255:
                 iterTimeEvents.append(Instant(At(currentTime), randomAgent[0], var, True))
                 iterTimeEvents.append(Instant(At(currentTime + flashTime/1000), randomAgent[0], 0, True))
@@ -498,7 +508,7 @@ def thatTimeEvolvingFuzz(duration, millisecondsOnRange, millisecondOverlapRange,
     pass
 
 # from agents import *
-# eventDict = thatSpatialEvolvingFuzz([(0.15,0.1), (0.15,0.1), (0.15,0.3), (0.4, 0.2)], 10, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70))
+# eventDict = thatSpatialEvolvingFuzz([(0.3,0.2,0.1), (0.3,0.2,0.1), (0.3,0.2,0.3), (0.3,0.2,0)], 10, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70), evolveType='decrease')
 # for event in eventDict['time'][3:]:
 #     print(event)
 # import pdb;pdb.set_trace()
