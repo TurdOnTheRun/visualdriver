@@ -383,7 +383,7 @@ def thatFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndSt
 
 
 # Resets Time
-def thatSpatialEvolvingFuzz(roundsAndBreaks, approximateDuration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, currentPosition=0, evolveType='pulse'):
+def thatSpatialEvolvingFuzz(roundsAndMaximumAndBreaks, approximateDurationPerRound, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, currentPosition=0, evolveType='pulse'):
     """
     Parameters
     ----------
@@ -393,18 +393,22 @@ def thatSpatialEvolvingFuzz(roundsAndBreaks, approximateDuration, millisecondsOn
 
     class Var(Variable):
 
-        def __init__(self, state, currentPosition, rounds):
+        def __init__(self, state, currentPosition, rounds, maximumRounds):
             self.startPosition = currentPosition
             self.rounds = rounds
-            self.peak = rounds/2
+            self.maximumRounds = maximumRounds
+            self.peakStart = rounds/2 - maximumRounds/2
+            self.peakEnd = rounds/2 + maximumRounds/2
             self.state = state
             super().__init__()
 
         def get_pulse(self, **kwargs):
-            if kwargs['position'] - self.startPosition <= self.peak:
-                return int(self.state * (kwargs['position'] - self.startPosition) / self.peak)
+            if kwargs['position'] - self.startPosition <= self.peakStart:
+                return int(self.state * (kwargs['position'] - self.startPosition) / self.peakStart)
+            elif kwargs['position'] - self.startPosition >= self.peakEnd:
+                return int(self.state * (1 - (kwargs['position'] - self.startPosition - self.peakEnd) / self.peakEnd))
             else:
-                return int(self.state * (1 - (kwargs['position'] - self.startPosition - self.peak) / self.peak))
+                return self.state
 
 
         def get_decrease(self, **kwargs):
@@ -422,10 +426,16 @@ def thatSpatialEvolvingFuzz(roundsAndBreaks, approximateDuration, millisecondsOn
     if currentPosition == 0:
         positionEvents.append(PositionReset(At(0)))
     
-    for rnb in roundsAndBreaks:
+    for rmb in roundsAndMaximumAndBreaks:
 
-        rounds = rnb[0]
-        breakRounds = rnb[1]
+        rounds = rmb[0]
+        # how much of the round should it be at the maximum setting?
+        maximumRounds = rmb[1]
+        breakRounds = rmb[2]
+
+        if rounds < maximumRounds[1]:
+            print('MaximumRounds cannot be greater than rounds.')
+            return None
     
         targetPosition = currentPosition + rounds
 
@@ -438,7 +448,7 @@ def thatSpatialEvolvingFuzz(roundsAndBreaks, approximateDuration, millisecondsOn
         flipping = False
         needsSort = False
 
-        while currentTime < approximateDuration:
+        while currentTime < approximateDurationPerRound:
             if flipAgentAndState and flipping:
                 randomAgent = flipAgentAndState
                 flipping = False
@@ -468,7 +478,7 @@ def thatSpatialEvolvingFuzz(roundsAndBreaks, approximateDuration, millisecondsOn
         if needsSort:
             iterTimeEvents.sort(key=lambda x:x.condition.value)
         
-        marker = Marker(At(approximateDuration))
+        marker = Marker(At(approximateDurationPerRound))
         iterTimeEvents.append(marker)
         positionEvents.append(TimeEventsClearToMarker(At(targetPosition), marker))
 
