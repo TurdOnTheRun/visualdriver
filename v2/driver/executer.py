@@ -56,10 +56,12 @@ for i in range(rounds):
     for j in range(swooshes):
         eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
         currentPostion += lightOn
+        eventDict['position'].append(TimeEventsBlock(At(currentPostion)),)
         evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 8, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
-        currentPostion += decreaseOn + offOn
-        eventDict['position'] += evolveFuzz['position']
+        currentPostion += decreaseOn
+        eventDict['position'] += evolveFuzz['position'] + [TimeEventsBlock(At(currentPostion)),]
         eventDict['time'] += evolveFuzz['time']
+        currentPostion += offOn
 
 
 # eventDict = schattentanzRandomBezier(90, 3, 14, [(TopAll, 80)], 1, 80, accelerationArc=0.5)
