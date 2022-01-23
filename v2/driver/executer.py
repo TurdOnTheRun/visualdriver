@@ -42,11 +42,14 @@ eventDict = {
 
 rounds = 3
 swooshes = 10
-lightPart = 0.5
+lightPart = 0.4
+decreasePart = 0.4
+offPart = 0.2
 
 swooshLength = 1/10
 lightOn = swooshLength*lightPart
-decreaseOn = swooshLength - lightOn
+decreaseOn = swooshLength*decreasePart
+offOn = swooshLength*offPart
 currentPostion = 0.5
 
 for i in range(rounds):
@@ -54,7 +57,7 @@ for i in range(rounds):
         eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
         currentPostion += lightOn
         evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 8, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
-        currentPostion += decreaseOn
+        currentPostion += decreaseOn + offOn
         eventDict['position'] += evolveFuzz['position']
         eventDict['time'] += evolveFuzz['time']
 
