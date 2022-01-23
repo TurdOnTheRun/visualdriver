@@ -16,16 +16,48 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 #     eventDict = pickle.load(handle)
 
 
-pulse = thatSpatialEvolvingFuzz([(0.3, 0.125, 0.035), (0.3, 0.125, 0.035), (0.3, 0.125, 0.035)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
-increase = thatSpatialEvolvingFuzz([(0.3, 0.125, 0.035), (0.3, 0.125, 0.035), (0.3, 0.125, 0.035)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='increase')
-decrease = thatSpatialEvolvingFuzz([(0.3, 0.2, 0.035), (0.3, 0.2, 0.035), (0.3, 0.2)], 8, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease')
-eventDict = pulse
-eventDict['position'] += increase['position']
-eventDict['time'] += increase['time']
-eventDict['position'] += decrease['position']
-eventDict['time'] += decrease['time']
-eventDict['position'] = [MotorSpeed(At(0), 70, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
-eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
+# pulse = thatSpatialEvolvingFuzz([(0.3, 0.125, 0.035), (0.3, 0.125, 0.035), (0.3, 0.125, 0.035)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
+# increase = thatSpatialEvolvingFuzz([(0.3, 0.125, 0.035), (0.3, 0.125, 0.035), (0.3, 0.125, 0.035)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='increase')
+# decrease = thatSpatialEvolvingFuzz([(0.3, 0.2, 0.035), (0.3, 0.2, 0.035), (0.3, 0.2)], 8, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease')
+# eventDict = pulse
+# eventDict['position'] += increase['position']
+# eventDict['time'] += increase['time']
+# eventDict['position'] += decrease['position']
+# eventDict['time'] += decrease['time']
+
+
+
+
+
+# Pulse Fuzz
+# eventDict = thatSpatialEvolvingFuzz([(0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
+# eventDict['position'] = [MotorSpeed(At(0), 90, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
+# eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
+
+
+eventDict = {
+    'position': [MotorSpeed(At(0), 90, 30), TimeEventsUnblock(At(0.5))],
+    'time': [TimeEventsBlock(At(0)),]
+}
+
+rounds = 3
+swooshes = 10
+lightPart = 0.5
+
+swooshLength = 1/10
+lightOn = swooshLength*lightPart
+decreaseOn = swooshLength - lightOn
+currentPostion = 0.5
+
+for i in range(rounds):
+    for j in range(swooshes):
+        eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
+        currentPostion += lightOn
+        evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 8, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
+        currentPostion += decreaseOn
+        eventDict['position'] += evolveFuzz['position']
+        eventDict['time'] += evolveFuzz['time']
+
 
 # eventDict = schattentanzRandomBezier(90, 3, 14, [(TopAll, 80)], 1, 80, accelerationArc=0.5)
 # eventDict = schattentanzRandomBezier(80, 1, 14, [(TopAll, 80)], 2, 80, accelerationArc=0.5)
