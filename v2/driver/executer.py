@@ -30,42 +30,44 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
 
 
 # Pulse Fuzz
-# eventDict = thatSpatialEvolvingFuzz([(0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
+# eventDict = thatSpatialEvolvingFuzz([(0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0.03), (0.3, 0.15, 0)], 5, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)])
 # eventDict['position'] = [MotorSpeed(At(0), 90, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
 # eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
 
-eventDict = {
-    'position': [MotorSpeed(At(0), 90, 30), TimeEventsUnblock(At(0.5))],
-    'time': [TimeEventsBlock(At(0)),]
-}
+# eventDict = {
+#     'position': [MotorSpeed(At(0), 90, 30), TimeEventsUnblock(At(0.5))],
+#     'time': [TimeEventsBlock(At(0)),]
+# }
 
-rounds = 3
-swooshes = 10
-lightPart = 0.4
-decreasePart = 0.4
-offPart = 0.2
+# rounds = 3
+# swooshes = 10
+# lightPart = 0.4
+# decreasePart = 0.4
+# offPart = 0.2
 
-swooshLength = 1/10
-lightOn = swooshLength*lightPart
-decreaseOn = swooshLength*decreasePart
-offOn = swooshLength*offPart
-currentPostion = 0.5
+# swooshLength = 1/10
+# lightOn = swooshLength*lightPart
+# decreaseOn = swooshLength*decreasePart
+# offOn = swooshLength*offPart
+# currentPostion = 0.5
 
-for i in range(rounds):
-    for j in range(swooshes):
-        eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
-        currentPostion += lightOn
-        eventDict['position'].append(TimeEventsBlock(At(currentPostion)),)
-        evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 8, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
-        currentPostion += decreaseOn
-        eventDict['position'] += evolveFuzz['position'] + [TimeEventsBlock(At(currentPostion)),]
-        eventDict['time'] += evolveFuzz['time']
-        currentPostion += offOn
+# for i in range(rounds):
+#     for j in range(swooshes):
+#         eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
+#         currentPostion += lightOn
+#         eventDict['position'].append(TimeEventsBlock(At(currentPostion)),)
+#         evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 8, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
+#         currentPostion += decreaseOn
+#         eventDict['position'] += evolveFuzz['position'] + [TimeEventsBlock(At(currentPostion)),]
+#         eventDict['time'] += evolveFuzz['time']
+#         currentPostion += offOn
 
 
 # eventDict = schattentanzRandomBezier(90, 3, 14, [(TopAll, 80)], 1, 80, accelerationArc=0.5)
 # eventDict = schattentanzRandomBezier(80, 1, 14, [(TopAll, 80)], 2, 80, accelerationArc=0.5)
+
+eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], motorspeed=100, accelerationArc=0.5)
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
