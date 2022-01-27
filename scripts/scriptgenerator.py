@@ -1,8 +1,8 @@
 
 import json
 
-INPUT = './photo/revolver/static/5step_toponly_static_22_100.csv'
-OUTPUT = './photo/revolver/static/5step_toponly_static_22_100.json'
+INPUT = './photo/revolver/static/8step_toponly_static_22_100.csv'
+OUTPUT = './photo/revolver/static/8step_toponly_static_22_100.json'
 FPS = 25
 
 
