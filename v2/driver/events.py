@@ -507,7 +507,34 @@ def thatSpatialEvolvingFuzz(roundsAndMaximumAndBreaks, approximateDurationPerRou
 def thatTimeEvolvingFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, iterations=1, currentTime=0, currentPosition=0):
     pass
 
-# from agents import *
+
+# def schattenFuzz():
+
+#     rounds = 3
+#     swooshes = 10
+#     lightPart = 0.4
+#     decreasePart = 0.4
+#     offPart = 0.2
+
+#     swooshLength = 1/swooshes
+#     lightOn = swooshLength*lightPart
+#     decreaseOn = swooshLength*decreasePart
+#     offOn = swooshLength*offPart
+#     currentPostion = 0.5
+
+#     for i in range(rounds):
+#         for j in range(swooshes):
+#             eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
+#             currentPostion += lightOn
+#             eventDict['position'].append(TimeEventsUnblock(At(currentPostion)),)
+#             evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 4, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
+#             currentPostion += decreaseOn
+#             eventDict['position'] += evolveFuzz['position'] + [TimeEventsBlock(At(currentPostion)),]
+#             eventDict['time'] += evolveFuzz['time']
+#             currentPostion += offOn
+
+
+# # from agents import *
 # eventDict = thatSpatialEvolvingFuzz([(0.3,0.2,0.1), (0.3,0.2,0.1), (0.3,0.2,0.3), (0.3,0.2,0)], 10, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70), evolveType='decrease')
 # for event in eventDict['time'][3:]:
 #     print(event)
