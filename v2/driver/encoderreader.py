@@ -33,10 +33,16 @@ class EncoderReader(Process):
         while True:
             b = self.serial.read()
             i = int.from_bytes(b, byteorder='little', signed=True)
-            with self.position.get_lock():
-                self.position.value += self.positionPerPulse
-            with self.distance.get_lock():
-                self.distance.value += self.distancePerPulse
+            if i > 0:
+                with self.position.get_lock():
+                    self.position.value += self.positionPerPulse
+                with self.distance.get_lock():
+                    self.distance.value += self.distancePerPulse
+            else:
+                with self.position.get_lock():
+                    self.position.value -= self.positionPerPulse
+                with self.distance.get_lock():
+                    self.distance.value -= self.distancePerPulse
 
 
 # position = Value('d', 0.0)
@@ -54,4 +60,6 @@ class EncoderReader(Process):
 #     time.sleep(2)
 #     q.put((1,120))
 #     time.sleep(2)
+#     print(position.value)
+#     print(distance.value)
 # time.sleep(100)

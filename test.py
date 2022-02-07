@@ -10,7 +10,7 @@ pwmComm = Queue()
 # distance = Value('d', 0.0)
 # er = EncoderReader(position, distance)
 
-pwm = ArduinoPwmManager(ARDUINO_MEGA_CONN, pwmComm)
+pwm = ArduinoPwmManager(ARDUINO_UNO_CONN, pwmComm)
 pwm.start()
 
 # trigger = Trigger(SONY_TRIGGER[0],SONY_TRIGGER[1],triggerComm)
