@@ -11,13 +11,17 @@ ADD_EVENTS_TYPE = 1
 POSITION_RESET_TYPE = 2
 TIME_EVENTS_BLOCK_TYPE = 3
 TIME_EVENTS_UNBLOCK_TYPE = 4
+TIME_EVENTS_CLEAR_TYPE = 5
+TIME_EVENTS_CLEAR_TO_MARKER_TYPE = 6
+MARKER_TYPE = 7
 
 
 class Event:
 
-    def __init__(self, condition, agent=None):
+    def __init__(self, condition, agent=None, hasVariable=False):
         self.condition = condition
         self.agent = agent
+        self.hasVariable = hasVariable
     
 
     def abort(self, message, error=None):
@@ -27,11 +31,24 @@ class Event:
         else:
             raise Exception
 
+    def __str__(self):
+        return 'Event({}, {}, {})'.format(self.condition, self.agent, self.hasVariable)
+
+
+class Variable:
+
+    def get(self, **kwargs):
+        pass
+
 
 class ArduinoEvent(Event):
 
-    def __init__(self, condition, agent=None):
-        super().__init__(condition, agent)
+    def __init__(self, condition, agent=None, hasVariable=False):
+        super().__init__(condition, agent, hasVariable)
+
+
+    def __str__(self):
+        return 'ArduinoEvent({}, {}, {})'.format(self.condition, self.agent, self.hasVariable)
     
 
     def check_state(self, state):
@@ -64,35 +81,57 @@ class ArduinoEvent(Event):
 
 class Instant(ArduinoEvent):
 
-    def __init__(self, condition, agent, state):
-        self.check_state(state)
+    def __init__(self, condition, agent, state, hasVariable=False):
         self.state = state
-        self.check_is_light_agent(agent)
-        super().__init__(condition, agent)
+        super().__init__(condition, agent, hasVariable)
+        if not hasVariable:
+            self.check_init()
         self.command = self.make_command()
+
+    def __str__(self):
+        return 'Instant({}, {}, {}, {})'.format(self.condition, self.agent, self.state, self.hasVariable)
+    
+    def check_init(self):
+        self.check_state(self.state)
+        self.check_is_light_agent(self.agent)
     
     def make_command(self):
         if self.agent.id == -1:
-            return self.clean_bytes([200, self.state])
+            command = [200, self.state]
         else:
-            return self.clean_bytes([self.agent.id, self.state])
+            command = [self.agent.id, self.state]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
     
 
 class Flash(ArduinoEvent):
 
-    def __init__(self, condition, agent, state, millisecondsOn):
-        self.check_state(state)
+    def __init__(self, condition, agent, state, millisecondsOn, hasVariable=False):
         self.state = state
         self.millisecondsOn = millisecondsOn
-        self.check_is_light_agent(agent)
-        super().__init__(condition, agent)
+        super().__init__(condition, agent, hasVariable)
+        if not hasVariable:
+            self.check_init()
         self.command = self.make_command()
+
+    def __str__(self):
+        return 'Flash({}, {}, {}, {}, {})'.format(self.condition, self.agent, self.state, self.millisecondsOn, self.hasVariable)
+
+    def check_init(self):
+        self.check_state(self.state)
+        self.check_is_light_agent(self.agent)
     
     def make_command(self):
         if self.agent.id == -1:
-            return self.clean_bytes([204, self.state, self.millisecondsOn])
+            command = [204, self.state, self.millisecondsOn]
         else:
-            return self.clean_bytes([40 + self.agent.id, self.state, self.millisecondsOn])
+            command = [40 + self.agent.id, self.state, self.millisecondsOn]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
 
 
 class InstantBezier(ArduinoEvent):
@@ -175,6 +214,12 @@ class MotorChangeDirection(ArduinoEvent):
         return self.clean_bytes([221,])
 
 
+class Marker(Event):
+    def __init__(self, condition):
+        self.type = MARKER_TYPE
+        super().__init__(condition, Main)
+
+
 class TimeReset(Event):
 
     def __init__(self, condition):
@@ -193,6 +238,21 @@ class TimeEventsUnblock(Event):
 
     def __init__(self, condition):
         self.type = TIME_EVENTS_UNBLOCK_TYPE
+        super().__init__(condition, Main)
+
+
+class TimeEventsClear(Event):
+
+    def __init__(self, condition):
+        self.type = TIME_EVENTS_CLEAR_TYPE
+        super().__init__(condition, Main)
+
+
+class TimeEventsClearToMarker(Event):
+
+    def __init__(self, condition, marker):
+        self.type = TIME_EVENTS_CLEAR_TO_MARKER_TYPE
+        self.marker = marker
         super().__init__(condition, Main)
 
 
@@ -320,3 +380,162 @@ def thatFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndSt
     return {
         'time': timeEvents
     }
+
+
+# Resets Time
+def thatSpatialEvolvingFuzz(roundsAndMaximumAndBreaks, approximateDurationPerRound, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, currentPosition=0, evolveType='pulse'):
+    """
+    Parameters
+    ----------
+    rounds : float
+        Through what position length the evolvement should take place
+    """
+
+    class Var(Variable):
+
+        def __init__(self, state, currentPosition, rounds, maximumRounds):
+            self.startPosition = currentPosition
+            self.rounds = rounds
+            self.maximumRounds = maximumRounds
+            self.peakStart = rounds/2 - maximumRounds/2
+            self.peakEnd = rounds/2 + maximumRounds/2
+            self.state = state
+            super().__init__()
+
+        def get_pulse(self, **kwargs):
+            if kwargs['position'] - self.startPosition <= self.peakStart:
+                return int(self.state * (kwargs['position'] - self.startPosition) / self.peakStart)
+            elif kwargs['position'] - self.startPosition >= self.peakEnd:
+                return int(self.state * (1 - (kwargs['position'] - self.startPosition - self.peakEnd) / (self.rounds - self.peakEnd)))
+            else:
+                return self.state
+
+        def get_decrease(self, **kwargs):
+            if kwargs['position'] - self.startPosition >= self.maximumRounds:
+                return int(self.state * (1 - (kwargs['position'] - self.startPosition - self.maximumRounds) / (self.rounds - self.maximumRounds)))
+            else:
+                return self.state
+
+        def get_increase(self, **kwargs):
+            if kwargs['position'] - self.startPosition <= self.rounds - self.maximumRounds:
+                return int(self.state * (kwargs['position'] - self.startPosition) / (self.rounds - self.maximumRounds))
+            else:
+                return self.state
+
+
+    
+    timeEvents = []
+    positionEvents = []
+
+    if millisecondsOnRange[0] < millisecondOverlapRange[1]:
+        print('Overlap can exceed on time.')
+        return None
+
+    if currentPosition == 0:
+        positionEvents.append(PositionReset(At(0)))
+    
+    for rmb in roundsAndMaximumAndBreaks:
+
+        rounds = rmb[0]
+        # how much of the round should it be at the maximum setting?
+        maximumRounds = rmb[1]
+        breakRounds = rmb[2]
+
+        if rounds < maximumRounds:
+            print('MaximumRounds cannot be greater than rounds.')
+            return None
+    
+        targetPosition = currentPosition + rounds
+
+        iterTimeEvents = []
+        iterTimeEvents.append(TimeReset(At(0)))
+        currentTime = 0
+
+        lastIndex = random.randint(0, len(agentsAndStates)-1)
+        agentIndexes = list(range(len(agentsAndStates)))
+        flipping = False
+        needsSort = False
+
+        while currentTime < approximateDurationPerRound:
+            if flipAgentAndState and flipping:
+                randomAgent = flipAgentAndState
+                flipping = False
+            else:
+                indexes = agentIndexes.copy()
+                indexes.remove(lastIndex)
+                i = random.choice(indexes)
+                randomAgent = agentsAndStates[i]
+                lastIndex = i
+                if flipAgentAndState:
+                    flipping = True
+            flashTime = random.randint(millisecondsOnRange[0], millisecondsOnRange[1])
+            var = Var(randomAgent[1], currentPosition, rounds, maximumRounds)
+            if evolveType == 'pulse':
+                var.get = var.get_pulse
+            elif evolveType == 'decrease':
+                var.get = var.get_decrease
+            else:
+                var.get = var.get_increase
+            if flashTime > 255:
+                iterTimeEvents.append(Instant(At(currentTime), randomAgent[0], var, True))
+                iterTimeEvents.append(Instant(At(currentTime + flashTime/1000), randomAgent[0], 0, True))
+                needsSort = True
+            else:
+                iterTimeEvents.append(Flash(At(currentTime), randomAgent[0], var, flashTime, True))
+            overlap = random.randint(millisecondOverlapRange[0], millisecondOverlapRange[1])
+            currentTime = currentTime + (flashTime - overlap)/1000
+        
+        if needsSort:
+            iterTimeEvents.sort(key=lambda x:x.condition.value)
+        
+        marker = Marker(At(approximateDurationPerRound))
+        iterTimeEvents.append(marker)
+        positionEvents.append(TimeEventsClearToMarker(At(targetPosition), marker))
+
+        if breakRounds != 0:
+            iterTimeEvents.append(TimeEventsBlock(At(0)))
+            positionEvents.append(TimeEventsUnblock(At(targetPosition + breakRounds)))
+        timeEvents += iterTimeEvents
+        currentPosition = targetPosition + breakRounds
+    
+    return {
+        'time': timeEvents,
+        'position': positionEvents
+    }
+
+
+def thatTimeEvolvingFuzz(duration, millisecondsOnRange, millisecondOverlapRange, agentsAndStates, flipAgentAndState=None, iterations=1, currentTime=0, currentPosition=0):
+    pass
+
+
+# def schattenFuzz():
+
+#     rounds = 3
+#     swooshes = 10
+#     lightPart = 0.4
+#     decreasePart = 0.4
+#     offPart = 0.2
+
+#     swooshLength = 1/swooshes
+#     lightOn = swooshLength*lightPart
+#     decreaseOn = swooshLength*decreasePart
+#     offOn = swooshLength*offPart
+#     currentPostion = 0.5
+
+#     for i in range(rounds):
+#         for j in range(swooshes):
+#             eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
+#             currentPostion += lightOn
+#             eventDict['position'].append(TimeEventsUnblock(At(currentPostion)),)
+#             evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 4, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
+#             currentPostion += decreaseOn
+#             eventDict['position'] += evolveFuzz['position'] + [TimeEventsBlock(At(currentPostion)),]
+#             eventDict['time'] += evolveFuzz['time']
+#             currentPostion += offOn
+
+
+# # from agents import *
+# eventDict = thatSpatialEvolvingFuzz([(0.3,0.2,0.1), (0.3,0.2,0.1), (0.3,0.2,0.3), (0.3,0.2,0)], 10, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70), evolveType='decrease')
+# for event in eventDict['time'][3:]:
+#     print(event)
+# import pdb;pdb.set_trace()

@@ -7,7 +7,7 @@ import time
 import atexit
 import json
 
-INPUT = './scripts/generators/randomlyspacedquickstrobe_TEST2.json'
+INPUT = './scripts/photo/revolver/blurry/full_4step_toponly_blurry_22_100.json'
 f = open(INPUT,) 
 SCRIPT = json.load(f)
 f.close()
