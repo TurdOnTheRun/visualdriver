@@ -26,6 +26,13 @@ eventDict = {
     'time': []
 }
 
+
+
+eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (Bottom1, 100), (Bottom2, 100)], motorspeed=90, accelerationArc=0.5)
+
+
+
+
 # rounds = 3
 # swooshes = 10
 # lightPart = 0.4
