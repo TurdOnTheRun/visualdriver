@@ -8,8 +8,7 @@ from conditions import *
 
 from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
-from trigger import Trigger
-from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, SONY_TRIGGER
+from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_ENCODER_CONN
 
 
 # with open('filename.pickle', 'rb') as handle:

@@ -1,7 +1,7 @@
 import serial
 import time
 from multiprocessing import Process, Value
-from settings import ARDUINO_UNO_TRIGGER_ENCODER_CONN, ENCODER_REV_PULSE, ENCODER_READ_INTERVAL, WHEEL_SIZE, RAIL_LENGTH
+from settings import ARDUINO_UNO_TRIGGER_ENCODER_CONN, ENCODER_REV_PULSE, WHEEL_SIZE, RAIL_LENGTH
 
 
 class EncoderReader(Process):
