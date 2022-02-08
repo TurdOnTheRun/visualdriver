@@ -27,34 +27,35 @@ eventDict = {
     'time': []
 }
 
-rounds = 3
-swooshes = 10
-lightPart = 0.4
-decreasePart = 0.4
-offPart = 0.2
+# rounds = 3
+# swooshes = 10
+# lightPart = 0.4
+# decreasePart = 0.4
+# offPart = 0.2
 
-swooshLength = 1/swooshes
-lightOn = swooshLength*lightPart
-decreaseOn = swooshLength*decreasePart
-offOn = swooshLength*offPart
-currentPostion = 0.5
+# swooshLength = 1/swooshes
+# lightOn = swooshLength*lightPart
+# decreaseOn = swooshLength*decreasePart
+# offOn = swooshLength*offPart
+# currentPostion = 0.5
 
-for i in range(rounds):
-    for j in range(swooshes):
-        eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
-        currentPostion += lightOn
-        eventDict['position'].append(Instant(At(currentPostion), TopAll, 0))
-        eventDict['position'].append(TimeEventsUnblock(At(currentPostion)),)
-        evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 4, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
-        currentPostion += decreaseOn
-        eventDict['position'] += evolveFuzz['position'] + [TimeEventsBlock(At(currentPostion)),]
-        eventDict['time'] += evolveFuzz['time']
-        currentPostion += offOn
+# for i in range(rounds):
+#     for j in range(swooshes):
+#         eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
+#         currentPostion += lightOn
+#         eventDict['position'].append(Instant(At(currentPostion), TopAll, 0))
+#         eventDict['position'].append(TimeEventsUnblock(At(currentPostion)),)
+#         evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 4, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
+#         currentPostion += decreaseOn
+#         eventDict['position'] += evolveFuzz['position'] + [TimeEventsBlock(At(currentPostion)),]
+#         eventDict['time'] += evolveFuzz['time']
+#         currentPostion += offOn
 
-eventDict['position'] = [MotorSpeed(At(0), 100, 30),] + eventDict['position']
-eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
+# eventDict['position'] = [MotorSpeed(At(0), 100, 30),] + eventDict['position']
+# eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
 
+eventDict['position'] = [MotorSpeed(At(0), 50, 30), Instant(At(0.5), TopAll, 100),  Instant(At(1), TopAll, 30),  Instant(At(1.5), TopAll, 100), MotorSpeed(At(2), 0, 30)]
 
 
 
