@@ -24,6 +24,7 @@ while True:
         
     except ValueError:
         print('Invalid Command')
+        pwmComm.put([220,0,50])
     if command:
         pwmComm.put(command)
     

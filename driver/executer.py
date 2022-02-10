@@ -28,7 +28,7 @@ eventDict = {
 
 
 
-eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (Bottom1, 100), (Bottom2, 100)], motorspeed=90, accelerationArc=0.5)
+eventDict = dancingInTheVoid(5, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (Bottom1, 100), (Bottom2, 100)], motorspeed=100, accelerationArc=0.5)
 
 
 
@@ -61,11 +61,6 @@ eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100)
 # eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
 
-eventDict['position'] = [MotorSpeed(At(0), 50, 30), Instant(At(0.5), TopAll, 100),  Instant(At(1), TopAll, 30),  Instant(At(1.5), TopAll, 100), MotorSpeed(At(2), 0, 30)]
-
-
-
-
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
 
@@ -90,7 +85,7 @@ if __name__ == '__main__':
 
     print('Setting Up...')
     time.sleep(3)
-    bottomQueue.put((220,0))
+    bottomQueue.put((220,0,50))
     topQueue.put((200,0))
     bottomQueue.put((200,0))
     time.sleep(2)
@@ -163,7 +158,7 @@ if __name__ == '__main__':
                 break
 
     except Exception as e:
-        bottomQueue.put((220,0))
+        bottomQueue.put((220,0,50))
         topQueue.put((200,50))
         bottomQueue.put((200,0))
         print('Error:', e)
@@ -172,6 +167,7 @@ if __name__ == '__main__':
 
 print('Finishing')
 time.sleep(1)
-bottomQueue.put((220,0))
+bottomQueue.put((220,0,50))
 topQueue.put((200,50))
 bottomQueue.put((200,0))
+time.sleep(1)
