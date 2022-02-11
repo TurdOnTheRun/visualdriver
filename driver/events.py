@@ -135,6 +135,7 @@ class Flash(ArduinoEvent):
 
 
 class InstantBezier(ArduinoEvent):
+
     def __init__(self, condition, agent, state1, state2, millisecondsStep, ax, ay, bx, by):
         self.check_state(state1)
         self.check_state(state2)
@@ -154,6 +155,9 @@ class InstantBezier(ArduinoEvent):
         self.check_is_light_agent(agent)
         super().__init__(condition, agent)
         self.command = self.make_command()
+
+    def __str__(self):
+        return 'InstantBezier({}, {}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.agent, self.state1, self.state2, self.hasVariable, self.ax, self.ay, self.bx, self.by, self.millisecondsStep)
     
     def make_command(self):
         if self.agent.id == -1:
@@ -515,7 +519,6 @@ def schattenFuzzNotTested(motorspeed, rounds, swooshsPerRound, swooshSplit, ligh
     swooshSplit -- (float, float, float): split between lightPart, decreasePart, and offPart. The three must add up to 1.
     """
 
-    randintrange = (0,100)
     eventDict = {
         'position': [],
         'time': [TimeEventsBlock(At(0)),]
@@ -558,8 +561,49 @@ def schattenFuzzNotTested(motorspeed, rounds, swooshsPerRound, swooshSplit, ligh
     return eventDict            
 
 
+def backAndForward(duration, backAgentsAndStates, forwardAgentsAndStates, millisecondsOn, millisecondsStep, currentTime=0):
+
+    eventDict = {
+        'position': [],
+        'time': []
+    }
+   
+    if currentTime == 0:
+        eventDict['time'].append(TimeReset(At(0)))
+    
+    duration += currentTime
+    forward = True
+    randintrange = (0, 100)
+    lastBack = random.choice(backAgentsAndStates)
+    lastForward = None
+
+    eventDict['time'].append(InstantBezier(At(currentTime), lastBack[0], 0, lastBack[1], millisecondsStep, 100, 100, 100, 100))
+    currentTime += (millisecondsOn + millisecondsStep)/1000
+
+    while currentTime < duration:
+
+        ax = random.randint(randintrange[0], randintrange[1])
+        ay = random.randint(randintrange[0], randintrange[1])
+        bx = random.randint(randintrange[0], randintrange[1])
+        by = random.randint(randintrange[0], randintrange[1])
+
+        if forward:
+            lastForward = random.choice(forwardAgentsAndStates)
+            eventDict['time'].append(InstantBezier(At(currentTime), lastForward[0], 0, lastForward[1], millisecondsStep, ax, ay, bx, by))
+            eventDict['time'].append(InstantBezier(At(currentTime), lastBack[0], lastBack[1], 0, millisecondsStep, ax, ay, bx, by))
+        else:
+            lastBack = random.choice(backAgentsAndStates)
+            eventDict['time'].append(InstantBezier(At(currentTime), lastBack[0], 0, lastBack[1], millisecondsStep, ax, ay, bx, by))
+            eventDict['time'].append(InstantBezier(At(currentTime), lastForward[0], lastForward[1], 0, millisecondsStep, ax, ay, bx, by))
+        
+        forward = not forward
+        currentTime += (millisecondsOn + millisecondsStep)/1000
+
+    return eventDict
+
+
 # from agents import *
-# eventDict = schattenFuzzNotTested(100, 3, 10, (0.3,0.5,0.2), [(TopAll,80),], [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], 4, (50,70), (20,30))
-# for event in eventDict['time'][3:]:
+# eventDict = backAndForward(100, [(TopAll, 80)], [(BottomAll, 80)], 1000, 10)
+# for event in eventDict['time']:
 #     print(event)
 # import pdb;pdb.set_trace()
