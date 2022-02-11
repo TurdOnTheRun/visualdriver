@@ -618,7 +618,7 @@ def sideToSide(duration, leftAgentAndState, centerAgentAndState, rightAgentAndSt
     lastAgentAndState = 'left'
 
     eventDict['time'].append(InstantBezier(At(currentTime), leftAgentAndState[0], 0, leftAgentAndState[1], millisecondsStep, 100, 100, 100, 100))
-    currentTime += (millisecondsOn + millisecondsStep)/1000
+    currentTime += (millisecondsOn + millisecondsStep*100)/1000
 
     while currentTime < duration:
 
@@ -646,7 +646,7 @@ def sideToSide(duration, leftAgentAndState, centerAgentAndState, rightAgentAndSt
             nextAgentAndState = 'center'
             lastAgentAndState = 'left'
 
-        currentTime += (millisecondsOn + millisecondsStep)/1000
+        currentTime += (millisecondsOn + millisecondsStep*100)/1000
 
     return eventDict
 
