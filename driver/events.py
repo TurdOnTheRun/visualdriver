@@ -508,34 +508,58 @@ def thatTimeEvolvingFuzz(duration, millisecondsOnRange, millisecondOverlapRange,
     pass
 
 
-# def schattenFuzz():
+def schattenFuzzNotTested(motorspeed, rounds, swooshsPerRound, swooshSplit, lightningAgentsAndStates, fuzzAgentsAndStates, approximateDurationPerDecreasePart, fuzzMillisecondsOnRangeFuzz, fuzzMillisecondOverlapRange, currentPosition=0, accelerationArc=0):
 
-#     rounds = 3
-#     swooshes = 10
-#     lightPart = 0.4
-#     decreasePart = 0.4
-#     offPart = 0.2
+    """
+    Keyword arguments:
+    swooshSplit -- (float, float, float): split between lightPart, decreasePart, and offPart. The three must add up to 1.
+    """
 
-#     swooshLength = 1/swooshes
-#     lightOn = swooshLength*lightPart
-#     decreaseOn = swooshLength*decreasePart
-#     offOn = swooshLength*offPart
-#     currentPostion = 0.5
+    randintrange = (0,100)
+    eventDict = {
+        'position': [],
+        'time': [TimeEventsBlock(At(0)),]
+    }
+    positionEvents = []
 
-#     for i in range(rounds):
-#         for j in range(swooshes):
-#             eventDict['position'].append(Instant(At(currentPostion), TopAll, 80))
-#             currentPostion += lightOn
-#             eventDict['position'].append(TimeEventsUnblock(At(currentPostion)),)
-#             evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], 4, (40, 50), (10,20), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], evolveType='decrease', currentPosition=currentPostion)
-#             currentPostion += decreaseOn
-#             eventDict['position'] += evolveFuzz['position'] + [TimeEventsBlock(At(currentPostion)),]
-#             eventDict['time'] += evolveFuzz['time']
-#             currentPostion += offOn
+    if currentPosition == 0:
+        positionEvents.append(PositionReset(At(0)))
+    
+    positionEvents.append(MotorSpeed(At(0), motorspeed, 30))
+    currentPosition += accelerationArc
+
+    lightPart = swooshSplit[0]
+    decreasePart = swooshSplit[1]
+    offPart = swooshSplit[2]
+
+    if (lightPart + decreasePart + offPart) != 1:
+        print('The three swooshSplit Elements must add up to 1.')
+        return None
+
+    swooshLength = 1/swooshsPerRound
+    lightOn = swooshLength*lightPart
+    decreaseOn = swooshLength*decreasePart
+    offOn = swooshLength*offPart
+
+    for i in range(rounds):
+        for j in range(swooshsPerRound):
+            for agentAndState in lightningAgentsAndStates:
+                eventDict['position'].append(Instant(At(currentPosition), agentAndState[0], agentAndState[1]))
+            currentPosition += lightOn
+            for agentAndState in lightningAgentsAndStates:
+                eventDict['position'].append(Instant(At(currentPosition), agentAndState[0], 0))
+            eventDict['position'].append(TimeEventsUnblock(At(currentPosition)),)
+            evolveFuzz = thatSpatialEvolvingFuzz([(decreaseOn, 0, 0),], approximateDurationPerDecreasePart, fuzzMillisecondsOnRangeFuzz, fuzzMillisecondOverlapRange, fuzzAgentsAndStates, evolveType='decrease', currentPosition=currentPosition)
+            currentPosition += decreaseOn
+            eventDict['position'] += evolveFuzz['position'] + [TimeEventsBlock(At(currentPosition)),]
+            eventDict['time'] += evolveFuzz['time']
+            currentPosition += offOn
+
+    return eventDict            
 
 
-# # from agents import *
-# eventDict = thatSpatialEvolvingFuzz([(0.3,0.2,0.1), (0.3,0.2,0.1), (0.3,0.2,0.3), (0.3,0.2,0)], 10, (75, 90), (20,25), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], flipAgentAndState=(BottomAll, 70), evolveType='decrease')
+# from agents import *
+# eventDict = schattenFuzzNotTested(100, 3, 10, (0.3,0.5,0.2), [(TopAll,80),], [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)], 4, (50,70), (20,30))
 # for event in eventDict['time'][3:]:
 #     print(event)
 # import pdb;pdb.set_trace()
