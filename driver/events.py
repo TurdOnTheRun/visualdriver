@@ -2,6 +2,8 @@ from agents import LIGHT_AGENT_TYPE, Main, Bottom
 from conditions import At
 import random
 
+from driver.agents import BottomAll, TopAll
+
 
 ARDUINO_COMMUNICATION_START_BYTE = 251
 ARDUINO_COMMUNICATION_STOP_BYTE = 252
@@ -698,6 +700,9 @@ def sideToSideTwo(duration, leftAgentAndStateAndOn, centerAgentAndStateAndOn, ri
             lastAgentAndState = 'left'
             currentTime += (leftAgentAndStateAndOn[2] + millisecondsStep*100)/1000
 
+
+    eventDict['time'].append(Instant(At(currentTime), TopAll, 0))
+    eventDict['time'].append(Instant(At(currentTime), BottomAll, 0))
     return eventDict
 
 

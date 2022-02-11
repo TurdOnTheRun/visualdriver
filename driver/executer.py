@@ -21,7 +21,10 @@ eventDict = {
 
 # eventDict = backAndForward(50, [(TopAll, 80),], [(BottomAll, 80),], 1000, 10)
 # eventDict = sideToSide(30, (Bottom1, 100), (TopAll, 80), (Bottom2, 100), 1000, 10)
-eventDict = sideToSideTwo(30, (Bottom1, 100, 100), (TopAll, 80, 40), (Bottom2, 100, 100), 1)
+# eventDict = sideToSideTwo(28, (Bottom1, 100, 100), (TopAll, 90, 40), (Bottom2, 100, 100), 1)
+
+eventDict = sideToSideTwo(28, (Bottom1, 100, 200), (TopAll, 90, 80), (Bottom2, 100, 200), 2)
+
 
 
 # eventDict['position'] = [MotorSpeed(At(0), 100, 30),] + eventDict['position']
@@ -54,7 +57,7 @@ if __name__ == '__main__':
     bottomQueue.put((220,0,50))
     topQueue.put((200,0))
     bottomQueue.put((200,0))
-    time.sleep(2)
+    time.sleep(4)
     print('Setup Complete!')
 
     timeEventsIndex = 0
