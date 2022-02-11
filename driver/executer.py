@@ -19,7 +19,9 @@ eventDict = {
     'time': []
 }
 
-eventDict = backAndForward(50, [(TopAll, 80),], [(BottomAll, 80),], 1000, 10)
+# eventDict = backAndForward(50, [(TopAll, 80),], [(BottomAll, 80),], 1000, 10)
+eventDict = sideToSide(30, (Bottom1, 100), (TopAll, 80), (Bottom2, 100), 1000, 10)
+
 
 # eventDict['position'] = [MotorSpeed(At(0), 100, 30),] + eventDict['position']
 # eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']

@@ -602,8 +602,58 @@ def backAndForward(duration, backAgentsAndStates, forwardAgentsAndStates, millis
     return eventDict
 
 
+def sideToSide(duration, leftAgentAndState, centerAgentAndState, rightAgentAndState, millisecondsOn, millisecondsStep, currentTime=0):
+
+    eventDict = {
+        'position': [],
+        'time': []
+    }
+   
+    if currentTime == 0:
+        eventDict['time'].append(TimeReset(At(0)))
+    
+    duration += currentTime
+    randintrange = (0, 100)
+    nextAgentAndState = 'center'
+    lastAgentAndState = 'left'
+
+    eventDict['time'].append(InstantBezier(At(currentTime), leftAgentAndState[0], 0, leftAgentAndState[1], millisecondsStep, 100, 100, 100, 100))
+    currentTime += (millisecondsOn + millisecondsStep)/1000
+
+    while currentTime < duration:
+
+        ax = random.randint(randintrange[0], randintrange[1])
+        ay = random.randint(randintrange[0], randintrange[1])
+        bx = random.randint(randintrange[0], randintrange[1])
+        by = random.randint(randintrange[0], randintrange[1])
+
+        if nextAgentAndState == 'center':
+            eventDict['time'].append(InstantBezier(At(currentTime), centerAgentAndState[0], 0, centerAgentAndState[1], millisecondsStep, ax, ay, bx, by))
+            if lastAgentAndState == 'left':
+                eventDict['time'].append(InstantBezier(At(currentTime), leftAgentAndState[0], leftAgentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
+                nextAgentAndState = 'right'
+            else:
+                eventDict['time'].append(InstantBezier(At(currentTime), rightAgentAndState[0], rightAgentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
+                nextAgentAndState = 'left'
+        elif nextAgentAndState == 'right':
+            eventDict['time'].append(InstantBezier(At(currentTime), rightAgentAndState[0], 0, rightAgentAndState[1], millisecondsStep, ax, ay, bx, by))
+            eventDict['time'].append(InstantBezier(At(currentTime), centerAgentAndState[0], centerAgentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
+            nextAgentAndState = 'center'
+            lastAgentAndState = 'right'
+        elif nextAgentAndState == 'left':
+            eventDict['time'].append(InstantBezier(At(currentTime), leftAgentAndState[0], 0, leftAgentAndState[1], millisecondsStep, ax, ay, bx, by))
+            eventDict['time'].append(InstantBezier(At(currentTime), centerAgentAndState[0], centerAgentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
+            nextAgentAndState = 'center'
+            lastAgentAndState = 'left'
+
+        currentTime += (millisecondsOn + millisecondsStep)/1000
+
+    return eventDict
+
+
 # from agents import *
 # eventDict = backAndForward(100, [(TopAll, 80)], [(BottomAll, 80)], 1000, 10)
+# eventDict = sideToSide(30, (Bottom1, 100), (TopAll, 80), (Bottom2, 100), 1000, 10)
 # for event in eventDict['time']:
 #     print(event)
 # import pdb;pdb.set_trace()
