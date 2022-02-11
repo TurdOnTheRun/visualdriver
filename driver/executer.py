@@ -20,7 +20,8 @@ eventDict = {
 }
 
 # eventDict = backAndForward(50, [(TopAll, 80),], [(BottomAll, 80),], 1000, 10)
-eventDict = sideToSide(30, (Bottom1, 100), (TopAll, 80), (Bottom2, 100), 1000, 10)
+# eventDict = sideToSide(30, (Bottom1, 100), (TopAll, 80), (Bottom2, 100), 1000, 10)
+eventDict = sideToSideTwo(30, (Bottom1, 100, 100), (TopAll, 80, 40), (Bottom2, 100, 100), 1)
 
 
 # eventDict['position'] = [MotorSpeed(At(0), 100, 30),] + eventDict['position']
