@@ -20,9 +20,8 @@ eventDict = {
 }
 
 # eventDict = backAndForward(50, [(TopAll, 80),], [(BottomAll, 80),], 1000, 10)
-# eventDict = sideToSide(30, (Bottom1, 100), (TopAll, 80), (Bottom2, 100), 1000, 10)
 
-eventDict = sideToSideTwo(30, (Bottom1, 100, 100), (TopAll, 90, 40), (Bottom2, 100, 100), 1)
+eventDict = leftCenterRight(30, (Bottom1, 100, 100), (TopAll, 90, 40), (Bottom2, 100, 100), 1)
 # eventDict = sideToSideTwo(60, (Bottom1, 100, 200), (TopAll, 90, 80), (Bottom2, 100, 200), 2)
 
 
@@ -121,6 +120,10 @@ if __name__ == '__main__':
                     elif event.type == TIME_EVENTS_CLEAR_TO_MARKER_TYPE:
                         timeEvents = timeEvents[timeEvents.index(event.marker)+1:]
                         timeEventsIndex = 0
+                    elif event.type == TRIGGER_SET_ANGLE_TYPE:
+                        triggerQueue.append([1, event.angle])
+                    elif event.type == TRIGGER_DETACH_TYPE:
+                        triggerQueue.append([0,])
                 
             if timeEventsIndex >= len(timeEvents) and positionEventsIndex >= len(positionEvents):
                 time.sleep(2)

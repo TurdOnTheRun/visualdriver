@@ -16,6 +16,8 @@ TIME_EVENTS_UNBLOCK_TYPE = 4
 TIME_EVENTS_CLEAR_TYPE = 5
 TIME_EVENTS_CLEAR_TO_MARKER_TYPE = 6
 MARKER_TYPE = 7
+TRIGGER_SET_ANGLE_TYPE = 8
+TRIGGER_DETACH_TYPE = 9
 
 
 class Event:
@@ -218,6 +220,23 @@ class MotorChangeDirection(ArduinoEvent):
     
     def make_command(self):
         return self.clean_bytes([221,])
+
+
+class TriggerAngle(Event):
+    def __init__(self, condition, angle):
+        self.type = TRIGGER_SET_ANGLE_TYPE
+        super().__init__(condition, Main)
+        if type(angle) != int or angle > 180 or angle < 0:
+            self.abort('Invalid angle: ' + str(angle))
+        else:
+            self.angle = angle
+
+
+class TriggerDetach(Event):
+    def __init__(self, condition):
+        self.type = TRIGGER_DETACH_TYPE
+        super().__init__(condition, Main)
+
 
 
 class Marker(Event):
@@ -604,56 +623,7 @@ def backAndForward(duration, backAgentsAndStates, forwardAgentsAndStates, millis
     return eventDict
 
 
-def sideToSide(duration, leftAgentAndState, centerAgentAndState, rightAgentAndState, millisecondsOn, millisecondsStep, currentTime=0):
-
-    eventDict = {
-        'position': [],
-        'time': []
-    }
-   
-    if currentTime == 0:
-        eventDict['time'].append(TimeReset(At(0)))
-    
-    duration += currentTime
-    randintrange = (0, 100)
-    nextAgentAndState = 'center'
-    lastAgentAndState = 'left'
-
-    eventDict['time'].append(InstantBezier(At(currentTime), leftAgentAndState[0], 0, leftAgentAndState[1], millisecondsStep, 100, 100, 100, 100))
-    currentTime += (millisecondsOn + millisecondsStep*100)/1000
-
-    while currentTime < duration:
-
-        ax = random.randint(randintrange[0], randintrange[1])
-        ay = random.randint(randintrange[0], randintrange[1])
-        bx = random.randint(randintrange[0], randintrange[1])
-        by = random.randint(randintrange[0], randintrange[1])
-
-        if nextAgentAndState == 'center':
-            eventDict['time'].append(InstantBezier(At(currentTime), centerAgentAndState[0], 0, centerAgentAndState[1], millisecondsStep, ax, ay, bx, by))
-            if lastAgentAndState == 'left':
-                eventDict['time'].append(InstantBezier(At(currentTime), leftAgentAndState[0], leftAgentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
-                nextAgentAndState = 'right'
-            else:
-                eventDict['time'].append(InstantBezier(At(currentTime), rightAgentAndState[0], rightAgentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
-                nextAgentAndState = 'left'
-        elif nextAgentAndState == 'right':
-            eventDict['time'].append(InstantBezier(At(currentTime), rightAgentAndState[0], 0, rightAgentAndState[1], millisecondsStep, ax, ay, bx, by))
-            eventDict['time'].append(InstantBezier(At(currentTime), centerAgentAndState[0], centerAgentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
-            nextAgentAndState = 'center'
-            lastAgentAndState = 'right'
-        elif nextAgentAndState == 'left':
-            eventDict['time'].append(InstantBezier(At(currentTime), leftAgentAndState[0], 0, leftAgentAndState[1], millisecondsStep, ax, ay, bx, by))
-            eventDict['time'].append(InstantBezier(At(currentTime), centerAgentAndState[0], centerAgentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
-            nextAgentAndState = 'center'
-            lastAgentAndState = 'left'
-
-        currentTime += (millisecondsOn + millisecondsStep*100)/1000
-
-    return eventDict
-
-
-def sideToSideTwo(duration, leftAgentAndStateAndOn, centerAgentAndStateAndOn, rightAgentAndStateAndOn, millisecondsStep, currentTime=0):
+def leftCenterRight(duration, leftAgentAndStateAndOn, centerAgentAndStateAndOn, rightAgentAndStateAndOn, millisecondsStep, currentTime=0):
 
     eventDict = {
         'position': [],
