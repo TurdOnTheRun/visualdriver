@@ -2,7 +2,7 @@ from agents import LIGHT_AGENT_TYPE, Main, Bottom
 from conditions import At
 import random
 
-from driver.agents import BottomAll, TopAll
+from agents import BottomAll, TopAll
 
 
 ARDUINO_COMMUNICATION_START_BYTE = 251
