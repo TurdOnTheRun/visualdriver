@@ -22,7 +22,7 @@ eventDict = {
 
 eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=100, accelerationArc=0.5)
 
-eventDict = schattentanzRandomBezier(100, 3, 10, [(TopAll, 80), (BottomAll, 80)], 2, 160, accelerationArc=0.5)
+#eventDict = schattentanzRandomBezier(100, 3, 10, [(TopAll, 80), (BottomAll, 80)], 2, 160, accelerationArc=0.5)
 
 
 
@@ -65,8 +65,6 @@ if __name__ == '__main__':
     positionEventsIndex = 0
     positionEventsBlocked = False
 
-    mi.start()
-
     try:
         last = time.time()
 
@@ -75,12 +73,6 @@ if __name__ == '__main__':
             events = []
             now = time.time() - last
             positionNow = position.value
-
-            try:
-                mi = manualQueue.get_nowait()
-                bottomQueue.put((220,0,60))
-            except:
-                pass
 
             if not timeEventsBlocked and timeEventsIndex < len(timeEvents):
                 nextTimeEvent = timeEvents[timeEventsIndex]
