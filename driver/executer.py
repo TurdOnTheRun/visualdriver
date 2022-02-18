@@ -10,6 +10,8 @@ from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_ENCODER_CONN
 
+from manualinputmanager import ManualInputManager
+
 
 # with open('filename.pickle', 'rb') as handle:
 #     eventDict = pickle.load(handle)
@@ -19,26 +21,15 @@ eventDict = {
     'time': []
 }
 
-# eventDict = backAndForward(50, [(TopAll, 80),], [(BottomAll, 80),], 1000, 10)
 
-# eventDict = leftCenterRight(30, (Bottom1, 100, 100), (TopAll, 90, 40), (Bottom2, 100, 100), 1)
-# eventDict = sideToSideTwo(60, (Bottom1, 100, 200), (TopAll, 90, 80), (Bottom2, 100, 200), 2)
+eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 50)], motorspeed=120, accelerationArc=0.5)
+
+eventDict = schattentanzRandomBezier(120, 6, 10, [(TopAll, 80), (BottomAll, 80)], 1, 80, accelerationArc=0.5)
 
 
 
 # eventDict['position'] = [MotorSpeed(At(0), 100, 30),] + eventDict['position']
 # eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
-
-from photoevents import flashCollection
-# First Fire
-# ISO 160, 22
-# eventDict = flashCollection([(Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Top1, 100, 250), (Top1, 100, 250)])
-
-# ISO 100, 16
-eventDict = flashCollection([(Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Top1, 100, 250), (Top1, 100, 250)])
-
-# ISO 100, 11-18
-eventDict = flashCollection([(Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Bottom1, 100, 250), (Bottom2, 100, 250), (Top1, 100, 250), (Top1, 100, 250)], 3)
 
 
 timeEvents = eventDict.get('time', [])
@@ -63,6 +54,9 @@ if __name__ == '__main__':
     er = EncoderReader(position, distance)
     er.start()
 
+    manualQueue = Queue()
+    mi = ManualInputManager(manualQueue)
+
     print('Setting Up...')
     time.sleep(3)
     bottomQueue.put((220,0,50))
@@ -76,6 +70,8 @@ if __name__ == '__main__':
     positionEventsIndex = 0
     positionEventsBlocked = False
 
+    mi.start()
+
     try:
         last = time.time()
 
@@ -84,6 +80,12 @@ if __name__ == '__main__':
             events = []
             now = time.time() - last
             positionNow = position.value
+
+            try:
+                mi = manualQueue.get_nowait()
+                bottomQueue.put((220,0,60))
+            except:
+                pass
 
             if not timeEventsBlocked and timeEventsIndex < len(timeEvents):
                 nextTimeEvent = timeEvents[timeEventsIndex]
