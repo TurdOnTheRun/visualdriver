@@ -10,8 +10,6 @@ from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_ENCODER_CONN
 
-from manualinputmanager import ManualInputManager
-
 
 # with open('filename.pickle', 'rb') as handle:
 #     eventDict = pickle.load(handle)
@@ -22,9 +20,9 @@ eventDict = {
 }
 
 
-eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 50)], motorspeed=120, accelerationArc=0.5)
+eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=100, accelerationArc=0.5)
 
-eventDict = schattentanzRandomBezier(120, 6, 10, [(TopAll, 80), (BottomAll, 80)], 1, 80, accelerationArc=0.5)
+eventDict = schattentanzRandomBezier(100, 3, 10, [(TopAll, 80), (BottomAll, 80)], 2, 160, accelerationArc=0.5)
 
 
 
@@ -53,9 +51,6 @@ if __name__ == '__main__':
     distance = Value('d', 0.0)
     er = EncoderReader(position, distance)
     er.start()
-
-    manualQueue = Queue()
-    mi = ManualInputManager(manualQueue)
 
     print('Setting Up...')
     time.sleep(3)
