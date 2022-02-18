@@ -316,12 +316,52 @@ def schattentanzRandomBezier(motorspeed, rounds, swooshsPerRound, agentsAndState
             ay = random.randint(randintrange[0], randintrange[1])
             bx = random.randint(randintrange[0], randintrange[1])
             by = random.randint(randintrange[0], randintrange[1])
-            for a in agentsAndStates:
-                positionEvents.append(FlashBezier(At(currentPosition), a[0], a[1], 0, millisecondsStep, ax, ay, bx, by, millisecondsOn))
+            agentAndState = random.choice(agentsAndStates)
+            positionEvents.append(FlashBezier(At(currentPosition), agentAndState[0], agentAndState[1], 0, millisecondsStep, ax, ay, bx, by, millisecondsOn))
             currentPosition += 1/swooshsPerRound
     
     return {
         'position': positionEvents
+    }
+
+
+def breathing(duration, agentsAndStates, millisecondsStep, millisecondsOn, motorspeed=None, currentPosition=0, accelerationArc=0):
+
+    randintrange = (0,100)
+
+    positionEvents = []
+    timeEvents = []
+    
+    timeEvents.append(TimeEventsBlock(At(0)))
+    if currentPosition == 0:
+        positionEvents.append(PositionReset(At(0)))
+    
+    if motorspeed:
+        positionEvents.append(MotorSpeed(At(0), motorspeed, 50))
+    currentPosition += accelerationArc
+    positionEvents.append(TimeReset(At(currentPosition)))
+    positionEvents.append(TimeEventsUnblock(At(currentPosition)))
+
+    currentTime = 0
+
+    while currentTime < duration:
+        ax = random.randint(randintrange[0], randintrange[1])
+        ay = random.randint(randintrange[0], randintrange[1])
+        bx = random.randint(randintrange[0], randintrange[1])
+        by = random.randint(randintrange[0], randintrange[1])
+        agentAndState = random.choice(agentsAndStates)
+        timeEvents.append(InstantBezier(At(currentTime), agentAndState[0], 0, agentAndState[1],  millisecondsStep, ax, ay, bx, by))
+        currentTime += (millisecondsOn + millisecondsStep*100)/1000
+        ax = random.randint(randintrange[0], randintrange[1])
+        ay = random.randint(randintrange[0], randintrange[1])
+        bx = random.randint(randintrange[0], randintrange[1])
+        by = random.randint(randintrange[0], randintrange[1])
+        timeEvents.append(InstantBezier(At(currentTime), agentAndState[0], agentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
+        currentTime += (millisecondsStep*100)/1000
+    
+    return {
+        'position': positionEvents,
+        'time': timeEvents
     }
 
 # Resets Time

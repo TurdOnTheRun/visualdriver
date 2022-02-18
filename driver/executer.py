@@ -20,9 +20,11 @@ eventDict = {
 }
 
 
-eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=100, accelerationArc=0.5)
+#eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=100, accelerationArc=0.5)
 
-#eventDict = schattentanzRandomBezier(100, 3, 10, [(TopAll, 80), (BottomAll, 80)], 2, 160, accelerationArc=0.5)
+eventDict = schattentanzRandomBezier(100, 3, 10, [(TopAll, 80), (BottomAll, 80)], 2, 200, accelerationArc=0.5)
+
+eventDict = breathing(28, [(TopAll, 80), (BottomAll, 80)], 2, 200, 100, accelerationArc=0.5)
 
 
 
