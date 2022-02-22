@@ -1,0 +1,1 @@
+eventDict = breathing(58, [(TopAll, 90), (BottomAll, 100)], 7, 600, 100, accelerationArc=0.5)

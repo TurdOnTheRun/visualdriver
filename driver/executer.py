@@ -24,7 +24,7 @@ eventDict = {
 
 # eventDict = schattentanzRandomBezier(100, 3, 10, [(TopAll, 100), (BottomAll, 100)], 3, 255, accelerationArc=0.5)
 
-eventDict = breathing(58, [(TopAll, 90), (BottomAll, 100)], 7, 600, 100, accelerationArc=0.5)
+eventDict = leftCenterRight(60, (BottomAll, 90, 200), (TopAll, 90, 80), (BottomAll, 90, 200), 2)
 
 
 
