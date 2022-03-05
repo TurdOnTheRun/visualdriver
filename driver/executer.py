@@ -19,8 +19,8 @@ eventDict = {
     'time': []
 }
 
-# eventDict = thatFuzz(49, (40, 50), (10,20), ((Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)))
-# eventDict['position'] = [MotorSpeed(At(0), 111, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
+# eventDict = thatFuzz(29, (40, 50), (10,20), ((Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)))
+# eventDict['position'] = [MotorSpeed(At(0), 111, 30), TimeEventsUnblock(At(0.5))]
 # eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
 eventDict = dancingInTheVoid(58, (200,220), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=111, accelerationArc=0.5)

@@ -202,7 +202,7 @@ class FlashBezier(ArduinoEvent):
 class MotorSpeed(ArduinoEvent):
 
     def __init__(self, condition, state, millisecondsStep):
-        self.check_state(state)
+        # self.check_state(state)
         self.state = state
         self.millisecondsStep = millisecondsStep
         super().__init__(condition, Bottom)
