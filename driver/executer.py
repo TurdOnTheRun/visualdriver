@@ -20,11 +20,11 @@ eventDict = {
 }
 
 
-#eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=100, accelerationArc=0.5)
+eventDict = dancingInTheVoid(28, (50,70), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=100, accelerationArc=0.5)
 
 # eventDict = schattentanzRandomBezier(100, 3, 10, [(TopAll, 100), (BottomAll, 100)], 3, 255, accelerationArc=0.5)
 
-eventDict = leftCenterRight(60, (BottomAll, 90, 200), (TopAll, 90, 80), (BottomAll, 90, 200), 2)
+# eventDict = leftCenterRight(58, (BottomAll, 90, 200), (TopAll, 90, 80), (BottomAll, 90, 200), 2)
 
 
 
@@ -41,13 +41,15 @@ ti = 1
 millisecondson = 50
 for x in range(10):
     eventDict['time'].append(Flash(At(ti), Top1, 100, millisecondson))
-    ti += millisecondson*2
+    ti += (millisecondson/1000)*2
     eventDict['time'].append(Flash(At(ti), BottomAll, 100, millisecondson))
-    ti += millisecondson*2
+    ti += (millisecondson/1000)*2
 
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
+
+print(timeEvents)
 
 if __name__ == '__main__':
 
