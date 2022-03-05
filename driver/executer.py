@@ -31,6 +31,20 @@ eventDict = leftCenterRight(60, (BottomAll, 90, 200), (TopAll, 90, 80), (BottomA
 # eventDict['position'] = [MotorSpeed(At(0), 100, 30),] + eventDict['position']
 # eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
+eventDict = {
+    'position': [],
+    'time': []
+}
+
+ti = 1
+
+millisecondson = 50
+for x in range(10):
+    eventDict['time'].append(Flash(At(ti), Top1, 100, millisecondson))
+    ti += millisecondson*2
+    eventDict['time'].append(Flash(At(ti), BottomAll, 100, millisecondson))
+    ti += millisecondson*2
+
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
