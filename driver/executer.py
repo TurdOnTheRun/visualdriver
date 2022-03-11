@@ -45,6 +45,12 @@ positionEvents = eventDict.get('position', [])
 
 print(timeEvents)
 
+discharging = open('/sys/class/power_supply/BAT0/status','r').readline().strip().lower()
+if discharging != 'discharging':
+    print('Laptop is charging')
+    exit()
+
+
 if __name__ == '__main__':
 
     topQueue = Queue()
