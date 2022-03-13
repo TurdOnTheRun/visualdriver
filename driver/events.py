@@ -722,3 +722,37 @@ def leftCenterRight(duration, leftAgentAndStateAndOn, centerAgentAndStateAndOn, 
 # for event in eventDict['time']:
 #     print(event)
 # import pdb;pdb.set_trace()
+
+
+# Resets Time
+def topBottomLightTest(duration, millisecondsOnOff, agentsAndStates, motorspeed=None, accelerationArc=0):
+
+    positionEvents = []
+    timeEvents = []
+    
+    timeEvents.append(TimeEventsBlock(At(0)))
+    if currentPosition == 0:
+        positionEvents.append(PositionReset(At(0)))
+    
+    if motorspeed:
+        positionEvents.append(MotorSpeed(At(0), motorspeed, 30))
+    currentPosition += accelerationArc
+    positionEvents.append(TimeReset(At(currentPosition)))
+    positionEvents.append(TimeEventsUnblock(At(0)))
+
+    currentTime = 0
+    index = 0
+
+    while currentTime < duration:
+        if index == len(agentsAndStates-1):
+            index = 0
+        else:
+            index += 1
+        agent = agentsAndStates[index]
+        timeEvents.append(Flash(At(currentTime), agent[0], agent[1], millisecondsOnOff))
+        currentTime += (millisecondsOnOff + millisecondsOnOff)/1000
+
+    return {
+        'position': positionEvents,
+        'time': timeEvents
+    }

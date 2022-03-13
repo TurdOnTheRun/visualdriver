@@ -19,26 +19,8 @@ eventDict = {
     'time': []
 }
 
-# eventDict = thatFuzz(29, (40, 50), (10,20), ((Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100)))
-# eventDict['position'] = [MotorSpeed(At(0), 111, 30), TimeEventsUnblock(At(0.5))]
-# eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
-eventDict = dancingInTheVoid(58, (200,220), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=111, accelerationArc=0.5)
-
-
-
-
-
-
-# eventDict = schattentanzRandomBezier(100, 3, 10, [(TopAll, 100), (BottomAll, 100)], 3, 255, accelerationArc=0.5)
-
-# eventDict = leftCenterRight(58, (BottomAll, 90, 200), (TopAll, 90, 80), (BottomAll, 90, 200), 2)
-
-
-
-# eventDict['position'] = [MotorSpeed(At(0), 100, 30),] + eventDict['position']
-# eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
-
+eventDict = topBottomLightTest(30, 50, [[Top1, Bottom1, Top2, Bottom2, Top3, Bottom1, Top4, Bottom2,]])
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
@@ -47,8 +29,9 @@ print(timeEvents)
 
 discharging = open('/sys/class/power_supply/BAT0/status','r').readline().strip().lower()
 if discharging != 'discharging':
-    print('Laptop is charging')
-    exit()
+    inp = input('Laptop is charging...\nTo continue confirm with "go":')
+    if inp.lower() != "go":
+        exit()
 
 
 if __name__ == '__main__':
