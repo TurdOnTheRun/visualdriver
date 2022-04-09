@@ -756,3 +756,52 @@ def topBottomLightTest(duration, millisecondsOnOff, agentsAndStates, motorspeed=
         'position': positionEvents,
         'time': timeEvents
     }
+
+
+def flower(motorspeed, rounds, swooshsPerRound, agentsAndStates, millisecondsStep, currentPosition=0, accelerationArc=0):
+
+    eventDict = {
+        'position': [],
+        'time': []
+    }
+
+    randintrange = (0,100)
+
+    if currentPosition == 0:
+        eventDict['position'].append(PositionReset(At(0)))
+    
+    eventDict['position'].append(MotorSpeed(At(0), motorspeed, 30))
+    currentPosition += accelerationArc
+    
+    lastAgentAndState = agentsAndStates[1]
+    agentsIndex = 0
+
+    for i in range(rounds):
+        for j in range(swooshsPerRound):
+            ax = random.randint(randintrange[0], randintrange[1])
+            ay = random.randint(randintrange[0], randintrange[1])
+            bx = random.randint(randintrange[0], randintrange[1])
+            by = random.randint(randintrange[0], randintrange[1])
+            agentAndState = agentsAndStates[agentsIndex]
+            if not (i == 0 and j == 0):
+                eventDict['position'].append(InstantBezier(At(currentPosition), lastAgentAndState[0], lastAgentAndState[1], 0, millisecondsStep, ax, ay, bx, by))
+            if i == rounds-1 and j == swooshsPerRound-1:
+                currentPosition += 1/swooshsPerRound
+                continue
+            eventDict['position'].append(InstantBezier(At(currentPosition), agentAndState[0], 0, agentAndState[1], millisecondsStep, ax, ay, bx, by))
+            lastAgentAndState = agentAndState
+            if agentsIndex == len(agentsAndStates)-1:
+                agentsIndex = 0
+            else:
+                agentsIndex += 1
+            currentPosition += 1/swooshsPerRound
+
+    eventDict['position'].append(MotorSpeed(At(currentPosition), 0, 30))
+    return eventDict
+
+
+from agents import *
+eventDict = flower(90, 3, 10, [(TopAll, 90), (BottomAll, 90)], 2, 0.5)
+for event in eventDict['position']:
+    print(event)
+import pdb;pdb.set_trace()
