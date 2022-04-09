@@ -20,12 +20,13 @@ eventDict = {
 }
 
 
-eventDict = topBottomLightTest(30, 50, [[Top1, Bottom1, Top2, Bottom2, Top3, Bottom1, Top4, Bottom2,]])
+# eventDict = topBottomLightTest(30, 50, [[Top1, Bottom1, Top2, Bottom2, Top3, Bottom1, Top4, Bottom2,]])
+
+eventDict = leftCenterRight(25, (BottomAll, 90, 200), (TopAll, 90, 80), (BottomAll, 90, 200), 2)
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
 
-print(timeEvents)
 
 discharging = open('/sys/class/power_supply/BAT0/status','r').readline().strip().lower()
 if discharging != 'discharging':
