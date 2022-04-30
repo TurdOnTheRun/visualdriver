@@ -765,7 +765,7 @@ def flower(motorspeed, rounds, swooshsPerRound, agentsAndStates, millisecondsSte
         'time': []
     }
 
-    randintrange = (0,100)
+    randintrange = (80,100)
 
     if currentPosition == 0:
         eventDict['position'].append(PositionReset(At(0)))
@@ -800,8 +800,8 @@ def flower(motorspeed, rounds, swooshsPerRound, agentsAndStates, millisecondsSte
     return eventDict
 
 
-from agents import *
+""" from agents import *
 eventDict = flower(90, 3, 10, [(TopAll, 90), (BottomAll, 90)], 2, 0.5)
 for event in eventDict['position']:
     print(event)
-import pdb;pdb.set_trace()
+import pdb;pdb.set_trace() """

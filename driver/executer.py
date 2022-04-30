@@ -14,17 +14,11 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 # with open('filename.pickle', 'rb') as handle:
 #     eventDict = pickle.load(handle)
 
-eventDict = {
-    'position': [],
-    'time': []
-}
-
-
 # eventDict = topBottomLightTest(30, 50, [[Top1, Bottom1, Top2, Bottom2, Top3, Bottom1, Top4, Bottom2,]])
 
 # eventDict = leftCenterRight(25, (BottomAll, 90, 200), (TopAll, 90, 80), (BottomAll, 90, 200), 2)
 
-eventDict = flower(90, 3, 10, [(TopAll, 90), (BottomAll, 90)], 2, 0.5)
+# eventDict = flower(100, 3, 6, [(TopAll, 90), (BottomAll, 90)], 4, 0.5)
 
 
 timeEvents = eventDict.get('time', [])
