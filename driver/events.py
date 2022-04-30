@@ -725,7 +725,7 @@ def leftCenterRight(duration, leftAgentAndStateAndOn, centerAgentAndStateAndOn, 
 
 
 # Resets Time
-def topBottomLightTest(duration, millisecondsOnOff, agentsAndStates, motorspeed=None, accelerationArc=0):
+def topBottomLightTest(duration, millisecondsOnOff, agentsAndStates, motorspeed=None, currentPosition=0, accelerationArc=0):
 
     positionEvents = []
     timeEvents = []
@@ -738,7 +738,7 @@ def topBottomLightTest(duration, millisecondsOnOff, agentsAndStates, motorspeed=
         positionEvents.append(MotorSpeed(At(0), motorspeed, 30))
     currentPosition += accelerationArc
     positionEvents.append(TimeReset(At(currentPosition)))
-    positionEvents.append(TimeEventsUnblock(At(0)))
+    positionEvents.append(TimeEventsUnblock(At(currentPosition)))
 
     currentTime = 0
     index = 0
