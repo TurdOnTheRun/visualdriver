@@ -21,9 +21,9 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 # eventDict = flower(100, 3, 6, [(TopAll, 90), (BottomAll, 90)], 4, 0.5)
 
 
-eventDict = topBottomLightTest(20, 10, [(TopAll, 90), (BottomAll, 90),])
+# eventDict = topBottomLightTest(20, 10, [(TopAll, 90), (BottomAll, 90),])
 
-# eventDict = backAndForward(20, [(TopAll, 90),], [(BottomAll, 90),], 600, 4)
+eventDict = backAndForward(20, [(TopAll, 90),], [(BottomAll, 90),], 100, 2)
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])

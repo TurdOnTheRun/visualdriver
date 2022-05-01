@@ -744,13 +744,16 @@ def topBottomLightTest(duration, millisecondsOnOff, agentsAndStates, motorspeed=
     index = 0
 
     while currentTime < duration:
-        if index == len(agentsAndStates-1):
+        if index == len(agentsAndStates)-1:
             index = 0
         else:
             index += 1
         agent = agentsAndStates[index]
         timeEvents.append(Flash(At(currentTime), agent[0], agent[1], millisecondsOnOff))
-        currentTime += (millisecondsOnOff + millisecondsOnOff)/1000
+        if index == 1:
+            currentTime += (millisecondsOnOff)/1000
+        else:
+            currentTime += (millisecondsOnOff + millisecondsOnOff)/1000
 
     return {
         'position': positionEvents,
