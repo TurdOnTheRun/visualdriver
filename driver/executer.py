@@ -14,17 +14,13 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 # with open('filename.pickle', 'rb') as handle:
 #     eventDict = pickle.load(handle)
 
-# eventDict = topBottomLightTest(30, 50, [[Top1, Bottom1, Top2, Bottom2, Top3, Bottom1, Top4, Bottom2,]])
+eventDict = dancingInTheVoid(30, (200,220), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=111, accelerationArc=0.5)
 
-# eventDict = leftCenterRight(25, (BottomAll, 90, 200), (TopAll, 90, 80), (BottomAll, 90, 200), 2)
+# eventDict = thatFuzz(30, (200,220), (50, 60), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)])
 
-# eventDict = flower(100, 3, 6, [(TopAll, 90), (BottomAll, 90)], 4, 0.5)
+eventDict['position'] = [MotorSpeed(At(0), 100, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
+eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
 
-
-# eventDict = topBottomLightTest(20, 10, [(TopAll, 90), (BottomAll, 90),])
-
-# eventDict = backAndForward(20, [(TopAll, 90),], [(BottomAll, 90),], 100, 2)
-eventDict = flower(100, 3, 9, [(TopAll, 90), (BottomAll, 90)], 4, 0.5)
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
