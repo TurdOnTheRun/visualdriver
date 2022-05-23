@@ -23,6 +23,12 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 
 eventDict = leftCenterRight(60, (Bottom1, 100, 200), (TopAll, 90, 80), (Bottom2, 100, 200), 2)
 
+# 900ms
+eventDict = leftCenterRight(60, (Bottom1, 100, 200), (TopAll, 90, 100), (Bottom2, 100, 200), 2)
+
+
+
+
 
 timeEvents = eventDict.get('time', [])
 positionEvents = eventDict.get('position', [])
