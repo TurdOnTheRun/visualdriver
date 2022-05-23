@@ -11,15 +11,17 @@ from encoderreader import EncoderReader
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_ENCODER_CONN
 
 
-# with open('filename.pickle', 'rb') as handle:
-#     eventDict = pickle.load(handle)
+# # with open('filename.pickle', 'rb') as handle:
+# #     eventDict = pickle.load(handle)
 
-eventDict = dancingInTheVoid(30, (200,220), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=111, accelerationArc=0.5)
+# eventDict = dancingInTheVoid(30, (200,220), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)], motorspeed=111, accelerationArc=0.5)
 
-# eventDict = thatFuzz(30, (200,220), (50, 60), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)])
+# # eventDict = thatFuzz(30, (200,220), (50, 60), [(Top1, 100), (Top2, 100), (Top3, 100), (Top4, 100), (BottomAll, 80)])
 
-eventDict['position'] = [MotorSpeed(At(0), 100, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
-eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
+# eventDict['position'] = [MotorSpeed(At(0), 100, 30), TimeEventsUnblock(At(0.5))] + eventDict['position']
+# eventDict['time'] = [TimeEventsBlock(At(0)),] + eventDict['time']
+
+eventDict = leftCenterRight(60, (Bottom1, 100, 200), (TopAll, 90, 80), (Bottom2, 100, 200), 2)
 
 
 timeEvents = eventDict.get('time', [])
