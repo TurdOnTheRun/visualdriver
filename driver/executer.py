@@ -27,6 +27,8 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 eventDict = leftCenterRight(60, (Bottom1, 100, 200), (TopAll, 90, 100), (Bottom2, 100, 200), 2)
 # 1830ms
 eventDict = leftCenterRight(60, (Bottom1, 100, 467), (TopAll, 90, 467), (Bottom2, 100, 467), 2)
+# 1830ms
+eventDict = leftCenterRight(60, (Bottom1, 100, 200), (TopAll, 90, 200), (Bottom2, 100, 200), 4)
 
 
 
