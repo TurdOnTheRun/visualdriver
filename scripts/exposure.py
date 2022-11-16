@@ -1,0 +1,1 @@
+eventDict = flower(100, 3, 6, [(TopAll, 90), (BottomAll, 90)], 4, 0.5)
