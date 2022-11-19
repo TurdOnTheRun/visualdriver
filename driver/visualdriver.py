@@ -1,6 +1,6 @@
 from multiprocessing import Queue, Value, Lock
+from pygame import mixer
 import queue
-import pickle
 import time
 
 from events import *
@@ -15,17 +15,23 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 
 class VisualDriver:
 
-    def __init__(self, eventDict, usesKinect=False, usesTrigger=False):
+    def __init__(self, eventDict, usesKinect=False, usesTrigger=False, music=None):
         self.timeEvents = eventDict.get('time', [])
         self.positionEvents = eventDict.get('position', [])
         self.usesKinect = usesKinect
         self.usesTrigger = usesTrigger
+        self.music = music
 
         discharging = open('/sys/class/power_supply/BAT0/status','r').readline().strip().lower()
         if discharging != 'discharging':
             inp = input('Laptop is charging...\nTo continue confirm with "go":')
             if inp.lower() != "go":
                 exit()
+
+        if self.music:
+            mixer.init()
+            mixer.music.load(self.music)
+            mixer.music.set_volume(1)
 
         self.topQueue = Queue()
         self.top = ArduinoPwmManager(ARDUINO_MEGA_CONN, self.topQueue)
@@ -75,6 +81,8 @@ class VisualDriver:
         positionEventsIndex = 0
         positionEventsBlocked = False
         last = time.time()
+        if self.music:
+            mixer.music.play()
 
         try:
 

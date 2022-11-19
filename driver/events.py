@@ -1,7 +1,7 @@
 from agents import LIGHT_AGENT_TYPE, Main, Bottom
 from conditions import At
 import random
-
+from kinectreader import LEFT_WRIST, RIGHT_WRIST
 from agents import BottomAll, TopAll
 
 
@@ -104,6 +104,34 @@ class Instant(ArduinoEvent):
             command = [200, self.state]
         else:
             command = [self.agent.id, self.state]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class Linear(ArduinoEvent):
+
+    def __init__(self, condition, agent, state, millisecondsStep, hasVariable=False):
+        self.state = state
+        self.millisecondsStep = millisecondsStep
+        super().__init__(condition, agent, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'Instant({}, {}, {}, {})'.format(self.condition, self.agent, self.state, self.hasVariable)
+    
+    def check_init(self):
+        self.check_state(self.state)
+        self.check_is_light_agent(self.agent)
+    
+    def make_command(self):
+        if self.agent.id == -1:
+            command = [201, self.state, self.millisecondsStep]
+        else:
+            command = [10 + self.agent.id, self.state, self.millisecondsStep]
         if not self.hasVariable:
             return self.clean_bytes(command)
         else:
@@ -794,3 +822,42 @@ def flower(motorspeed, rounds, swooshsPerRound, agentsAndStates, millisecondsSte
     eventDict['position'].append(MotorSpeed(At(currentPosition), 0, 30))
     return eventDict
 
+
+def kinectTest(seconds, agent, millisecondsStep):
+
+
+    class Var(Variable):
+
+        def __init__(self):
+            self.lowHeight = 0.7
+            self.highHeight = 0.2
+            super().__init__()
+
+        def get(self, **kwargs):
+            height = (kwargs['pose'][LEFT_WRIST][1] + kwargs['pose'][RIGHT_WRIST][1])/2
+            print(height)
+            if height >= self.lowHeight:
+                print(0)
+                return 0
+            elif height <= self.highHeight:
+                print(100)
+                return 100
+            else:
+                print(int(140-200*height))
+                return int(140-200*height)
+
+    eventDict = {
+        'position': [],
+        'time': []
+    }
+
+    currentTime = 0
+    increments = 0.05
+
+    var = Var()
+
+    while currentTime < seconds:
+        eventDict['time'].append(Instant(At(currentTime), agent, var, hasVariable=True))
+        currentTime += increments
+    
+    return eventDict

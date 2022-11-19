@@ -43,7 +43,9 @@ while True:
     #image = cv2.rotate(image, cv2.cv2.ROTATE_90_CLOCKWISE)
     results = pose.process(image)
 
-    print(results.pose_landmarks)
+    if results.pose_landmarks:
+        print('X', (results.pose_landmarks.landmark[15].x + results.pose_landmarks.landmark[16].x)/2)
+        print('Y', (results.pose_landmarks.landmark[15].y + results.pose_landmarks.landmark[16].y)/2)
 
     # Draw the pose annotation on the image.
     image.flags.writeable = True
@@ -55,5 +57,6 @@ while True:
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
     # Flip the image horizontally for a selfie-view display.
     cv2.imshow('MediaPipe Pose', image)
-    if cv2.waitKey(5) & 0xFF == 27:
+    if cv2.waitKey(2000) & 0xFF == 27:
         break
+    
