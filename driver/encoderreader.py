@@ -6,10 +6,13 @@ from settings import ARDUINO_UNO_TRIGGER_ENCODER_CONN, ENCODER_REV_PULSE, WHEEL_
 
 class EncoderReader(Process):
 
-    def __init__(self, position, distance):
+    def __init__(self, lock, position, distance):
         super().__init__()
         self.daemon = True
         self.serial = self.connect()
+        self.positionBuffer = 0
+        self.distanceBuffer = 0
+        self.lock = lock
         self.position = position
         self.distance = distance
         self.distancePerPulse = (1 / ENCODER_REV_PULSE) * WHEEL_SIZE
@@ -34,32 +37,14 @@ class EncoderReader(Process):
             b = self.serial.read()
             i = int.from_bytes(b, byteorder='little', signed=True)
             if i > 0:
-                with self.position.get_lock():
-                    self.position.value += self.positionPerPulse
-                with self.distance.get_lock():
-                    self.distance.value += self.distancePerPulse
+                self.positionBuffer += self.positionPerPulse
+                self.distanceBuffer += self.distancePerPulse
             else:
-                with self.position.get_lock():
-                    self.position.value -= self.positionPerPulse
-                with self.distance.get_lock():
-                    self.distance.value -= self.distancePerPulse
-
-
-# position = Value('d', 0.0)
-# distance = Value('d', 0.0)
-# er = EncoderReader(position, distance)
-# er.start()
-
-# from arduinopwmmanager import ArduinoPwmManager
-# from multiprocessing import Queue
-# q = Queue()
-# trigger = ArduinoPwmManager(ARDUINO_UNO_TRIGGER_ENCODER_CONN, q)
-# trigger.start()
-# while True:
-#     q.put((1, 90))
-#     time.sleep(2)
-#     q.put((1,120))
-#     time.sleep(2)
-#     print(position.value)
-#     print(distance.value)
-# time.sleep(100)
+                self.positionBuffer -= self.positionPerPulse
+                self.distanceBuffer -= self.distancePerPulse
+            if self.lock.acquire(False):
+                self.position.value += self.positionBuffer
+                self.distance.value += self.distanceBuffer
+                self.lock.release()
+                self.positionBuffer = 0
+                self.distanceBuffer = 0

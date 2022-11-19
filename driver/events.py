@@ -286,7 +286,7 @@ class EventsAdd(Event):
     def __init__(self, condition, events):
         self.type = ADD_EVENTS_TYPE
         if not events or type(events) != dict:
-            self.abort('Events in TimeAddEvents is empty or not a dict')
+            self.abort('Events in EventsAdd is empty or not a dict')
         self.events = events
         super().__init__(condition, Main)
 
@@ -716,14 +716,6 @@ def leftCenterRight(duration, leftAgentAndStateAndOn, centerAgentAndStateAndOn, 
     return eventDict
 
 
-# from agents import *
-# eventDict = backAndForward(100, [(TopAll, 80)], [(BottomAll, 80)], 1000, 10)
-# eventDict = sideToSide(30, (Bottom1, 100), (TopAll, 80), (Bottom2, 100), 1000, 10)
-# for event in eventDict['time']:
-#     print(event)
-# import pdb;pdb.set_trace()
-
-
 # Resets Time
 def topBottomLightTest(duration, millisecondsOnOff, agentsAndStates, motorspeed=None, currentPosition=0, accelerationArc=0):
 
@@ -802,9 +794,3 @@ def flower(motorspeed, rounds, swooshsPerRound, agentsAndStates, millisecondsSte
     eventDict['position'].append(MotorSpeed(At(currentPosition), 0, 30))
     return eventDict
 
-
-""" from agents import *
-eventDict = flower(90, 3, 10, [(TopAll, 90), (BottomAll, 90)], 2, 0.5)
-for event in eventDict['position']:
-    print(event)
-import pdb;pdb.set_trace() """
