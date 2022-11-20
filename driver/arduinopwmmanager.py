@@ -7,12 +7,13 @@ endByte = bytes([252])
 
 class ArduinoPwmManager(Process):
 
-    def __init__(self, conn, commands):
+    def __init__(self, conn, commands, shutdownQueue):
         super().__init__()
         self.daemon = True
         self.conn = conn
         self.serial = self.connect()
         self.commands = commands
+        self.shutdownQueue = shutdownQueue
     
 
     def connect(self):

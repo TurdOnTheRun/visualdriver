@@ -32,27 +32,36 @@ class VisualDriver:
             mixer.init()
             mixer.music.load(self.music)
             mixer.music.set_volume(1)
+        
+        self.shutdownQueue = Queue()
 
         self.topQueue = Queue()
-        self.top = ArduinoPwmManager(ARDUINO_MEGA_CONN, self.topQueue)
+        self.top = ArduinoPwmManager(ARDUINO_MEGA_CONN, self.topQueue, self.shutdownQueue)
 
         self.bottomQueue = Queue()
-        self.bottom = ArduinoPwmManager(ARDUINO_UNO_CONN, self.bottomQueue)
+        self.bottom = ArduinoPwmManager(ARDUINO_UNO_CONN, self.bottomQueue, self.shutdownQueue)
         
         self.encoderLock = Lock()
         self.position = Value('d', 0.0, lock=False)
         self.distance = Value('d', 0.0, lock=False)
-        self.er = EncoderReader(self.encoderLock, self.position, self.distance)
+        self.er = EncoderReader(self.encoderLock, self.position, self.distance, self.shutdownQueue)
 
         if self.usesTrigger:
             self.triggerQueue = Queue()
-            self.trigger = ArduinoPwmManager(ARDUINO_UNO_TRIGGER_ENCODER_CONN, self.triggerQueue)
+            self.trigger = ArduinoPwmManager(ARDUINO_UNO_TRIGGER_ENCODER_CONN, self.triggerQueue, self.shutdownQueue)
 
         if self.usesKinect:
             self.kinectLock = Lock()
             self.kinectQueue = Queue()
-            self.kinectShutdownQueue = Queue()
-            self.kr = KinectReader(self.kinectLock, self.kinectQueue, self.kinectShutdownQueue)
+            self.kr = KinectReader(self.kinectLock, self.kinectQueue, self.shutdownQueue)
+    
+    def shutdown(self):
+        self.bottomQueue.put((220,0,50))
+        self.topQueue.put((200,50))
+        self.bottomQueue.put((200,0))
+        time.sleep(1)
+        self.shutdownQueue.put('STOP')
+        time.sleep(3)
     
     def start(self):
 
@@ -157,11 +166,6 @@ class VisualDriver:
                     break
 
         except Exception as e:
-            self.bottomQueue.put((220,0,50))
-            self.topQueue.put((200,50))
-            self.bottomQueue.put((200,0))
-            if self.usesKinect:
-                self.kinectShutdownQueue.put('STOP')
+            self.shutdown()
             print('Error:', e)
-            time.sleep(2)
             exit(-1)

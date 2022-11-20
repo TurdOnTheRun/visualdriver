@@ -6,7 +6,7 @@ from settings import ARDUINO_UNO_TRIGGER_ENCODER_CONN, ENCODER_REV_PULSE, WHEEL_
 
 class EncoderReader(Process):
 
-    def __init__(self, lock, position, distance):
+    def __init__(self, lock, position, distance, shutdownQueue):
         super().__init__()
         self.daemon = True
         self.serial = self.connect()
@@ -17,6 +17,7 @@ class EncoderReader(Process):
         self.distance = distance
         self.distancePerPulse = (1 / ENCODER_REV_PULSE) * WHEEL_SIZE
         self.positionPerPulse = self.distancePerPulse / RAIL_LENGTH
+        self.shutdownQueue = shutdownQueue
 
 
     def connect(self):
@@ -48,3 +49,8 @@ class EncoderReader(Process):
                 self.lock.release()
                 self.positionBuffer = 0
                 self.distanceBuffer = 0
+            if not self.shutdownQueue.empty():
+                print("Shutting down Encoder...")
+                self.serial.close()
+                time.sleep(1)
+                break

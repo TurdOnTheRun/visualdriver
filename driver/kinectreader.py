@@ -72,6 +72,7 @@ class KinectReader(Process):
                 print("Shutting down kinect...")
                 device.stop()
                 device.close()
+                break
             frames = kinect.FrameMap()
             listener.waitForNewFrame(frames)
             ir = frames[kinect.FrameType.Ir]

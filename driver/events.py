@@ -857,7 +857,7 @@ def kinectTest(seconds, agent, millisecondsStep):
     var = Var()
 
     while currentTime < seconds:
-        eventDict['time'].append(Instant(At(currentTime), agent, var, hasVariable=True))
+        eventDict['time'].append(Linear(At(currentTime), agent, var, millisecondsStep, hasVariable=True))
         currentTime += increments
     
     return eventDict
