@@ -829,22 +829,18 @@ def kinectTest(seconds, agent, millisecondsStep):
     class Var(Variable):
 
         def __init__(self):
-            self.lowHeight = 0.7
-            self.highHeight = 0.2
+            self.lowHeight = 0.5
+            self.highHeight = 0.1
             super().__init__()
 
         def get(self, **kwargs):
             height = (kwargs['pose'][LEFT_WRIST][1] + kwargs['pose'][RIGHT_WRIST][1])/2
-            print(height)
             if height >= self.lowHeight:
-                print(0)
                 return 0
             elif height <= self.highHeight:
-                print(100)
                 return 100
             else:
-                print(int(140-200*height))
-                return int(140-200*height)
+                return int(125-250*height)
 
     eventDict = {
         'position': [],

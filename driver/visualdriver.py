@@ -160,9 +160,7 @@ class VisualDriver:
                             self.triggerQueue.put([0,])
                     
                 if timeEventsIndex >= len(self.timeEvents) and positionEventsIndex >= len(self.positionEvents):
-                    if self.usesKinect:
-                        self.kinectShutdownQueue.put('STOP')
-                    time.sleep(2)
+                    self.shutdown()
                     break
 
         except Exception as e:
