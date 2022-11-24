@@ -1,7 +1,7 @@
 from agents import LIGHT_AGENT_TYPE, Main, Bottom
 from conditions import At
 import random
-
+from kinectreader import LEFT_WRIST, RIGHT_WRIST
 from agents import BottomAll, TopAll
 
 
@@ -104,6 +104,34 @@ class Instant(ArduinoEvent):
             command = [200, self.state]
         else:
             command = [self.agent.id, self.state]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class Linear(ArduinoEvent):
+
+    def __init__(self, condition, agent, state, millisecondsStep, hasVariable=False):
+        self.state = state
+        self.millisecondsStep = millisecondsStep
+        super().__init__(condition, agent, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'Instant({}, {}, {}, {})'.format(self.condition, self.agent, self.state, self.hasVariable)
+    
+    def check_init(self):
+        self.check_state(self.state)
+        self.check_is_light_agent(self.agent)
+    
+    def make_command(self):
+        if self.agent.id == -1:
+            command = [201, self.state, self.millisecondsStep]
+        else:
+            command = [10 + self.agent.id, self.state, self.millisecondsStep]
         if not self.hasVariable:
             return self.clean_bytes(command)
         else:
@@ -286,7 +314,7 @@ class EventsAdd(Event):
     def __init__(self, condition, events):
         self.type = ADD_EVENTS_TYPE
         if not events or type(events) != dict:
-            self.abort('Events in TimeAddEvents is empty or not a dict')
+            self.abort('Events in EventsAdd is empty or not a dict')
         self.events = events
         super().__init__(condition, Main)
 
@@ -716,14 +744,6 @@ def leftCenterRight(duration, leftAgentAndStateAndOn, centerAgentAndStateAndOn, 
     return eventDict
 
 
-# from agents import *
-# eventDict = backAndForward(100, [(TopAll, 80)], [(BottomAll, 80)], 1000, 10)
-# eventDict = sideToSide(30, (Bottom1, 100), (TopAll, 80), (Bottom2, 100), 1000, 10)
-# for event in eventDict['time']:
-#     print(event)
-# import pdb;pdb.set_trace()
-
-
 # Resets Time
 def topBottomLightTest(duration, millisecondsOnOff, agentsAndStates, motorspeed=None, currentPosition=0, accelerationArc=0):
 
@@ -803,8 +823,37 @@ def flower(motorspeed, rounds, swooshsPerRound, agentsAndStates, millisecondsSte
     return eventDict
 
 
-""" from agents import *
-eventDict = flower(90, 3, 10, [(TopAll, 90), (BottomAll, 90)], 2, 0.5)
-for event in eventDict['position']:
-    print(event)
-import pdb;pdb.set_trace() """
+def kinectTest(seconds, agent, millisecondsStep):
+
+
+    class Var(Variable):
+
+        def __init__(self):
+            self.lowHeight = 0.5
+            self.highHeight = 0.1
+            super().__init__()
+
+        def get(self, **kwargs):
+            height = (kwargs['pose'][LEFT_WRIST][1] + kwargs['pose'][RIGHT_WRIST][1])/2
+            if height >= self.lowHeight:
+                return 0
+            elif height <= self.highHeight:
+                return 100
+            else:
+                return int(125-250*height)
+
+    eventDict = {
+        'position': [],
+        'time': []
+    }
+
+    currentTime = 0
+    increments = 0.05
+
+    var = Var()
+
+    while currentTime < seconds:
+        eventDict['time'].append(Linear(At(currentTime), agent, var, millisecondsStep, hasVariable=True))
+        currentTime += increments
+    
+    return eventDict
