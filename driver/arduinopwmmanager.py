@@ -32,8 +32,12 @@ class ArduinoPwmManager(Process):
         while True:
             command = self.commands.get()
             commandstring = startByte
-            for comm in command:
-                commandstring += bytes([comm])
+            try:
+                for comm in command:
+                    commandstring += bytes([comm])
+            except ValueError as e:
+                print(e)
+                continue
             commandstring += endByte
             self.serial.write(commandstring)
             time.sleep(0.004)

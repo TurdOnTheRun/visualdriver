@@ -30,7 +30,7 @@ class Motor {
     byte OUT_pin;
     byte NOTOUT_pin;
     const byte MAXIMAL_SPEED_DIFFERENCE = 5;
-    const byte MAXIMUM_SPEED = 110;
+    const byte MAXIMUM_SPEED = 130;
     boolean stopped = true;
     boolean changingDirection = false;
     byte state;
