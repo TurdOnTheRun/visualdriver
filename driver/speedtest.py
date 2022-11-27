@@ -31,20 +31,23 @@ while True:
     # with encoderLock:
     #     print(position.value, distance.value)
     value = input("Please enter a command:\n")
+    command = None
     
     try:
         commands = value.split(',')
         if len(commands) == 1:
             if commands[0] == 's':
                 shutdown.put(1234)
-            targetSpeed.value = int(commands[0])
+            else:
+                targetSpeed.value = int(commands[0])
             continue
         else:
             command = []
             for c in commands:
                 command.append(int(c))
-    except ValueError:
+    except Exception as e:
         print('Invalid Command')
+        print(e)
         pwmComm.put([220,0,50])
         continue
     if command:

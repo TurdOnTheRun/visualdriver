@@ -26,7 +26,7 @@ class SpeedController(Process):
         integral = 0
         time.sleep(1)
 
-        while not self.shutdownQueue.empty():
+        while self.shutdownQueue.empty():
 
             currentTime = time.time()
             dt = currentTime - prevTime
@@ -67,6 +67,7 @@ class SpeedController(Process):
             prevError = error
             time.sleep(1)
 
+        print('SpeedController shutting down...')
         self.bottomQueue.put([220, 0, MOTOR_STEP_TIME])
 
 
