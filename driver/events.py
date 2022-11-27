@@ -3,6 +3,7 @@ from conditions import At
 import random
 from kinectreader import LEFT_WRIST, RIGHT_WRIST
 from agents import BottomAll, TopAll
+from settings import MOTOR_MAXIMUM_SPEED, MOTOR_CLOCKWISE, MOTOR_COUNTERCLOCKWISE
 
 
 ARDUINO_COMMUNICATION_START_BYTE = 251
@@ -18,6 +19,9 @@ TIME_EVENTS_CLEAR_TO_MARKER_TYPE = 6
 MARKER_TYPE = 7
 TRIGGER_SET_ANGLE_TYPE = 8
 TRIGGER_DETACH_TYPE = 9
+MOTOR_SPEED_TYPE = 10
+MOTOR_DIRECTION_TYPE = 11
+
 
 
 class Event:
@@ -227,27 +231,28 @@ class FlashBezier(ArduinoEvent):
             return self.clean_bytes([110 + self.agent.id, self.state1, self.state2, self.millisecondsStep, self.ax, self.ay, self.bx, self.by, self.millisecondsOn])
     
 
-class MotorSpeed(ArduinoEvent):
+class MotorSpeed(Event):
 
-    def __init__(self, condition, state, millisecondsStep):
-        # self.check_state(state)
-        self.state = state
-        self.millisecondsStep = millisecondsStep
-        super().__init__(condition, Bottom)
-        self.command = self.make_command()
+    def __init__(self, condition, speed):
+        self.type = MOTOR_SPEED_TYPE
+        super().__init__(condition, Main)
+        if type(speed) != int or speed < 0:
+            self.abort('Invalid speed: ' + str(speed))
+        elif speed > MOTOR_MAXIMUM_SPEED:
+            self.speed = MOTOR_MAXIMUM_SPEED
+        else:
+            self.speed = speed
 
-    def make_command(self):
-        return self.clean_bytes([220, self.state, self.millisecondsStep])
 
+class MotorChangeDirection(Event):
 
-class MotorChangeDirection(ArduinoEvent):
-
-    def __init__(self, condition):
-        super().__init__(condition, Bottom)
-        self.command = self.make_command()
-    
-    def make_command(self):
-        return self.clean_bytes([221,])
+    def __init__(self, condition, direction):
+        self.type = MOTOR_DIRECTION_TYPE
+        super().__init__(condition, Main)
+        if direction != MOTOR_CLOCKWISE or direction != MOTOR_COUNTERCLOCKWISE:
+            self.abort('Invalid direction: ' + str(direction))
+        else:
+            self.direction = direction
 
 
 class TriggerAngle(Event):

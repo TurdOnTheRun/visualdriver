@@ -15,9 +15,10 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 
 class VisualDriver:
 
-    def __init__(self, eventDict, usesKinect=False, usesTrigger=False, music=None):
+    def __init__(self, eventDict, usesMotor=False, usesKinect=False, usesTrigger=False, music=None):
         self.timeEvents = eventDict.get('time', [])
         self.positionEvents = eventDict.get('position', [])
+        self.usesMotor = usesMotor
         self.usesKinect = usesKinect
         self.usesTrigger = usesTrigger
         self.music = music
@@ -45,6 +46,11 @@ class VisualDriver:
         self.position = Value('d', 0.0, lock=False)
         self.distance = Value('d', 0.0, lock=False)
         self.er = EncoderReader(self.encoderLock, self.position, self.distance, self.shutdownQueue)
+
+        if self.usesMotor:
+            self.speed = Value('d', 0.0)
+            self.targetSpeed = Value('i', 0)
+            self.sc = SpeedController(self.speed, self.targetSpeed, self.encoderLock, self.distance, self.bottomQueue, self.shutdownQueue)
 
         if self.usesTrigger:
             self.triggerQueue = Queue()
@@ -84,6 +90,9 @@ class VisualDriver:
             print('Getting first pose...')
             poseNow = self.kinectQueue.get()
             print('Pose received!')
+
+        if self.usesMotor:
+            self.sc.start()
 
         timeEventsIndex = 0
         timeEventsBlocked = False
@@ -154,10 +163,15 @@ class VisualDriver:
                         elif event.type == TIME_EVENTS_CLEAR_TO_MARKER_TYPE:
                             self.timeEvents = timeEvents[timeEvents.index(event.marker)+1:]
                             timeEventsIndex = 0
-                        elif event.type == TRIGGER_SET_ANGLE_TYPE:
+                        elif event.type == TRIGGER_SET_ANGLE_TYPE and self.usesTrigger:
                             self.triggerQueue.put([1, event.angle])
-                        elif event.type == TRIGGER_DETACH_TYPE:
+                        elif event.type == TRIGGER_DETACH_TYPE and self.usesTrigger:
                             self.triggerQueue.put([0,])
+                        elif event.type == MOTOR_SPEED_TYPE and self.usesMotor:
+                            with self.targetSpeed.get_lock():
+                                self.targetSpeed.value = event.speed
+                        elif event.type == MOTOR_DIRECTION_TYPE and self.usesMotor:
+                            pass
                     
                 if timeEventsIndex >= len(self.timeEvents) and positionEventsIndex >= len(self.positionEvents):
                     self.shutdown()
