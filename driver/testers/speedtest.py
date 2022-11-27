@@ -20,7 +20,7 @@ er = EncoderReader(encoderLock, position, distance, shutdown)
 er.start()
 
 speed = Value('d', 0.0)
-targetSpeed = Value('i', 150)
+targetSpeed = Value('i', 0)
 sc = SpeedController(speed, targetSpeed, encoderLock, distance, pwmComm, shutdown)
 sc.start()
 
