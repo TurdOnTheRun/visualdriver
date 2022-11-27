@@ -40,7 +40,7 @@ class SpeedController(Process):
                 targetSpeed = self.targetSpeed.value
 
             if targetSpeed == 0:
-                if self.arduinoSpeed != 0:
+                if speed != 0:
                     self.arduinoSpeed = 0
                     self.bottomQueue.put([220, self.arduinoSpeed, MOTOR_STEP_TIME])
                 error = 0
@@ -60,7 +60,7 @@ class SpeedController(Process):
                         self.arduinoSpeed = 0
                     self.bottomQueue.put([220, self.arduinoSpeed, MOTOR_STEP_TIME])
                 
-                print(speed, self.arduinoSpeed, output, error, integral, derivative)
+                #print(speed, self.arduinoSpeed, output, error, integral, derivative)
 
             prevTime = currentTime
             prevDistance = currentDistance
