@@ -9,6 +9,7 @@ from conditions import *
 
 from arduinopwmmanager import ArduinoPwmManager
 from encoderreader import EncoderReader
+from speedcontroller import SpeedController
 from kinectreader import KinectReader
 from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_ENCODER_CONN
 
@@ -149,7 +150,7 @@ class VisualDriver:
                             self.positionEvents += event.events.get('position', [])
                         elif event.type == POSITION_RESET_TYPE:
                             # print(now, positionNow, 'POSITION_RESET_TYPE')
-                            position.value = 0
+                            self.position.value = 0
                         elif event.type == TIME_EVENTS_BLOCK_TYPE:
                             # print(now, positionNow, 'TIME_EVENTS_BLOCK_TYPE')
                             timeEventsBlocked = True
@@ -161,7 +162,7 @@ class VisualDriver:
                             self.timeEvents = []
                             timeEventsIndex = 0
                         elif event.type == TIME_EVENTS_CLEAR_TO_MARKER_TYPE:
-                            self.timeEvents = timeEvents[timeEvents.index(event.marker)+1:]
+                            self.timeEvents = self.timeEvents[self.timeEvents.index(event.marker)+1:]
                             timeEventsIndex = 0
                         elif event.type == TRIGGER_SET_ANGLE_TYPE and self.usesTrigger:
                             self.triggerQueue.put([1, event.angle])
