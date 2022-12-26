@@ -241,7 +241,6 @@ class Vibrato(ArduinoEvent):
         if not hasVariable:
             self.check_init()
         self.command = self.make_command()
-        print(self.command)
 
     def __str__(self):
         return 'Vibrato({}, {}, {}, {}, {}, {})'.format(self.condition, self.agent, self.vibratoType, self.amplitude, self.millisecondsStep, self.hasVariable)
