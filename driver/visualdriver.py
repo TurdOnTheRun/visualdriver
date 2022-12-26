@@ -64,7 +64,9 @@ class VisualDriver:
     
     def shutdown(self):
         self.bottomQueue.put((220,0,50))
-        self.topQueue.put((200,50))
+        self.topQueue.put((212,0))
+        self.topQueue.put((200,30))
+        self.bottomQueue.put((212,0))
         self.bottomQueue.put((200,0))
         time.sleep(1)
         self.shutdownQueue.put('STOP')
