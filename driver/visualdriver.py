@@ -16,13 +16,14 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 
 class VisualDriver:
 
-    def __init__(self, eventDict, usesMotor=False, usesKinect=False, usesTrigger=False, music=None):
+    def __init__(self, eventDict, usesMotor=False, usesKinect=False, usesTrigger=False, music=None, startTime=0):
         self.timeEvents = eventDict.get('time', [])
         self.positionEvents = eventDict.get('position', [])
         self.usesMotor = usesMotor
         self.usesKinect = usesKinect
         self.usesTrigger = usesTrigger
         self.music = music
+        self.startTime = startTime
 
         discharging = open('/sys/class/power_supply/BAT0/status','r').readline().strip().lower()
         if discharging != 'discharging':
@@ -31,6 +32,7 @@ class VisualDriver:
                 exit()
 
         if self.music:
+            mixer.pre_init(frequency=48000)
             mixer.init()
             mixer.music.load(self.music)
             mixer.music.set_volume(1)
@@ -64,7 +66,7 @@ class VisualDriver:
     
     def shutdown(self):
         self.bottomQueue.put((220,0,50))
-        self.topQueue.put((200,50))
+        self.topQueue.put((200,0))
         self.bottomQueue.put((200,0))
         time.sleep(1)
         self.shutdownQueue.put('STOP')
@@ -95,13 +97,19 @@ class VisualDriver:
         if self.usesMotor:
             self.sc.start()
 
+        if self.startTime != 0:
+            for i in range(len(self.timeEvents)):
+                if not self.timeEvents[i].condition.met(self.startTime):
+                    self.timeEvents = self.timeEvents[i:]
+                    break
+
         timeEventsIndex = 0
         timeEventsBlocked = False
         positionEventsIndex = 0
         positionEventsBlocked = False
-        last = time.time()
+        last = time.time() - self.startTime
         if self.music:
-            mixer.music.play()
+            mixer.music.play(start=self.startTime)
 
         try:
 
