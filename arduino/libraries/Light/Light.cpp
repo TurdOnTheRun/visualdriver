@@ -404,6 +404,11 @@ void Light::setto(byte type, byte state1, byte state2, byte steptime, byte set1,
       _vibratosteptime = steptime;
       _hasvibrato = true;
     }
+    Serial.println(_vibratotype);
+    Serial.println(_hasvibrato);
+    Serial.println(_vibratoamplitude);
+    Serial.println(_vibratosteptime);
+    Serial.println();
   }
 }
 

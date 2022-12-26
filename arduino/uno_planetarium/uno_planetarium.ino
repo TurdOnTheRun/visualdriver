@@ -336,7 +336,7 @@ void parseData() {
     //lightning time in ms    
     set5 = interpreter.inputBuffer[8];
   }
-  else if(id < 112) {
+  else if(id < 130) {
     //Vibrato  
     lightid = id % 10;
     type = 12;
@@ -344,6 +344,7 @@ void parseData() {
     state2 = interpreter.inputBuffer[2];
     steptime = interpreter.inputBuffer[3];
   }
+
 
 //  Serial.println(id);
 //  Serial.println(state1);
