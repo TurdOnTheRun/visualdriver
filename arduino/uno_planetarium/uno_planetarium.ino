@@ -322,7 +322,7 @@ void parseData() {
     set3 = interpreter.inputBuffer[6];
     set4 = interpreter.inputBuffer[7];
   }
-  else if(id < 111) {
+  else if(id < 120) {
     //Lightning Bezier Appear/Disappear  
     lightid = id % 10;
     type = 11;
@@ -336,9 +336,18 @@ void parseData() {
     //lightning time in ms    
     set5 = interpreter.inputBuffer[8];
   }
+  else if(id < 130) {
+    //Vibrato  
+    lightid = id % 10;
+    type = 12;
+    state1 = interpreter.inputBuffer[1];
+    state2 = interpreter.inputBuffer[2];
+    steptime = interpreter.inputBuffer[3];
+  }
 
 //  Serial.println(id);
-//  Serial.println(state);
+//  Serial.println(state1);
+//  Serial.println(state2);
 //  Serial.println(steptime);
 //  Serial.println();
   

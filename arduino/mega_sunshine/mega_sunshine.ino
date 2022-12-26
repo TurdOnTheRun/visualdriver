@@ -31,13 +31,13 @@ Light lights[numberoflights] = {
 //  Light(10, light10),
 };
 
-byte baseBrightness = 82;
+byte baseBrightness = 30;
 
 SerialInterpreter interpreter = SerialInterpreter();
 
 void setup() {
   //SETUP BLUETOOTH
-  //Serial.begin(9600);
+//  Serial.begin(9600);
   Serial1.begin(115200);  
   
   //SET PIN FREQUENCIES TO 31kHz  
@@ -188,7 +188,7 @@ void parseData() {
     set3 = interpreter.inputBuffer[6];
     set4 = interpreter.inputBuffer[7];
   }
-  else if(id < 111) {
+  else if(id < 120) {
     //Lightning Bezier Appear/Disappear  
     lightid = id % 10;
     type = 11;
@@ -202,17 +202,25 @@ void parseData() {
     //lightning time in ms    
     set5 = interpreter.inputBuffer[8];
   }
+  else if(id < 130) {
+    //Vibrato  
+    lightid = id % 10;
+    type = 12;
+    state1 = interpreter.inputBuffer[1];
+    state2 = interpreter.inputBuffer[2];
+    steptime = interpreter.inputBuffer[3];
+  }
 
-//  Serial.println(type);
-//  Serial.println(state1);
-//  Serial.println(state2);
-//  Serial.println(steptime);
-//  Serial.println(set1);
-//  Serial.println(set2);
-//  Serial.println(set3);
-//  Serial.println(set4);
-//  Serial.println(set5);
-//  Serial.println();
+// Serial.println(type);
+// Serial.println(state1);
+// Serial.println(state2);
+// Serial.println(steptime);
+// Serial.println(set1);
+// Serial.println(set2);
+// Serial.println(set3);
+// Serial.println(set4);
+// Serial.println(set5);
+// Serial.println();
   
   if(all){
     //Serial.println("all");
