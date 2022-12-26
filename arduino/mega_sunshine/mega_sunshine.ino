@@ -37,7 +37,7 @@ SerialInterpreter interpreter = SerialInterpreter();
 
 void setup() {
   //SETUP BLUETOOTH
-  //Serial.begin(9600);
+  Serial.begin(9600);
   Serial1.begin(115200);  
   
   //SET PIN FREQUENCIES TO 31kHz  
@@ -211,16 +211,16 @@ void parseData() {
     steptime = interpreter.inputBuffer[3];
   }
 
-//  Serial.println(type);
-//  Serial.println(state1);
-//  Serial.println(state2);
-//  Serial.println(steptime);
-//  Serial.println(set1);
-//  Serial.println(set2);
-//  Serial.println(set3);
-//  Serial.println(set4);
-//  Serial.println(set5);
-//  Serial.println();
+ Serial.println(type);
+ Serial.println(state1);
+ Serial.println(state2);
+ Serial.println(steptime);
+ Serial.println(set1);
+ Serial.println(set2);
+ Serial.println(set3);
+ Serial.println(set4);
+ Serial.println(set5);
+ Serial.println();
   
   if(all){
     //Serial.println("all");
