@@ -39,7 +39,7 @@ void Light::setpinstate(byte newstate)
 void Light::update()
 {
 
-  _now = millis()
+  _now = millis();
 
   if(changing()){
     
@@ -216,13 +216,13 @@ void Light::update()
       int vibratostate;
       switch(_vibratotype) {
         case 1: {
-          vibratostate = (int) round( _state + _state * _updownvibrato(angle) * _vibratoamplitude);
+          vibratostate = (int) round( _state + _state * _updownvibrato(_vibratoangle) * _vibratoamplitude);
         } break;
         case 2: {
-          vibratostate = (int) round(_state + _state * _upvibrato(angle) * _vibratoamplitude);
+          vibratostate = (int) round(_state + _state * _upvibrato(_vibratoangle) * _vibratoamplitude);
         } break;
         default: {
-          vibratostate = (int) round(_state + _state * _downvibrato(angle) * _vibratoamplitude);
+          vibratostate = (int) round(_state + _state * _downvibrato(_vibratoangle) * _vibratoamplitude);
         } break;
       }
       if(vibratostate > 100){
@@ -442,17 +442,17 @@ float Light::bezier(byte step)
   return y;
 }
 
-float Light::updownvibrato(float angle)
+float Light::_updownvibrato(float angle)
 { 
   return sin(angle);
 }
 
-float Light::upvibrato(float angle)
+float Light::_upvibrato(float angle)
 { 
   return (cos(angle) * (-1) + 1)/2;
 }
 
-float Light::downvibrato(float angle)
+float Light::_downvibrato(float angle)
 { 
   return (cos(angle)-1)/2;
 }
