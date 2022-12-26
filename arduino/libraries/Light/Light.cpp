@@ -3,7 +3,7 @@
   Created by Maximilian Weber, Dezember 25, 2020.
 */
 
-#include "Arduino.h"
+// #include "Arduino.h"
 #include "Light.h"
 #include <math.h>
 
@@ -45,7 +45,7 @@ void Light::update()
     
     _passed = _now - _laststep;
 
-    if (_passed < _steptime){
+    if (_passed >= _steptime){
 
       switch(_type) {
     
@@ -207,16 +207,15 @@ void Light::update()
   if(_hasvibrato==true){
 
     _passed = _now - _vibratolaststep;
-
-    if (_passed < _vibratosteptime){
+    if (_passed >= _vibratosteptime){
       _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_vibratosteptime;
-      if(_vibratoangle > 2 * M_PI){
-        _vibratoangle = _vibratoangle - (2 * M_PI);
-      }
+      // if(_vibratoangle > 2 * M_PI){
+      //   _vibratoangle = _vibratoangle - (2 * M_PI);
+      // }
       int vibratostate;
       switch(_vibratotype) {
         case 1: {
-          vibratostate = (int) round( _state + _state * _updownvibrato(_vibratoangle) * _vibratoamplitude);
+          vibratostate = (int) round(_state + _state * _updownvibrato(_vibratoangle) * _vibratoamplitude);
         } break;
         case 2: {
           vibratostate = (int) round(_state + _state * _upvibrato(_vibratoangle) * _vibratoamplitude);
@@ -230,6 +229,9 @@ void Light::update()
       } else if(vibratostate < 0){
         vibratostate = 0;
       }
+      // Serial.println(_vibratoangle);
+      // Serial.println(vibratostate);
+      // Serial.println();
       setpinstate(lowByte(vibratostate));
       _vibratolaststep = millis();
     }
@@ -400,15 +402,16 @@ void Light::setto(byte type, byte state1, byte state2, byte steptime, byte set1,
       _hasvibrato = false;
     } else {
       // state2 sets amplitude percentage
-      _vibratoamplitude = state2/100;
+      _vibratoamplitude = (float) state2 / 100;
       _vibratosteptime = steptime;
       _hasvibrato = true;
+      _vibratolaststep = millis();
     }
-    Serial.println(_vibratotype);
-    Serial.println(_hasvibrato);
-    Serial.println(_vibratoamplitude);
-    Serial.println(_vibratosteptime);
-    Serial.println();
+    // Serial.println(_vibratotype);
+    // Serial.println(_hasvibrato);
+    // Serial.println(_vibratoamplitude);
+    // Serial.println(_vibratosteptime);
+    // Serial.println();
   }
 }
 

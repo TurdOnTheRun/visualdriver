@@ -27,7 +27,7 @@ class Light {
     bool _hasvibrato = false;
     byte _vibratotype;
     byte _vibratosteptime;
-    float _vibratostepangle = 2 * M_PI / 50; //50 steps per period
+    float _vibratostepangle = (float) 2 * M_PI / 50; //50 steps per period
     float _vibratoangle = 0;
     float _vibratoamplitude; //percentage of state
     float _upvibrato(float angle);
