@@ -1,7 +1,12 @@
 from visualdriver import VisualDriver
 from agents import *
-from events import kinectTest, leftCenterRight
+from conditions import At
+from events import Instant, Vibrato
 
-eventDict = kinectTest(60, TopAll, 1)
-vd = VisualDriver(eventDict, usesKinect=True, music='/home/maximilian/Downloads/sound.wav')
+eventDict = {
+    'time': [Instant(At(0), TopAll, 50), Vibrato(At(0), TopAll, 2, 100, 1), Vibrato(At(20), TopAll, 3, 100, 2), Instant(At(25), TopAll, 0)],
+    'position': []
+}
+
+vd = VisualDriver(eventDict)
 vd.start()

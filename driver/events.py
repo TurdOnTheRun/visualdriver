@@ -229,6 +229,35 @@ class FlashBezier(ArduinoEvent):
             return self.clean_bytes([211, self.state1, self.state2, self.millisecondsStep, self.ax, self.ay, self.bx, self.by, self.millisecondsOn])
         else:
             return self.clean_bytes([110 + self.agent.id, self.state1, self.state2, self.millisecondsStep, self.ax, self.ay, self.bx, self.by, self.millisecondsOn])
+
+
+class Vibrato(ArduinoEvent):
+
+    def __init__(self, condition, agent, vibratoType, amplitude, millisecondsStep, hasVariable=False):
+        self.vibratoType = vibratoType
+        self.amplitude = amplitude
+        self.millisecondsStep = millisecondsStep
+        super().__init__(condition, agent, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+        print(self.command)
+
+    def __str__(self):
+        return 'Vibrato({}, {}, {}, {}, {}, {})'.format(self.condition, self.agent, self.vibratoType, self.amplitude, self.millisecondsStep, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_agent(self.agent)
+    
+    def make_command(self):
+        if self.agent.id == -1:
+            command = [212, self.vibratoType, self.amplitude, self.millisecondsStep]
+        else:
+            command = [120 + self.agent.id, self.vibratoType, self.amplitude, self.millisecondsStep]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
     
 
 class MotorSpeed(Event):
