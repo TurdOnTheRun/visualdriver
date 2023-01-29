@@ -197,7 +197,7 @@ dimmdownduration = 2
 on = totalduration - dimminduration - dimmdownduration
 strength = 86
 eventDict['time'].append(InstantBezier(At(starttime), TopAll, 10, strength, int(dimminduration*10), 100, 100, 100, 100))
-eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), TopAll, strength, 10, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), TopAll, strength, 5, int(dimmdownduration*10), 100, 100, 100, 100))
 
 # Strings start
 # 1
@@ -214,7 +214,7 @@ dimminduration = 2
 dimmdownduration = .6
 on = totalduration - dimminduration - dimmdownduration
 strength = 90
-eventDict['time'].append(InstantBezier(At(starttime), TopAll, 10, 0, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(InstantBezier(At(starttime), TopAll, 5, 0, int(dimminduration*10), 100, 100, 100, 100))
 eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 10, strength, int(dimminduration*10), 100, 100, 100, 100))
 eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom2, strength, 60, int(dimmdownduration*10), 100, 100, 100, 100))
 
@@ -316,10 +316,10 @@ dimmdownduration = .7
 on = totalduration - dimminduration - dimmdownduration
 strength = 80
 # dimmwave right
-eventDict['time'].append(Vibrato(At(starttime), Bottom2, 3, 50, 3))
+eventDict['time'].append(Vibrato(At(starttime), Bottom2, 3, 40, 3))
 eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 60, strength, int(dimminduration*10), 100, 100, 100, 100))
 eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom2, strength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
-eventDict['time'].append(Vibrato(At(121.3), Bottom2, 3, 20, 3))
+eventDict['time'].append(Vibrato(At(121.3), Bottom2, 3, 10, 3))
 
 # 6
 # top with vibrato 
@@ -354,7 +354,7 @@ eventDict['time'].append(InstantBezier(At(starttime), TopAll, topstrength, 0, in
 eventDict['time'].append(InstantBezier(At(starttime), Bottom1, 40, strength, int(dimminduration*10), 100, 100, 100, 100))
 eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom1, strength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
 eventDict['time'].append(Vibrato(At(126.8), TopAll, 0, 0, 0))
-eventDict['time'].append(Vibrato(At(126.8), Bottom1, 3, 20, 3))
+eventDict['time'].append(Vibrato(At(126.8), Bottom1, 3, 10, 3))
 
 
 # 7
@@ -408,7 +408,7 @@ eventDict['time'].append(Vibrato(At(starttime), TopAll, 3, 80, 4))
 eventDict['time'].append(Vibrato(At(133.5), Bottom1, 3, 40, 4))
 eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), TopAll, topstrength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
 eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom1, strength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
-eventDict['time'].append(Vibrato(At(137), Bottom2, 3, 20, 3))
+eventDict['time'].append(Vibrato(At(137), Bottom2, 3, 10, 3))
 eventDict['time'].append(Vibrato(At(137), TopAll, 0, 0, 0))
 
 
