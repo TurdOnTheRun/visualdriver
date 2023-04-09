@@ -66,7 +66,7 @@ void LightSetting::init()
 
 byte LightSetting::get_state(unsigned long now, byte lightid)
 {
-  if(_laststep == now || _laststep == 0){
+  if(_laststep == now){
     return _state;
   }
   if(_laststep == 0){
