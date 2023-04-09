@@ -174,6 +174,9 @@ byte LightSetting::get_state(unsigned long now, byte lightid)
       }
       _laststep = now;
       return _state;
+    } else {
+      // If no _passed < _steptime
+      return _state;
     }
   }
 }
