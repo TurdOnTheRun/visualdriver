@@ -89,6 +89,7 @@ void set_setting(byte targetlights, LightSetting setting){
   for(i=0; i < numberOfSettings; i++) {
     if(lightSettings[i].is_unused()){
       lightSettings[i] = setting;
+      lightSettings[i].init();
       break;
     }
   };
@@ -109,6 +110,7 @@ void add_effect(byte targetlights, LightEffect effect){
   for(i=0; i < numberOfEffects; i++) {
     if(lightEffects[i].is_unused()){
       lightEffects[i] = effect;
+      lightEffects[i].init();
       break;
     }
   };

@@ -41,8 +41,8 @@ void LightEffect::init()
 
 byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
 {
-  if(_laststep == now){
-    // skip right to return at bottom
+  if(_laststep == now && (_type==UPDOWNVIBRATO || _type==DOWNVIBRATO || _type==UPVIBRATO)){
+    // no need to recalculate delta
   }
   else if(_laststep == 0){
     _laststep = now;
