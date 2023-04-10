@@ -1,4 +1,5 @@
 #include <Light.h>
+#include <LightSetting.h>
 #include <SerialInterpreter.h>
 
 
@@ -31,9 +32,25 @@ Light lights[numberoflights] = {
 //  Light(10, light10),
 };
 
+unsigned long now;
+
+LightSetting *setting;
+map<LightSetting*, int> settings;
+SerialInterpreter interpreter = SerialInterpreter();
+
 byte baseBrightness = 30;
 
-SerialInterpreter interpreter = SerialInterpreter();
+byte typeid; //id of setting or effect
+byte lights; //bit map for what lights the effect is for
+// settings
+byte set1;
+byte set2;
+byte set3;
+byte set4;
+byte set5;
+byte set6;
+byte set7;
+byte set8;
 
 void setup() {
   //SETUP BLUETOOTH
@@ -78,33 +95,15 @@ void readSerial() {
 void parseData() {
   // split the data into its parts
 
-  byte id = interpreter.inputBuffer[0];
-  //Serial.println(id);
-  byte lightid;
-  byte type;
-  byte state1;
-  byte state2;
-  byte steptime;
-  byte set1;
-  byte set2;
-  byte set3;
-  byte set4;
-  byte set5;
-
-  boolean all = false;
-  byte alltype;
-
-  if(id > 199 && id < 220){
-    all = true;
-    alltype = id - 200;
-    id = alltype*10;
-  } 
+  setting = NULL;
+  // effect = NULL;
+  typeid = interpreter.inputBuffer[0];
   
-  if(id < 10) {
-    //Direct    
-    lightid = id % 10;
-    type = 0;
-    state1 = interpreter.inputBuffer[1];
+  if(typeid == 0) {
+    //Direct
+    //set1: state 
+    set1 = interpreter.inputBuffer[1];
+    
     steptime = 0;
   } 
   else if(id < 20) {
@@ -238,9 +237,14 @@ void initLights() {
 }
 
 void updateLights() {
+  now = millis();
   for(int i = 0; i < numberoflights; ++i) {
-    lights[i].update();
+    lights[i].update(now);
   };
+}
+
+void setLights(byte id, byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5) {
+  lights[id].setto(type,state1,state2,steptime,set1,set2,set3,set4,set5);
 }
 
 void setAll(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5) {

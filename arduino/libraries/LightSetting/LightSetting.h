@@ -15,10 +15,10 @@
 class LightSetting {
   private:
     //Possible Settings 
-    byte STATICLIGHT = 10
-    byte STATICFLASH = 11
-    byte LINEARDIMM = 20
-    byte BEZIERDIMM = 30
+    byte STATICLIGHT = 0
+    byte STATICFLASH = 1
+    byte LINEARDIMM = 2
+    byte BEZIERDIMM = 3
 
 
     byte _type;

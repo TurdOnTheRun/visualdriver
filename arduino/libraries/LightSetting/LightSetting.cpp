@@ -175,7 +175,6 @@ byte LightSetting::get_state(unsigned long now, byte lightid)
   }
 }
 
-// This goes to the setting
 void LightSetting::set_state(unsigned long now, byte newstate)
 {
   if(newstate > 100){

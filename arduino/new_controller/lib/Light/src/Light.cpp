@@ -38,11 +38,44 @@ void Light::set_setting(LightSetting* setting)
   _setting->usercount_up();
 }
 
+void Light::add_effect(LightEffect* effect)
+{
+  for(byte i; i<EFFECTSPERLIGHT; i++){
+    if(_effects[i] == NULL){
+      effect->usercount_up();
+      _effects[i] = effect;
+    }
+  }
+}
+
+void Light::remove_effect(LightEffect* effect)
+{
+  for(byte i; i<EFFECTSPERLIGHT; i++){
+    if(_effects[i] == effect){
+      effect->usercount_down();
+      _effects[i] = NULL;
+    }
+  }
+}
+
+void Light::remove_effect(byte index)
+{
+  if(index < EFFECTSPERLIGHT){
+    if(_effects[index] != NULL){
+      _effects[index]->usercount_down();
+      _effects[index] = NULL;
+    }
+  }
+}
+
 void Light::update(unsigned long now)
 {
   _newstate = _setting->get_state(now, _id);
-  // for effect in effects:
-  //    state = effect.get_state(state, _id)
+  for(byte i; i<EFFECTSPERLIGHT; i++){
+    if(_effects[i] != NULL){
+      _newstate = _effects[i]->get_state(now, _id, _newstate);
+    }
+  }
   set_pinstate();
 }
 

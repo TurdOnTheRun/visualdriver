@@ -1,5 +1,6 @@
 #include <Light.h>
 #include <LightSetting.h>
+#include <LightEffect.h>
 #include <SerialInterpreter.h>
 
 
@@ -35,6 +36,7 @@ const byte light3 = 8;
 // ARDUINO SPECIFIC
 const byte numberOfLights = 4;
 const byte numberOfSettings = 5;
+const byte numberOfEffects = (numberOfLights * EFFECTSPERLIGHT) + 1;
 
 // ARDUINO SPECIFIC
 // Always must be one more than numberOfLights
@@ -45,6 +47,8 @@ LightSetting lightSettings[numberOfSettings] = {
   LightSetting(),
   LightSetting(),
 };
+
+LightEffect lightEffects[numberOfEffects];
 
 // ARDUINO SPECIFIC
 Light lights[numberOfLights] = {
@@ -95,6 +99,32 @@ void set_setting(byte targetlights, LightSetting setting){
     }
   };
 }
+
+
+void add_effect(byte targetlights, LightEffect effect){
+
+  byte i;
+
+  // Write setting into array
+  for(i=0; i < numberOfEffects; i++) {
+    if(lightEffects[i].is_unused()){
+      lightEffects[i] = effect;
+      break;
+    }
+  };
+
+  for(byte j = 0; j < numberOfLights; j++) {
+    if(bitRead(targetlights, j)){
+      lights[j].add_effect(&lightEffects[i]);
+    }
+  };
+}
+
+
+void remove_effect(byte lightid, byte effectindex){
+  lights[lightid].remove_effect(effectindex);
+}
+
 
 void parse_data() {
   // split the data into its parts
@@ -199,6 +229,7 @@ void setup() {
   lights_setup();
   settings_setup();
   update_lights();
+  add_effect(255, LightEffect(111, 100, 200, 10, 0,0,0,0,0));
 }
 
 void loop() {
