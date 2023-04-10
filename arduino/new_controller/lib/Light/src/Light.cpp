@@ -3,7 +3,7 @@
   Created by Maximilian Weber, Dezember 25, 2020.
 */
 
-// #include "Arduino.h"
+#include "Arduino.h"
 #include "Light.h"
 #include <math.h>
 
@@ -18,6 +18,9 @@ Light::Light(byte id, byte pin, LightSetting* setting)
 void Light::init()
 {
   pinMode(_pin, OUTPUT);
+  for(byte i; i<EFFECTSPERLIGHT; i++){
+    _effects[i] = NULL;
+  }
 }
 
 void Light::set_pinstate()
@@ -71,8 +74,9 @@ void Light::remove_effect(byte index)
 void Light::update(unsigned long now)
 {
   _newstate = _setting->get_state(now, _id);
-  for(byte i; i<EFFECTSPERLIGHT; i++){
+  for(byte i=0; i<EFFECTSPERLIGHT; i++){
     if(_effects[i] != NULL){
+      Serial.println(123);
       _newstate = _effects[i]->get_state(now, _id, _newstate);
     }
   }

@@ -73,26 +73,27 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
           // }
           _delta = _updownvibrato(_vibratoangle) * _amplitude;
         } break;
-        case MILLISTROBE:
-        case DECISTROBE: {
-          if(_on){
-            // If lightbit is 0 _on means on
-            if(bitRead(_set1, lightid)){
-              _delta = 0.0;
-            } else {
-              _delta = _amplitude;
-            };
-            _on = false;
-          } else {
-            if(bitRead(_set1, lightid)){
-              _delta = _amplitude;
-            } else {
-              _delta = 0.0;
-            }
-            _on = true;
-          }
-        } break;
+        // case MILLISTROBE:
+        // case DECISTROBE: {
+        //   if(_on){
+        //     // If lightbit is 0 _on means on
+        //     if(bitRead(_set1, lightid)){
+        //       _delta = 0.0;
+        //     } else {
+        //       _delta = _amplitude;
+        //     };
+        //     _on = false;
+        //   } else {
+        //     if(bitRead(_set1, lightid)){
+        //       _delta = _amplitude;
+        //     } else {
+        //       _delta = 0.0;
+        //     }
+        //     _on = true;
+        //   }
+        // } break;
       }
+      _laststep = now;
     }
   }
   _newstate = (int) round(state + state * _delta);
