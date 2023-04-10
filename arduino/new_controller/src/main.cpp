@@ -115,7 +115,7 @@ void add_effect(byte targetlights, LightEffect effect){
     }
   };
 
-  for(byte j = 0; j < numberOfLights; j++) {
+  for(byte j=0; j < numberOfLights; j++) {
     if(bitRead(targetlights, j)){
       lights[j].add_effect(&lightEffects[i]);
     }
@@ -224,14 +224,14 @@ void read_serial() {
 
 void setup() {
   // ARDUINO SPECIFIC
-  Serial.begin(9600);
+  // Serial.begin(9600);
   Serial1.begin(115200);
 
   pwm_setup();
   lights_setup();
   settings_setup();
   update_lights();
-  // add_effect(255, LightEffect(111, 100, 200, 10, 0,0,0,0,0));
+  add_effect(255, LightEffect(111, 100, 200, 10, 0,0,0,0,0));
 }
 
 void loop() {

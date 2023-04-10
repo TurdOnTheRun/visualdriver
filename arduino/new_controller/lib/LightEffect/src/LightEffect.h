@@ -43,6 +43,7 @@ class LightEffect {
 
     // Strobe variables
     boolean _on = true;
+    void _set_strobe_delta(byte lightid);
 
     int _steps;
     

@@ -41,8 +41,11 @@ void LightEffect::init()
 
 byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
 {
-  if(_laststep == now && (_type==UPDOWNVIBRATO || _type==DOWNVIBRATO || _type==UPVIBRATO)){
-    // no need to recalculate delta
+  if(_laststep == now){
+    if(_type==MILLISTROBE || _type==DECISTROBE){
+      _set_strobe_delta(lightid);
+    }
+    // no need to recalculate delta for other effects
   }
   else if(_laststep == 0){
     _laststep = now;
@@ -73,25 +76,11 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
           // }
           _delta = _updownvibrato(_vibratoangle) * _amplitude;
         } break;
-        // case MILLISTROBE:
-        // case DECISTROBE: {
-        //   if(_on){
-        //     // If lightbit is 0 _on means on
-        //     if(bitRead(_set1, lightid)){
-        //       _delta = 0.0;
-        //     } else {
-        //       _delta = _amplitude;
-        //     };
-        //     _on = false;
-        //   } else {
-        //     if(bitRead(_set1, lightid)){
-        //       _delta = _amplitude;
-        //     } else {
-        //       _delta = 0.0;
-        //     }
-        //     _on = true;
-        //   }
-        // } break;
+        case MILLISTROBE:
+        case DECISTROBE: {
+          _on = !_on;
+          _set_strobe_delta(lightid);
+        } break;
       }
       _laststep = now;
     }
@@ -104,6 +93,24 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
     _newstate = 0;
   }
   return lowByte(_newstate);
+}
+
+void LightEffect::_set_strobe_delta(byte lightid)
+{
+  if(_on){
+    // If lightbit is 0 _on means on
+    if(bitRead(_set1, lightid)){
+      _delta = 0.0;
+    } else {
+      _delta = _amplitude;
+    };
+  } else {
+    if(bitRead(_set1, lightid)){
+      _delta = _amplitude;
+    } else {
+      _delta = 0.0;
+    }
+  }
 }
 
 float LightEffect::_updownvibrato(float angle)
