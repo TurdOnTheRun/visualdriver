@@ -3,9 +3,9 @@
   Created by Maximilian Weber, April 2, 2023.
 
   Types:
-  1 - Static
-  2 - Linear
-  3 - Bezier
+  1 - 9 - Static Types
+  10-19 - Linear Types
+  20-29 - Bezier Types
 */
 #ifndef LightSetting_h
 #define LightSetting_h
@@ -15,8 +15,8 @@
 //Possible Settings 
 static const byte STATICLIGHT = 1;
 static const byte STATICFLASH = 2;
-static const byte LINEARDIMM = 3;
-static const byte BEZIERDIMM = 4;
+static const byte LINEARDIMM = 10;
+static const byte BEZIERDIMM = 20;
 
 class LightSetting {
   private:

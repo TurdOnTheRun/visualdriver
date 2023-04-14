@@ -1,14 +1,9 @@
 /*
   LightEffect.cpp - Library for controlling LightEffect.
   Created by Maximilian Weber, April 2, 2023.
-
-  Types:
-  10-19 - Static Types
-  20-29 - Linear Types
-  30-39 - Bezier Types
 */
 
-#include "Arduino.h"
+// #include "Arduino.h"
 #include "LightEffect.h"
 #include <math.h>
 
@@ -69,7 +64,6 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
       } break;
       case MILLISTROBE:
       case DECISTROBE: {
-        // Serial.println();
         _on = !_on;
         _set_strobe_delta(lightid);
       } break;
@@ -83,7 +77,6 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
       } break;
     }
   }
-  // Serial.println(_delta);
   _newstate = (int) round(state + state * _delta);
   if(_newstate > 100){
     _newstate = 100;
@@ -98,18 +91,12 @@ void LightEffect::_set_strobe_delta(byte lightid)
 {
   if(_on){
     // If lightbit is 0 _on means on
-    // Serial.println(111);
-    // Serial.println(lightid);
-    // Serial.println(bitRead(_set1, lightid));
     if(bitRead(_set1, lightid)){
       _delta = 0.0;
     } else {
       _delta = _amplitude;
     };
   } else {
-    // Serial.println(222);
-    // Serial.println(lightid);
-    // Serial.println(bitRead(_set1, lightid));
     if(bitRead(_set1, lightid)){
       _delta = _amplitude;
     } else {

@@ -1,6 +1,10 @@
 /*
   LightEffect.h - Library for controlling LightEffect.
   Created by Maximilian Weber, April 9, 2023.
+
+  Types:
+  100-109 - Vibrato Types
+  110-119 - Strobe Types
 */
 #ifndef LightEffect_h
 #define LightEffect_h
@@ -8,12 +12,12 @@
 #include "Arduino.h"
 
 //Possible Settings 
-static const byte UPVIBRATO = 101;
-static const byte DOWNVIBRATO = 102;
-static const byte UPDOWNVIBRATO = 103;
+static const byte UPVIBRATO = 100;
+static const byte DOWNVIBRATO = 101;
+static const byte UPDOWNVIBRATO = 102;
 
-static const byte MILLISTROBE = 111;
-static const byte DECISTROBE = 112;
+static const byte MILLISTROBE = 110;
+static const byte DECISTROBE = 111;
 
 
 class LightEffect {

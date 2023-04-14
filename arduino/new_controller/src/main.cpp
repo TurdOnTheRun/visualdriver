@@ -41,7 +41,7 @@ const byte numberOfEffects = (numberOfLights * EFFECTSPERLIGHT) + 1;
 // ARDUINO SPECIFIC
 // Always must be one more than numberOfLights
 LightSetting lightSettings[numberOfSettings] = {
-  LightSetting(3,0,30,40,0,0,0,0,0),
+  LightSetting(LINEARDIMM,0,30,40,0,0,0,0,0),
   LightSetting(),
   LightSetting(),
   LightSetting(),
@@ -148,46 +148,74 @@ void parse_data() {
 
   type = interpreter.inputBuffer[0];
   targetlights = interpreter.inputBuffer[1];
-  
-  if(type == STATICLIGHT) {
-    //set1 is state 
-    set1 = interpreter.inputBuffer[2];
-  }
-  else if(type == STATICFLASH) {
-    //set1 is start state
-    //set2 is to state
-    //set3 is flash time
-    set1 = interpreter.inputBuffer[2];
-    set2 = interpreter.inputBuffer[3];
-    set3 = interpreter.inputBuffer[4];
-  }
-  else if(type == LINEARDIMM){
-    //set1 is start state
-    //set2 is to state
-    //set3 is steptime
-    set1 = interpreter.inputBuffer[2];
-    set2 = interpreter.inputBuffer[3];
-    set3 = interpreter.inputBuffer[4];
-  }
-  else if(type == BEZIERDIMM){
-    //set1 is start state
-    //set2 is to state
-    //set3 is steptime
-    //set4 is y1 of bezier input
-    //set5 is y2 of bezier input
-    set1 = interpreter.inputBuffer[2];
-    set2 = interpreter.inputBuffer[3];
-    set3 = interpreter.inputBuffer[4];
-    set4 = interpreter.inputBuffer[5];
-    set5 = interpreter.inputBuffer[6];
-  }
-  else{
-    return;
+
+  switch(type){
+    case STATICLIGHT: {
+      //set1 is state 
+      set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case STATICFLASH: {
+      //set1 is start state
+      //set2 is to state
+      //set3 is flash time
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
+    case LINEARDIMM: {
+      //set1 is start state
+      //set2 is to state
+      //set3 is steptime
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
+    case BEZIERDIMM: {
+      //set1 is start state
+      //set2 is to state
+      //set3 is steptime
+      //set4 is y1 of bezier input
+      //set5 is y2 of bezier input
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+    } break;
+
+    case UPVIBRATO: 
+    case DOWNVIBRATO:
+    case UPDOWNVIBRATO: {
+      //set1 is amplitude
+      //set2 is steptime
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+    } break;
+
+    case MILLISTROBE:
+    case DECISTROBE: {
+      //set1 is amplitude
+      //set2 is steptime
+      //set3 is multisetting
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
+    default: {
+      return;
+    } break;
   }
 
   // Settings
   if(type < 100){
     set_setting(targetlights, LightSetting(type, set1, set2, set3, set4, set5, set6, set7, set8));
+  } 
+  else if(type < 200){
+    add_effect(targetlights, LightEffect(type, set1, set2, set3, set4, set5, set6, set7, set8));
   }
 }
 
@@ -224,7 +252,7 @@ void read_serial() {
 
 void setup() {
   // ARDUINO SPECIFIC
-  Serial.begin(9600);
+  // Serial.begin(9600);
   Serial1.begin(115200);
 
   pwm_setup();

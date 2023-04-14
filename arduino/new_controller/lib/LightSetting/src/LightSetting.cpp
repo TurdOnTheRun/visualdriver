@@ -3,9 +3,9 @@
   Created by Maximilian Weber, April 2, 2023.
 
   Types:
-  10-19 - Static Types
-  20-29 - Linear Types
-  30-39 - Bezier Types
+  1 - 9 - Static Types
+  10-19 - Linear Types
+  20-29 - Bezier Types
 */
 
 // #include "Arduino.h"
@@ -28,39 +28,42 @@ LightSetting::LightSetting(byte type, byte state1, byte state2, byte steptime, b
 
 void LightSetting::init(unsigned long now)
 {
+  switch(_type) {
+    case STATICLIGHT: {
+      _state = _state1;
+    } break;
 
-  // TODO: MAKE TO SWITCH ONCE YOU ADD THE OTHER ONES
-  if(_type == STATICLIGHT){
-    _state = _state1;
-  }
-  else if(_type == STATICFLASH){
-    // Goes from state1 to state2 after steptime
-    if(_steptime == 0){
-      _state = _state2;
-      _type = STATICLIGHT;
-    } else {
-      _state = _state1;
-    }
-  }
-  else if(_type == LINEARDIMM){
-    // Goes from state1 to state2 taking steptime for each increment
-    if(_steptime == 0){
-      _state = _state2;
-      _type = STATICLIGHT;
-    } else {
-      _state = _state1;
-    }
-    // _set1 = 0;
-  }
-  else if(_type == BEZIERDIMM){
-    // Bezier Dimm from state1 to state2
-    if(_steptime == 0){
-      _state = _state2;
-      _type = STATICLIGHT;
-    } else {
-      _bezierstep = 0;
-      _state = _state1;
-    }
+    case STATICFLASH: {
+      // Goes from state1 to state2 after steptime
+      if(_steptime == 0){
+        _state = _state2;
+        _type = STATICLIGHT;
+      } else {
+        _state = _state1;
+      }
+    } break;
+
+    case LINEARDIMM: {
+      // Goes from state1 to state2 taking steptime for each increment
+      if(_steptime == 0){
+        _state = _state2;
+        _type = STATICLIGHT;
+      } else {
+        _state = _state1;
+      }
+      // _set1 = 0;
+    } break;
+
+    case BEZIERDIMM: {
+      // Bezier Dimm from state1 to state2
+      if(_steptime == 0){
+        _state = _state2;
+        _type = STATICLIGHT;
+      } else {
+        _bezierstep = 0;
+        _state = _state1;
+      }
+    } break;
   }
   _laststep = now;
 }
