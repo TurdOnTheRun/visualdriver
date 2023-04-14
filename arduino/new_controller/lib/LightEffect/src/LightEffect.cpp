@@ -8,7 +8,7 @@
   30-39 - Bezier Types
 */
 
-// #include "Arduino.h"
+#include "Arduino.h"
 #include "LightEffect.h"
 #include <math.h>
 
@@ -26,7 +26,7 @@ LightEffect::LightEffect(byte type, byte amplitude, byte steptime, byte set1, by
   _set6 = set6;
 }
 
-void LightEffect::init()
+void LightEffect::init(unsigned long now)
 {
   switch(_type) {
     case MILLISTROBE: {
@@ -37,6 +37,7 @@ void LightEffect::init()
       _steptime = _steptime * 10;
     } break;
   }
+  _laststep = now;
 }
 
 byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
@@ -46,10 +47,6 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
       _set_strobe_delta(lightid);
     }
     // no need to recalculate delta for other effects
-  }
-  else if(_laststep == 0){
-    _laststep = now;
-    _delta = 0.0;
   }
   else{
     _passed = now - _laststep;
@@ -78,6 +75,7 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
         } break;
         case MILLISTROBE:
         case DECISTROBE: {
+          Serial.println();
           _on = !_on;
           _set_strobe_delta(lightid);
         } break;
@@ -99,12 +97,18 @@ void LightEffect::_set_strobe_delta(byte lightid)
 {
   if(_on){
     // If lightbit is 0 _on means on
+    Serial.println(111);
+    Serial.println(lightid);
+    Serial.println(bitRead(_set1, lightid));
     if(bitRead(_set1, lightid)){
       _delta = 0.0;
     } else {
       _delta = _amplitude;
     };
   } else {
+    Serial.println(222);
+    Serial.println(lightid);
+    Serial.println(bitRead(_set1, lightid));
     if(bitRead(_set1, lightid)){
       _delta = _amplitude;
     } else {

@@ -50,7 +50,7 @@ class LightEffect {
   public:
     LightEffect();
     LightEffect(byte type, byte amplitude, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
-    void init();
+    void init(unsigned long now);
     // get state at current timestamp
     // Always works with _delta. Either multiplied or added
     byte get_state(unsigned long now, byte lightid, byte state);

@@ -26,7 +26,7 @@ LightSetting::LightSetting(byte type, byte state1, byte state2, byte steptime, b
   _set5 = set5;
 }
 
-void LightSetting::init()
+void LightSetting::init(unsigned long now)
 {
 
   // TODO: MAKE TO SWITCH ONCE YOU ADD THE OTHER ONES
@@ -62,15 +62,12 @@ void LightSetting::init()
       _state = _state1;
     }
   }
+  _laststep = now;
 }
 
 byte LightSetting::get_state(unsigned long now, byte lightid)
 {
   if(_laststep == now){
-    return _state;
-  }
-  if(_laststep == 0){
-    _laststep = now;
     return _state;
   }
   if(_type == STATICLIGHT){
