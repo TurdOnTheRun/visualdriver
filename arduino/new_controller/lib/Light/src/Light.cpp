@@ -47,6 +47,7 @@ void Light::add_effect(LightEffect* effect)
     if(_effects[i] == NULL){
       effect->usercount_up();
       _effects[i] = effect;
+      break;
     }
   }
 }
