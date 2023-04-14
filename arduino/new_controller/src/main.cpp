@@ -151,34 +151,47 @@ void parse_data() {
 
   switch(type){
     case STATICLIGHT: {
-      //set1 is state 
+      //set1: state 
       set1 = interpreter.inputBuffer[2];
     } break;
 
     case STATICFLASH: {
-      //set1 is start state
-      //set2 is to state
-      //set3 is flash time
+      //set1: start state
+      //set2: to state
+      //set3: flash time
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
     } break;
 
+    case STATICMACHINE: {
+      //set1: on state
+      //set2: off state
+      //set3: on time
+      //set4: off time
+      //set5: amount of times 
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+    } break;
+
     case LINEARDIMM: {
-      //set1 is start state
-      //set2 is to state
-      //set3 is steptime
+      //set1: start state
+      //set2: to state
+      //set3: steptime
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
     } break;
 
     case BEZIERDIMM: {
-      //set1 is start state
-      //set2 is to state
-      //set3 is steptime
-      //set4 is y1 of bezier input
-      //set5 is y2 of bezier input
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      //set4: y1 of bezier input
+      //set5: y2 of bezier input
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
@@ -189,20 +202,21 @@ void parse_data() {
     case UPVIBRATO: 
     case DOWNVIBRATO:
     case UPDOWNVIBRATO: {
-      //set1 is amplitude
-      //set2 is steptime
+      //set1: amplitude
+      //set2: steptime
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
     } break;
 
-    case MILLISTROBE:
-    case DECISTROBE: {
-      //set1 is amplitude
-      //set2 is steptime
-      //set3 is multisetting
+    case STROBE: {
+      //set1: amplitude
+      //set2: steptime
+      //set3: steptime multiplier
+      //set4: multisetting
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
     } break;
 
     default: {

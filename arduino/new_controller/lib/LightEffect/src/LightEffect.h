@@ -16,9 +16,7 @@ static const byte UPVIBRATO = 100;
 static const byte DOWNVIBRATO = 101;
 static const byte UPDOWNVIBRATO = 102;
 
-static const byte MILLISTROBE = 110;
-static const byte DECISTROBE = 111;
-
+static const byte STROBE = 110;
 
 class LightEffect {
   private:

@@ -43,6 +43,11 @@ void LightSetting::init(unsigned long now)
       }
     } break;
 
+    case STATICMACHINE: {
+      //Goes from state1 to state2 after steptime, stays at state2 for set1, then returns to state1. Repeats set2 times
+      _state = _state1;
+    } break;
+
     case LINEARDIMM: {
       // Goes from state1 to state2 taking steptime for each increment
       if(_steptime == 0){
@@ -83,6 +88,26 @@ byte LightSetting::get_state(unsigned long now, byte lightid)
     if (_passed >= _steptime){
 
       switch(_type) {
+        case STATICFLASH: {
+          _state = _state2;
+          _type = STATICLIGHT;
+        } break;
+
+        case STATICMACHINE: {
+          if(_set2 == 0){
+            _type = STATICLIGHT;
+            break;
+          }
+          if(_state == _state1){
+            _state = _state2;
+            _set2 -= 1;
+          } else {
+            _state = _state1;
+          }
+          _set3 = _steptime;
+          _steptime = _set1;
+          _set1 = _set3;
+        } break;
         // case LINEARAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
         case LINEARDIMM: {
           _steps = (int) round(_passed/_steptime);
@@ -126,9 +151,6 @@ byte LightSetting::get_state(unsigned long now, byte lightid)
           }
         } break;
 
-        case STATICFLASH: {
-          _state = _state2;
-        } break;
         // case BEZIERAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
         case BEZIERDIMM: {
           //  Bezier Dimming & Direct to Bezier

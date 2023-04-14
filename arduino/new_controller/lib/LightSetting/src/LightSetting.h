@@ -15,6 +15,7 @@
 //Possible Settings 
 static const byte STATICLIGHT = 1;
 static const byte STATICFLASH = 2;
+static const byte STATICMACHINE = 3;
 static const byte LINEARDIMM = 10;
 static const byte BEZIERDIMM = 20;
 

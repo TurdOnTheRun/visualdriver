@@ -24,12 +24,12 @@ LightEffect::LightEffect(byte type, byte amplitude, byte steptime, byte set1, by
 void LightEffect::init(unsigned long now)
 {
   switch(_type) {
-    case MILLISTROBE: {
-      _amplitude = -1 * _amplitude;
-    } break;
-    case DECISTROBE: {
-      _amplitude = -1 * _amplitude;
-      _steptime = _steptime * 10;
+    case STROBE: {
+      if(_set1){
+        _amplitude = -1 * _amplitude * _set1;
+      } else {
+        _amplitude = -1 * _amplitude;
+      }
     } break;
   }
   _laststep = now;
@@ -62,8 +62,7 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
         // }
         _delta = _updownvibrato(_vibratoangle) * _amplitude;
       } break;
-      case MILLISTROBE:
-      case DECISTROBE: {
+      case STROBE: {
         _on = !_on;
         _set_strobe_delta(lightid);
       } break;
@@ -71,8 +70,7 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
     _laststep = now;
   } else {
     switch(_type) {
-      case MILLISTROBE:
-      case DECISTROBE: {
+      case STROBE: {
         _set_strobe_delta(lightid);
       } break;
     }
@@ -91,13 +89,13 @@ void LightEffect::_set_strobe_delta(byte lightid)
 {
   if(_on){
     // If lightbit is 0 _on means on
-    if(bitRead(_set1, lightid)){
+    if(bitRead(_set2, lightid)){
       _delta = 0.0;
     } else {
       _delta = _amplitude;
     };
   } else {
-    if(bitRead(_set1, lightid)){
+    if(bitRead(_set2, lightid)){
       _delta = _amplitude;
     } else {
       _delta = 0.0;
