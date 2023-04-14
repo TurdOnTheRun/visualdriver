@@ -42,47 +42,48 @@ void LightEffect::init(unsigned long now)
 
 byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
 {
-  if(_laststep == now){
-    if(_type==MILLISTROBE || _type==DECISTROBE){
-      _set_strobe_delta(lightid);
+  _passed = now - _laststep;
+  // If step
+  if (_passed >= _steptime){
+    switch(_type) {
+      case UPVIBRATO: {
+        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
+        // if(_vibratoangle > 2 * M_PI){
+        //   _vibratoangle = _vibratoangle - (2 * M_PI);
+        // }
+        _delta = _upvibrato(_vibratoangle) * _amplitude;
+      } break;
+      case DOWNVIBRATO: {
+        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
+        // if(_vibratoangle > 2 * M_PI){
+        //   _vibratoangle = _vibratoangle - (2 * M_PI);
+        // }
+        _delta = _downvibrato(_vibratoangle) * _amplitude;
+      } break;
+      case UPDOWNVIBRATO: {
+        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
+        // if(_vibratoangle > 2 * M_PI){
+        //   _vibratoangle = _vibratoangle - (2 * M_PI);
+        // }
+        _delta = _updownvibrato(_vibratoangle) * _amplitude;
+      } break;
+      case MILLISTROBE:
+      case DECISTROBE: {
+        // Serial.println();
+        _on = !_on;
+        _set_strobe_delta(lightid);
+      } break;
     }
-    // no need to recalculate delta for other effects
-  }
-  else{
-    _passed = now - _laststep;
-    if (_passed >= _steptime){
-      switch(_type) {
-        case UPVIBRATO: {
-          _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
-          // if(_vibratoangle > 2 * M_PI){
-          //   _vibratoangle = _vibratoangle - (2 * M_PI);
-          // }
-          _delta = _upvibrato(_vibratoangle) * _amplitude;
-        } break;
-        case DOWNVIBRATO: {
-          _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
-          // if(_vibratoangle > 2 * M_PI){
-          //   _vibratoangle = _vibratoangle - (2 * M_PI);
-          // }
-          _delta = _downvibrato(_vibratoangle) * _amplitude;
-        } break;
-        case UPDOWNVIBRATO: {
-          _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
-          // if(_vibratoangle > 2 * M_PI){
-          //   _vibratoangle = _vibratoangle - (2 * M_PI);
-          // }
-          _delta = _updownvibrato(_vibratoangle) * _amplitude;
-        } break;
-        case MILLISTROBE:
-        case DECISTROBE: {
-          Serial.println();
-          _on = !_on;
-          _set_strobe_delta(lightid);
-        } break;
-      }
-      _laststep = now;
+    _laststep = now;
+  } else {
+    switch(_type) {
+      case MILLISTROBE:
+      case DECISTROBE: {
+        _set_strobe_delta(lightid);
+      } break;
     }
   }
+  // Serial.println(_delta);
   _newstate = (int) round(state + state * _delta);
   if(_newstate > 100){
     _newstate = 100;
@@ -97,18 +98,18 @@ void LightEffect::_set_strobe_delta(byte lightid)
 {
   if(_on){
     // If lightbit is 0 _on means on
-    Serial.println(111);
-    Serial.println(lightid);
-    Serial.println(bitRead(_set1, lightid));
+    // Serial.println(111);
+    // Serial.println(lightid);
+    // Serial.println(bitRead(_set1, lightid));
     if(bitRead(_set1, lightid)){
       _delta = 0.0;
     } else {
       _delta = _amplitude;
     };
   } else {
-    Serial.println(222);
-    Serial.println(lightid);
-    Serial.println(bitRead(_set1, lightid));
+    // Serial.println(222);
+    // Serial.println(lightid);
+    // Serial.println(bitRead(_set1, lightid));
     if(bitRead(_set1, lightid)){
       _delta = _amplitude;
     } else {
