@@ -72,6 +72,14 @@ void Light::remove_effect(byte index)
   }
 }
 
+void Light::remove_effects()
+{
+  for(byte i=0; i<EFFECTSPERLIGHT; i++){
+    _effects[i]->usercount_down();
+    _effects[i] = NULL;
+  }
+}
+
 void Light::update(unsigned long now)
 {
   _newstate = _setting->get_state(now, _id);

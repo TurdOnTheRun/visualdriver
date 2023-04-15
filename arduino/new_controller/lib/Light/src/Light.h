@@ -32,6 +32,7 @@ class Light {
     void add_effect(LightEffect* effect);
     void remove_effect(LightEffect* effect);
     void remove_effect(byte index);
+    void remove_effects();
 };
 
 #endif

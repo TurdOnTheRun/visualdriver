@@ -13,7 +13,7 @@ def flashCollection(agentsStatesDurations, iterations=1):
 
     for i in range(iterations):
         for agent, state, duration in agentsStatesDurations:
-            eventDict['time'].append(Flash(At(currentTime), agent, state, duration))
+            eventDict['time'].append(StaticFlash(At(currentTime), agent, state, duration))
             currentTime += 1
         
         eventDict['time'].append(TriggerAngle(At(currentTime), TRIGGER_SONY_UP))

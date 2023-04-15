@@ -211,7 +211,7 @@ void parse_data() {
     case STROBE: {
       //set1: amplitude
       //set2: steptime
-      //set3: steptime multiplier
+      //set3: steptime factor
       //set4: multisetting
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
