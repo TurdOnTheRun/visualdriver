@@ -21,6 +21,8 @@ class Light {
     LightSetting* _setting;
     LightEffect* _effects[EFFECTSPERLIGHT] = {};
     void set_pinstate();
+    void pin_write();
+    void set_pin_frequency(); //only necessary for uno
 
   public:
     Light(byte id, byte pin, LightSetting* setting);

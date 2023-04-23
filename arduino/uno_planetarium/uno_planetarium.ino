@@ -1,5 +1,7 @@
-#include <SerialInterpreter.h>
 #include <Light.h>
+#include <LightSetting.h>
+#include <LightEffect.h>
+#include <SerialInterpreter.h>
 #include <PWM.h>
 
 
@@ -8,17 +10,14 @@ class UnoLight: public Light {
     int32_t _frequency = 31000; //frequency (in Hz)
     
   public:
-    UnoLight(byte id, byte pin):Light(id, pin){};
-    void init() {
-      pinMode(_pin, OUTPUT);
+    UnoLight(byte id, byte pin, LightSetting* setting):Light(id, pin, setting){};
+    void set_pin_frequency() {
       //sets the frequency for the specified pin
       SetPinFrequencySafe(_pin, _frequency);
     };
-    void setstate(byte newstate) {
-      pwmWrite(_pin, newstate);
-      _state = newstate;
-      _laststep = millis();
-    };
+    void pin_write() {
+      pwmWrite(_pin, _statemap[_newstate]);
+    }
 };
 
 
@@ -147,238 +146,291 @@ class Motor {
 
 };
 
+Motor motor = Motor();
 
-//3, 9, 10
+// ARDUINO SPECIFIC
+//Available Pins:
+//3,9,10
 const byte light1 = 3;
 const byte light2 = 9;
 const byte light3 = 10;
 
-const byte numberoflights = 3;
+// ARDUINO SPECIFIC
+const byte numberOfLights = 3;
+const byte numberOfSettings = 4;
+const byte numberOfEffects = (numberOfLights * EFFECTSPERLIGHT) + 1;
 
-Motor motor = Motor();
+// ARDUINO SPECIFIC
+// Always must be one more than numberOfLights
+LightSetting lightSettings[numberOfSettings] = {
+  LightSetting(STATICMACHINE,60,0,100,50,3,0,0,0),
+  LightSetting(),
+  LightSetting(),
+  LightSetting(),
+};
 
-UnoLight lights[numberoflights] = {
-  UnoLight(1, light1),
-  UnoLight(2, light2),
-  UnoLight(3, light3),
+LightEffect lightEffects[numberOfEffects];
+
+// ARDUINO SPECIFIC
+UnoLight lights[numberOfLights] = {
+  Light(0, light1, &lightSettings[0]),
+  Light(1, light2, &lightSettings[0]),
+  Light(2, light3, &lightSettings[0]),
 };
 
 SerialInterpreter interpreter = SerialInterpreter();
+unsigned long now;
 
-void setup(){
-  //SETUP USB SERIAL  
-  Serial.begin(115200);
-  
-  //initialize all timers except for 0, to save time keeping functions
-  InitTimersSafe(); 
+// One message consists of a maximum of 10 bytes
+byte type; //id of setting or effect
+byte targetlights; //bit map for what lights the effect is for
+// settings
+byte set1;
+byte set2;
+byte set3;
+byte set4;
+byte set5;
+byte set6;
+byte set7;
+byte set8;
 
-  motor.init();
-  initLights();
-  setAll(7,50,3,255,0,0,0,0,0);
+
+void set_setting(byte targetlights, LightSetting setting){
+
+  byte i;
+
+  // Write setting into array
+  for(i=0; i < numberOfSettings; i++) {
+    if(lightSettings[i].is_unused()){
+      lightSettings[i] = setting;
+      lightSettings[i].init(now);
+      break;
+    }
+  };
+
+  for(byte j = 0; j < numberOfLights; j++) {
+    if(bitRead(targetlights, j)){
+      lights[j].set_setting(&lightSettings[i]);
+    }
+  };
 }
 
-void loop(){
-  readSerial();
-  updateLights();
-  motor.update();
+
+void add_effect(byte targetlights, LightEffect effect){
+
+  byte i;
+
+  // Write setting into array
+  for(i=0; i < numberOfEffects; i++) {
+    if(lightEffects[i].is_unused()){
+      lightEffects[i] = effect;
+      lightEffects[i].init(now);
+      break;
+    }
+  };
+
+  for(byte j=0; j < numberOfLights; j++) {
+    if(bitRead(targetlights, j)){
+      lights[j].add_effect(&lightEffects[i]);
+    }
+  };
 }
 
-void readSerial() {
-  // receive data from Python and save it into inputBuffer
-  while(Serial.available() > 0) {
+void reset_effects(byte targetlights){
+  for(byte j=0; j < numberOfLights; j++) {
+    if(bitRead(targetlights, j)){
+      lights[j].remove_effects();
+    }
+  };
+}
+
+void remove_effect(byte targetlights, byte effectindex){
+  for(byte j=0; j < numberOfLights; j++) {
+    if(bitRead(targetlights, j)){
+      lights[j].remove_effect(effectindex);
+    }
+  };
+}
+
+
+void parse_data() {
+  // split the data into its parts
+
+  type = 0; //id of setting or effect
+  targetlights = 0; //bit map for what lights the effect is for
+  // Setting Variables
+  set1 = 0;
+  set2 = 0;
+  set3 = 0;
+  set4 = 0;
+  set5 = 0;
+  set6 = 0;
+  set7 = 0;
+  set8 = 0;
+
+  LightSetting setting;
+  LightSetting effect;
+
+  type = interpreter.inputBuffer[0];
+  targetlights = interpreter.inputBuffer[1];
+
+  // ARDUINO SPECIFIC
+  // Handles Motor Commands
+  if (type == 220) {
+    // set1: state
+    // set2: steptime
+    set1 = interpreter.inputBuffer[1];
+    set2 = interpreter.inputBuffer[2];
+    motor.setto(set1,set2);
+    return;
+  } else if (type == 221) {
+    motor.changedirection();
+    return;
+  }
+
+  switch(type){
+    case STATICLIGHT: {
+      //set1: state 
+      set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case STATICFLASH: {
+      //set1: start state
+      //set2: to state
+      //set3: flash time
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
+    case STATICMACHINE: {
+      //set1: on state
+      //set2: off state
+      //set3: on time
+      //set4: off time
+      //set5: amount of times 
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+    } break;
+
+    case LINEARDIMM: {
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
+    case BEZIERDIMM: {
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      //set4: y1 of bezier input
+      //set5: y2 of bezier input
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+    } break;
+
+    case UPVIBRATO: 
+    case DOWNVIBRATO:
+    case UPDOWNVIBRATO: {
+      //set1: amplitude
+      //set2: steptime
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+    } break;
+
+    case STROBE: {
+      //set1: amplitude
+      //set2: steptime
+      //set3: steptime factor
+      //set4: multisetting
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+    } break;
+
+    case RESETEFFECTS: {
+      //only needs target lights
+      reset_effects(targetlights);
+      return;
+    } break;
+
+    case REMOVEEFFECT: {
+      //set1: effect index
+      set1 = interpreter.inputBuffer[2];
+      remove_effect(targetlights, set1);
+      return;
+    } break;
+
+    default: {
+      return;
+    } break;
+  }
+
+  // Settings
+  if(type < 100){
+    set_setting(targetlights, LightSetting(type, set1, set2, set3, set4, set5, set6, set7, set8));
+  } 
+  else if(type < 200){
+    add_effect(targetlights, LightEffect(type, set1, set2, set3, set4, set5, set6, set7, set8));
+  }
+}
+
+void lights_setup() {
+  for(byte i = 0; i < numberOfLights; i++) {
+    lights[i].init();
+  };
+}
+
+void settings_setup() {
+  lightSettings[0].init(now);
+}
+
+void update_lights() {
+  now = millis();
+  for(byte i = 0; i < numberOfLights; i++) {
+    lights[i].update(now);
+  };
+}
+
+void read_serial() {
+  // receive data from Python and save it into interpreter.inputBuffer
+  while(Serial1.available() > 0) {
     
-    byte x = Serial.read();
-
-    // the order of these IF clauses is significant
+    byte x = Serial1.read();
     bool isEnd = interpreter.processByte(x);
     
     if(isEnd){
-      parseData();
+      parse_data();
     }
     
   }
 }
 
-void parseData() {
-  // split the data into its parts
+void setup() {
+  // ARDUINO SPECIFIC
+  Serial.begin(115200);
+  InitTimersSafe();
+  motor.init(); 
 
-  byte id = interpreter.inputBuffer[0];
-  //Serial.println(id);
-  byte lightid;
-  byte type;
-  byte state1;
-  byte state2;
-  byte steptime;
-  byte set1;
-  byte set2;
-  byte set3;
-  byte set4;
-  byte set5;
-
-  boolean all = false;
-  byte alltype;
-
-  if (id == 220) {
-    state1 = interpreter.inputBuffer[1];
-    steptime = interpreter.inputBuffer[2];
-    motor.setto(state1,steptime);
-    return;
-  } else if (id == 221) {
-    motor.changedirection();
-    return;
-  }
-
-  if(id > 199 && id < 220){
-    all = true;
-    alltype = id - 200;
-    id = alltype*10;
-  } 
-  
-  if(id < 10) {
-    //Direct    
-    lightid = id % 10;
-    type = 0;
-    state1 = interpreter.inputBuffer[1];
-    steptime = 0;
-  } 
-  else if(id < 20) {
-    //Linear    
-    lightid = id % 10;
-    type = 1;
-    state1 = interpreter.inputBuffer[1];
-    steptime = interpreter.inputBuffer[2];
-  }
-  else if(id < 30) {
-    //Strobe  
-    lightid = id % 10;
-    type = 2;
-    state1 = interpreter.inputBuffer[1];
-    steptime = interpreter.inputBuffer[2];
-  }
-  else if(id < 40) {
-    //Direct to Linear  
-    lightid = id % 10;
-    type = 3;
-    state1 = interpreter.inputBuffer[1];
-    state2 = interpreter.inputBuffer[2];
-    steptime = interpreter.inputBuffer[3];
-  }
-  else if(id < 50) {
-    //Shutter  
-    lightid = id % 10;
-    type = 4;
-    state1 = interpreter.inputBuffer[1];
-    steptime = interpreter.inputBuffer[2];
-  }
-  else if(id < 60) {
-    // Lightning Disappear  
-    lightid = id % 10;
-    type = 5;
-    state1 = interpreter.inputBuffer[1];
-    state2 = interpreter.inputBuffer[2];
-    // steptime for dimming    
-    steptime = interpreter.inputBuffer[3];
-    // lightning time in ms   
-    set1 = interpreter.inputBuffer[4];
-  }
-  else if(id < 70) {
-    // Lightning Appear  
-    lightid = id % 10;
-    type = 6;
-    state1 = interpreter.inputBuffer[1];
-    state2 = interpreter.inputBuffer[2];
-    // steptime for dimming
-    steptime = interpreter.inputBuffer[3];
-    // lightning time in ms
-    set1 = interpreter.inputBuffer[4];
-  }
-  else if(id < 80) {
-    //Machine Gun  
-    lightid = id % 10;
-    type = 7;
-    state1 = interpreter.inputBuffer[1];
-    state2 = interpreter.inputBuffer[2];
-    steptime = interpreter.inputBuffer[3];
-  }
-  else if(id < 90) {
-    //Accelerating Strobe  
-    lightid = id % 10;
-    type = 8;
-    state1 = interpreter.inputBuffer[1];
-    steptime = interpreter.inputBuffer[2];
-    set1 = interpreter.inputBuffer[3];
-    set2 = interpreter.inputBuffer[4];
-  }
-  else if(id < 100) {}
-  else if(id < 110) {
-    //Bezier Dimm  
-    lightid = id % 10;
-    type = 10;
-    state1 = interpreter.inputBuffer[1];
-    state2 = interpreter.inputBuffer[2];
-    steptime = interpreter.inputBuffer[3];
-    set1 = interpreter.inputBuffer[4];
-    set2 = interpreter.inputBuffer[5];
-    set3 = interpreter.inputBuffer[6];
-    set4 = interpreter.inputBuffer[7];
-  }
-  else if(id < 120) {
-    //Lightning Bezier Appear/Disappear  
-    lightid = id % 10;
-    type = 11;
-    state1 = interpreter.inputBuffer[1];
-    state2 = interpreter.inputBuffer[2];
-    steptime = interpreter.inputBuffer[3];
-    set1 = interpreter.inputBuffer[4];
-    set2 = interpreter.inputBuffer[5];
-    set3 = interpreter.inputBuffer[6];
-    set4 = interpreter.inputBuffer[7];
-    //lightning time in ms    
-    set5 = interpreter.inputBuffer[8];
-  }
-  else if(id < 130) {
-    //Vibrato  
-    lightid = id % 10;
-    type = 12;
-    state1 = interpreter.inputBuffer[1];
-    state2 = interpreter.inputBuffer[2];
-    steptime = interpreter.inputBuffer[3];
-  }
-
-//  Serial.println(id);
-//  Serial.println(state1);
-//  Serial.println(state2);
-//  Serial.println(steptime);
-//  Serial.println();
-  
-  if(all){
-    //Serial.println("all");
-    setAll(alltype,state1,state2,steptime,set1,set2,set3,set4,set5);
-  } else {
-    //Serial.println(lightid);
-    setLight(lightid,type,state1,state2,steptime,set1,set2,set3,set4,set5);
-  }
-
+  lights_setup();
+  now = millis();
+  settings_setup();
+  update_lights();
 }
 
-void initLights() {
-  for(int i = 0; i < numberoflights; ++i) {
-    lights[i].init();
-  };
-}
-
-void updateLights() {
-  for(int i = 0; i < numberoflights; ++i) {
-    lights[i].update();
-  };
-}
-
-void setAll(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5) {
-  for(int i = 0; i < numberoflights; ++i) {
-    lights[i].setto(type,state1,state2,steptime,set1,set2,set3,set4,set5);
-  };
-}
-
-void setLight(byte id, byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5) {
-  lights[id].setto(type,state1,state2,steptime,set1,set2,set3,set4,set5);
+void loop() {
+  read_serial();
+  update_lights();
+  // ARDUINO SPECIFIC
+  motor.update();
 }

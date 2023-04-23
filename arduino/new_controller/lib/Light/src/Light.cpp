@@ -18,9 +18,15 @@ Light::Light(byte id, byte pin, LightSetting* setting)
 void Light::init()
 {
   pinMode(_pin, OUTPUT);
+  set_pin_frequency();
   for(byte i=0; i<EFFECTSPERLIGHT; i++){
     _effects[i] = NULL;
   }
+}
+
+void Light::set_pin_frequency()
+{
+  //only necessary for uno
 }
 
 void Light::set_pinstate()
@@ -29,10 +35,16 @@ void Light::set_pinstate()
     _newstate = 100;
   }
   if(_pinstate != _newstate){
-    analogWrite(_pin, _statemap[_newstate]);
+    pin_write();
     _pinstate = _newstate;
   }
 }
+
+void Light::pin_write()
+{
+  analogWrite(_pin, _statemap[_newstate]);
+}
+
 
 void Light::set_setting(LightSetting* setting)
 {

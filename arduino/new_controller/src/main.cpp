@@ -22,10 +22,10 @@ void pwm_setup(){
 // ARDUINO SPECIFIC
 //Available Pins:
 //2,3,5,6,7,8,9,10
-const byte light0 = 7;
-const byte light1 = 3;
-const byte light2 = 2;
-const byte light3 = 8; 
+const byte light1 = 7;
+const byte light2 = 3;
+const byte light3 = 2;
+const byte light4 = 8; 
 // const byte light4 = 5;
 // const byte light5 = 6;
 // const byte light6 = 9;
@@ -52,10 +52,10 @@ LightEffect lightEffects[numberOfEffects];
 
 // ARDUINO SPECIFIC
 Light lights[numberOfLights] = {
-  Light(0, light0, &lightSettings[0]),
-  Light(1, light1, &lightSettings[0]),
-  Light(2, light2, &lightSettings[0]),
-  Light(3, light3, &lightSettings[0]),
+  Light(0, light1, &lightSettings[0]),
+  Light(1, light2, &lightSettings[0]),
+  Light(2, light3, &lightSettings[0]),
+  Light(3, light4, &lightSettings[0]),
 //  Light(5, light5),
 //  Light(6, light6),
 //  Light(7, light7),
@@ -292,8 +292,8 @@ void setup() {
   // ARDUINO SPECIFIC
   // Serial.begin(9600);
   Serial1.begin(115200);
-
   pwm_setup();
+
   lights_setup();
   now = millis();
   settings_setup();
