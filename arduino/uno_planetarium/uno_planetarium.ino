@@ -8,9 +8,6 @@
 class UnoLight: public Light {
   private:
     int32_t _frequency = 31000; //frequency (in Hz)
-    
-  public:
-    UnoLight(byte id, byte pin, LightSetting* setting):Light(id, pin, setting){};
     void set_pin_frequency() {
       //sets the frequency for the specified pin
       SetPinFrequencySafe(_pin, _frequency);
@@ -18,6 +15,10 @@ class UnoLight: public Light {
     void pin_write() {
       pwmWrite(_pin, _statemap[_newstate]);
     }
+    
+  public:
+    UnoLight(byte id, byte pin, LightSetting* setting):Light(id, pin, setting){};
+
 };
 
 
@@ -151,20 +152,19 @@ Motor motor = Motor();
 // ARDUINO SPECIFIC
 //Available Pins:
 //3,9,10
-const byte light1 = 3;
-const byte light2 = 9;
-const byte light3 = 10;
+const byte light1 = 9;
+const byte light2 = 10;
+//const byte light3 = 3;
 
 // ARDUINO SPECIFIC
-const byte numberOfLights = 3;
-const byte numberOfSettings = 4;
+const byte numberOfLights = 2;
+const byte numberOfSettings = 3;
 const byte numberOfEffects = (numberOfLights * EFFECTSPERLIGHT) + 1;
 
 // ARDUINO SPECIFIC
 // Always must be one more than numberOfLights
 LightSetting lightSettings[numberOfSettings] = {
-  LightSetting(STATICMACHINE,60,0,100,50,3,0,0,0),
-  LightSetting(),
+  LightSetting(STATICMACHINE,60,0,200,100,3,0,0,0),
   LightSetting(),
   LightSetting(),
 };
@@ -173,9 +173,8 @@ LightEffect lightEffects[numberOfEffects];
 
 // ARDUINO SPECIFIC
 UnoLight lights[numberOfLights] = {
-  Light(0, light1, &lightSettings[0]),
-  Light(1, light2, &lightSettings[0]),
-  Light(2, light3, &lightSettings[0]),
+  UnoLight(0, light1, &lightSettings[0]),
+  UnoLight(1, light2, &lightSettings[0]),
 };
 
 SerialInterpreter interpreter = SerialInterpreter();
@@ -404,9 +403,10 @@ void update_lights() {
 
 void read_serial() {
   // receive data from Python and save it into interpreter.inputBuffer
-  while(Serial1.available() > 0) {
-    
-    byte x = Serial1.read();
+  //ARDUINO SPECIFIC  
+  while(Serial.available() > 0) {
+    //ARDUINO SPECIFIC  
+    byte x = Serial.read();
     bool isEnd = interpreter.processByte(x);
     
     if(isEnd){
