@@ -337,6 +337,51 @@ class Strobe(ArduinoEvent):
             return self.clean_bytes(command)
         else:
             return command
+        
+
+class ResetEffects(ArduinoEvent):
+
+    def __init__(self, condition, controller, lightAgents):
+        super().__init__(condition, controller, False)
+        self.lightsByte = self.make_lightsbyte(lightAgents)
+        self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'ResetEffects({}, {}, {})'.format(self.condition, self.controller, self.lightsByte)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [190, self.lightsByte]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+        
+
+class RemoveEffect(ArduinoEvent):
+
+    def __init__(self, condition, controller, lightAgents, effectIndex):
+        super().__init__(condition, controller, False)
+        self.lightsByte = self.make_lightsbyte(lightAgents)
+        self.effectIndex = effectIndex
+        self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'RemoveEffect({}, {}, {}, {})'.format(self.condition, self.controller, self.lightsByte, self.effectIndex)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [191, self.lightsByte, self.effectIndex]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
     
 
 class MotorSpeed(Event):

@@ -5,6 +5,7 @@
   Types:
   100-109 - Vibrato Types
   110-119 - Strobe Types
+  190-199 - Effect Settings
 */
 #ifndef LightEffect_h
 #define LightEffect_h
@@ -17,6 +18,9 @@ static const byte DOWNVIBRATO = 101;
 static const byte UPDOWNVIBRATO = 102;
 
 static const byte STROBE = 110;
+
+static const byte RESETEFFECTS = 190;
+static const byte REMOVEEFFECT = 191;
 
 class LightEffect {
   private:

@@ -122,9 +122,20 @@ void add_effect(byte targetlights, LightEffect effect){
   };
 }
 
+void reset_effects(byte targetlights){
+  for(byte j=0; j < numberOfLights; j++) {
+    if(bitRead(targetlights, j)){
+      lights[j].remove_effects();
+    }
+  };
+}
 
-void remove_effect(byte lightid, byte effectindex){
-  lights[lightid].remove_effect(effectindex);
+void remove_effect(byte targetlights, byte effectindex){
+  for(byte j=0; j < numberOfLights; j++) {
+    if(bitRead(targetlights, j)){
+      lights[j].remove_effect(effectindex);
+    }
+  };
 }
 
 
@@ -217,6 +228,19 @@ void parse_data() {
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
       set4 = interpreter.inputBuffer[5];
+    } break;
+
+    case RESETEFFECTS: {
+      //only needs target lights
+      reset_effects(targetlights);
+      return;
+    } break;
+
+    case REMOVEEFFECT: {
+      //set1: effect index
+      set1 = interpreter.inputBuffer[2];
+      remove_effect(targetlights, set1);
+      return;
     } break;
 
     default: {

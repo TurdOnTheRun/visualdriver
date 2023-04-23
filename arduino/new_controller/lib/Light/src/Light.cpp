@@ -75,8 +75,10 @@ void Light::remove_effect(byte index)
 void Light::remove_effects()
 {
   for(byte i=0; i<EFFECTSPERLIGHT; i++){
-    _effects[i]->usercount_down();
-    _effects[i] = NULL;
+     if(_effects[i] != NULL){
+      _effects[i]->usercount_down();
+      _effects[i] = NULL;
+     }
   }
 }
 
