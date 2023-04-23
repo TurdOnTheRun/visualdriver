@@ -8,14 +8,6 @@ eventDict = {
     'time': []
 }
 
-#Right Light: 
-#0 - 3:75
-#4:34 - 8:01
-#8:35 - 11:53
-#12:00 - 14:76
-#15:23 -  18
-#18 - low steady until 29
-
 eventDict['time'].append(StaticLight(At(0), TopController, [Light1, Light2, Light3, Light4], 20))
 
 eventDict['time'].append(StaticFlash(At(2), TopController, [Light1, Light2, Light3, Light4], 100, 30, 200))
