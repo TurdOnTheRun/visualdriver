@@ -274,7 +274,6 @@ void setup() {
   now = millis();
   settings_setup();
   update_lights();
-  add_effect(255, LightEffect(111, 100, 20, 10, 0,0,0,0,0));
 }
 
 void loop() {
