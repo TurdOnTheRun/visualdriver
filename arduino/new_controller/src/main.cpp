@@ -22,10 +22,10 @@ void pwm_setup(){
 // ARDUINO SPECIFIC
 //Available Pins:
 //2,3,5,6,7,8,9,10
-const byte light0 = 2;
+const byte light0 = 7;
 const byte light1 = 3;
-const byte light2 = 7;
-const byte light3 = 8;
+const byte light2 = 2;
+const byte light3 = 8; 
 // const byte light4 = 5;
 // const byte light5 = 6;
 // const byte light6 = 9;
