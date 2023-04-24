@@ -2,169 +2,48 @@
 #include <LightSetting.h>
 #include <LightEffect.h>
 #include <SerialInterpreter.h>
-#include <PWM.h>
 
 
-class UnoLight: public Light {
-  private:
-    int32_t _frequency = 31000; //frequency (in Hz)
-    void set_pin_frequency() {
-      //sets the frequency for the specified pin
-      SetPinFrequencySafe(_pin, _frequency);
-    };
-    void pin_write() {
-      pwmWrite(_pin, _statemap[_newstate]);
-    }
-    
-  public:
-    UnoLight(byte id, byte pin, LightSetting* setting):Light(id, pin, setting){};
-
-};
-
-
-// Derived class
-class Motor {
-  protected:
-    const byte RPWM_pin = 5;
-    const byte LPWM_pin = 6;
-    byte OUT_pin;
-    byte NOTOUT_pin;
-    const byte MAXIMAL_SPEED_DIFFERENCE = 5;
-    const byte MAXIMUM_SPEED = 130;
-    boolean stopped = true;
-    boolean changingDirection = false;
-    byte state;
-    byte tostate;
-    byte savestate;
-    byte steptime;
-    unsigned long laststep;
-
-  public:
-
-    Motor(){}
-    
-    void init() {
-      pinMode(RPWM_pin, OUTPUT);
-      pinMode(LPWM_pin, OUTPUT);
-      OUT_pin = LPWM_pin;
-      NOTOUT_pin = RPWM_pin;
-    }
-
-    void update() {
-      
-      if (changing()){
-        
-        unsigned long passed = millis() - laststep;
-        int steps;
-        
-        if (passed < steptime){
-          return;
-        } else {
-          steps = (int) round(passed/steptime);
-        }
-
-        int newstate;
-        
-        if (rising()){
-          
-          newstate = ((int)state)+steps;
-          
-          if (newstate >= tostate || newstate > 255){
-            setstate(tostate);
-          } else {
-            setstate(lowByte(newstate));
-          }
-          
-        } else {
-          
-          newstate = ((int)state)-steps;
-          
-          if (newstate <= tostate || newstate < 0){
-            setstate(tostate);
-          } else {
-            setstate(lowByte(newstate));
-          }
-          
-        }
-      } else if (changingDirection && stopped) {
-        byte TEMP_pin = OUT_pin;
-        OUT_pin = NOTOUT_pin;
-        NOTOUT_pin = TEMP_pin;
-        changingDirection = false;
-        setto(savestate,20);
-      }
-    }
-
-    void setstate(byte newstate) {
-      analogWrite(NOTOUT_pin,0);
-      analogWrite(OUT_pin,newstate);
-      if (newstate != 0){
-        stopped = false;
-      } else {
-        stopped = true;
-      }
-      laststep = millis();
-      state = newstate;
-    }
-
-    void setto(byte state_in, byte steptime_in) {
-      if (changingDirection){
-        return;
-      }
-      if (steptime_in < 20) {
-        byte difference;
-        if (state > state_in) {
-          difference = state-state_in;
-        } else {
-          difference = state_in-state;
-        }
-        if (difference > MAXIMAL_SPEED_DIFFERENCE){
-          steptime_in = 20;
-        }
-      }
-      if (state_in > MAXIMUM_SPEED){
-        state_in = MAXIMUM_SPEED;
-      }
-      tostate = state_in;
-      steptime = steptime_in;
-      laststep = millis();
-    }
-
-    void changedirection() {
-      savestate = state;
-      tostate = 0;
-      steptime = 20;
-      changingDirection = true;
-    }
-
-    bool rising() {
-      return (state < tostate);
-    }
-
-    bool changing() {
-      return !(state == tostate);
-    }
-
-};
-
-Motor motor = Motor();
+// ARDUINO SPECIFIC
+void pwm_setup(){
+  //SET PIN FREQUENCIES TO 31kHz  
+  int eraser = 7;       // this is 111 in binary and is used as an eraser
+  int prescaler = 1;    // this could be a number in [1 , 6]. 1 corresponds to 31000 Hz (fastest)   
+  TCCR1B &= ~eraser;    // this operation (AND plus NOT), set the three bits in TCCR2B to 0
+  TCCR2B &= ~eraser;    
+  TCCR3B &= ~eraser;
+  TCCR4B &= ~eraser;
+  TCCR1B |= prescaler; //this operation (OR), replaces the last three bits in TCCR2B with our new value 001
+  TCCR2B |= prescaler;  
+  TCCR3B |= prescaler;
+  TCCR4B |= prescaler;
+}
 
 // ARDUINO SPECIFIC
 //Available Pins:
-//3,9,10
-const byte light1 = 9;
-const byte light2 = 10;
-//const byte light3 = 3;
+//2,3,5,6,7,8,9,10
+const byte light1 = 7;
+const byte light2 = 3;
+const byte light3 = 2;
+const byte light4 = 8; 
+// const byte light4 = 5;
+// const byte light5 = 6;
+// const byte light6 = 9;
+// const byte light7 = 10;
+// const byte light8 = 11;
+// const byte light9 = 12;
 
 // ARDUINO SPECIFIC
-const byte numberOfLights = 2;
-const byte numberOfSettings = 3;
+const byte numberOfLights = 4;
+const byte numberOfSettings = 5;
 const byte numberOfEffects = (numberOfLights * EFFECTSPERLIGHT) + 1;
 
 // ARDUINO SPECIFIC
 // Always must be one more than numberOfLights
 LightSetting lightSettings[numberOfSettings] = {
-  LightSetting(STATICMACHINE,60,0,200,100,3,0,0,0),
+  LightSetting(LINEARDIMM,0,30,40,0,0,0,0,0),
+  LightSetting(),
+  LightSetting(),
   LightSetting(),
   LightSetting(),
 };
@@ -172,9 +51,17 @@ LightSetting lightSettings[numberOfSettings] = {
 LightEffect lightEffects[numberOfEffects];
 
 // ARDUINO SPECIFIC
-UnoLight lights[numberOfLights] = {
-  UnoLight(0, light1, &lightSettings[0]),
-  UnoLight(1, light2, &lightSettings[0]),
+Light lights[numberOfLights] = {
+  Light(0, light1, &lightSettings[0]),
+  Light(1, light2, &lightSettings[0]),
+  Light(2, light3, &lightSettings[0]),
+  Light(3, light4, &lightSettings[0]),
+//  Light(5, light5),
+//  Light(6, light6),
+//  Light(7, light7),
+//  Light(8, light8),
+//  Light(9, light9),
+//  Light(10, light10),
 };
 
 SerialInterpreter interpreter = SerialInterpreter();
@@ -272,20 +159,6 @@ void parse_data() {
 
   type = interpreter.inputBuffer[0];
   targetlights = interpreter.inputBuffer[1];
-
-  // ARDUINO SPECIFIC
-  // Handles Motor Commands
-  if (type == 220) {
-    // set1: state
-    // set2: steptime
-    set1 = interpreter.inputBuffer[1];
-    set2 = interpreter.inputBuffer[2];
-    motor.setto(set1,set2);
-    return;
-  } else if (type == 221) {
-    motor.changedirection();
-    return;
-  }
 
   switch(type){
     case STATICLIGHT: {
@@ -403,10 +276,9 @@ void update_lights() {
 
 void read_serial() {
   // receive data from Python and save it into interpreter.inputBuffer
-  //ARDUINO SPECIFIC  
-  while(Serial.available() > 0) {
-    //ARDUINO SPECIFIC  
-    byte x = Serial.read();
+  while(Serial1.available() > 0) {
+    
+    byte x = Serial1.read();
     bool isEnd = interpreter.processByte(x);
     
     if(isEnd){
@@ -418,9 +290,9 @@ void read_serial() {
 
 void setup() {
   // ARDUINO SPECIFIC
-  Serial.begin(115200);
-  InitTimersSafe();
-  motor.init(); 
+  // Serial.begin(9600);
+  Serial1.begin(115200);
+  pwm_setup();
 
   lights_setup();
   now = millis();
@@ -431,6 +303,4 @@ void setup() {
 void loop() {
   read_serial();
   update_lights();
-  // ARDUINO SPECIFIC
-  motor.update();
 }

@@ -4,7 +4,7 @@ import queue
 import time
 
 from events import *
-from agents import *
+from controllers import *
 from conditions import *
 
 from arduinopwmmanager import ArduinoPwmManager
@@ -66,10 +66,9 @@ class VisualDriver:
     
     def shutdown(self):
         self.bottomQueue.put((220,0,50))
-        self.topQueue.put((212,0))
-        self.topQueue.put((200,0))
-        self.bottomQueue.put((212,0))
-        self.bottomQueue.put((200,0))
+        # TODO: Trigger Effect reset
+        self.topQueue.put((1,255,30))
+        self.bottomQueue.put((1,255,0))
         time.sleep(1)
         self.shutdownQueue.put('STOP')
         time.sleep(3)
@@ -85,8 +84,8 @@ class VisualDriver:
         print('Setting Up...')
         time.sleep(3)
         self.bottomQueue.put((220,0,50))
-        self.topQueue.put((200,0))
-        self.bottomQueue.put((200,0))
+        self.topQueue.put((1,255,0))
+        self.bottomQueue.put((1,255,0))
         time.sleep(4)
         print('Setup Complete!')
 
@@ -140,16 +139,16 @@ class VisualDriver:
                         positionEventsIndex += 1
 
                 for event in events:
-                    if event.agent.controller != MAIN_CONTROLLER:
+                    if event.controller.type != MAIN_CONTROLLER:
                         if event.hasVariable:
                             for i, com in enumerate(event.command):
                                 if isinstance(com, Variable):
                                     event.command[i] = com.get(now=now, position=positionNow, pose=poseNow)
                             event.command = event.clean_bytes(event.command)
                             # print(now, positionNow, event.command)
-                        if event.agent.controller == TOP_CONTROLLER:
+                        if event.controller.type == TOP_CONTROLLER:
                             self.topQueue.put(event.command)
-                        elif event.agent.controller == BOTTOM_CONTROLLER:
+                        elif event.controller.type == BOTTOM_CONTROLLER:
                             self.bottomQueue.put(event.command)
                     else:
                         if event.type == TIME_RESET_TYPE:
