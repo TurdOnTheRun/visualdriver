@@ -201,11 +201,12 @@ class LinearDimm(ArduinoEvent):
 
 class BezierDimm(ArduinoEvent):
 
-    def __init__(self, condition, controller, lightAgents, fromState, toState, steptime, y1, y2, hasVariable=False):
+    def __init__(self, condition, controller, lightAgents, fromState, toState, steptime, decisteps, y1, y2, hasVariable=False):
         self.lightsByte = self.make_lightsbyte(lightAgents)
         self.fromState = fromState
         self.toState = toState
         self.steptime = steptime
+        self.decisteps = decisteps
         self.y1 = y1
         self.y2 = y2
         super().__init__(condition, controller, hasVariable)
@@ -214,7 +215,7 @@ class BezierDimm(ArduinoEvent):
         self.command = self.make_command()
 
     def __str__(self):
-        return 'BezierDimm({}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.lightsByte, self.fromState, self.toState, self.steptime, self.y1, self.y2, self.hasVariable)
+        return 'BezierDimm({}, {}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.lightsByte, self.fromState, self.toState, self.steptime, self.decisteps, self.y1, self.y2, self.hasVariable)
     
     def check_init(self):
         self.check_state(self.fromState)
@@ -224,7 +225,7 @@ class BezierDimm(ArduinoEvent):
         self.check_is_light_controller(self.controller)
     
     def make_command(self):
-        command = [20, self.lightsByte, self.fromState, self.toState, self.steptime, self.y1, self.y2]
+        command = [20, self.lightsByte, self.fromState, self.toState, self.steptime, self.decisteps, self.y1, self.y2]
         if not self.hasVariable:
             return self.clean_bytes(command)
         else:

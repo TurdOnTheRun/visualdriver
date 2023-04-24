@@ -66,6 +66,7 @@ void LightSetting::init(unsigned long now)
         _type = STATICLIGHT;
       } else {
         _bezierstep = 0;
+        _beziersteps = 0.1/_set1;
         _state = _state1;
       }
     } break;
@@ -221,12 +222,12 @@ float LightSetting::lerp(float n1, float n2, float perc)
 float LightSetting::bezier(byte step)
 { 
   // There are a total of 100 steps
-  _i = 0.01 * step;
+  _i = _beziersteps * step;
 
   // The Green Lines
-  _ya = lerp( 0 , _set1 , _i );
-  _yb = lerp( _set1 , _set2 , _i );
-  _yc = lerp( _set2 , 100 , _i );
+  _ya = lerp( 0 , _set2 , _i );
+  _yb = lerp( _set2 , _set3 , _i );
+  _yc = lerp( _set3 , 100 , _i );
 
   // The Blue Line
   _ym = lerp( _ya , _yb , _i );

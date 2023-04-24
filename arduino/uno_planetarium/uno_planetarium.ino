@@ -328,13 +328,15 @@ void parse_data() {
       //set1: start state
       //set2: to state
       //set3: steptime
-      //set4: y1 of bezier input
-      //set5: y2 of bezier input
+      //set4: decisteps
+      //set5: y1 of bezier input
+      //set6: y2 of bezier input
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
       set4 = interpreter.inputBuffer[5];
       set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
     } break;
 
     case UPVIBRATO: 

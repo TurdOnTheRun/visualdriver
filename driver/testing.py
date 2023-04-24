@@ -24,8 +24,8 @@ eventDict['time'].append(LinearDimm(At(12), TopController, [Light1, Light2, Ligh
 eventDict['time'].append(LinearDimm(At(12), BottomController, [Light1, Light2], 0, 50, 6))
 
 
-eventDict['time'].append(BezierDimm(At(16), TopController, [Light1, Light2, Light3, Light4], 0, 100, 30, 80, 20))
-eventDict['time'].append(BezierDimm(At(16), BottomController, [Light1, Light2], 0, 100, 30, 80, 20))
+eventDict['time'].append(BezierDimm(At(16), TopController, [Light1, Light2, Light3, Light4], 0, 100, 3, 100, 80, 20))
+eventDict['time'].append(BezierDimm(At(16), BottomController, [Light1, Light2], 0, 100, 3, 100, 80, 20))
 
 
 eventDict['time'].append(StaticLight(At(20), TopController, [Light1, Light2, Light3, Light4], 50))
