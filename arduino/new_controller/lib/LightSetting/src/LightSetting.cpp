@@ -66,7 +66,7 @@ void LightSetting::init(unsigned long now)
         _type = STATICLIGHT;
       } else {
         _bezierstep = 0;
-        _beziersteps = (unsigned int) 0.1/_set1;
+        _beziersteps = (unsigned int) _set1/0.1;
         _state = _state1;
       }
     } break;
