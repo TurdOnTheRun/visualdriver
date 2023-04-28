@@ -42,7 +42,7 @@ class LightSetting {
 
     // Bezier
     unsigned int _bezierstep;
-    float _beziersteps;
+    unsigned int _beziersteps;
     float lerp(float n1, float n2, float perc);
     float bezier(byte step);
 
