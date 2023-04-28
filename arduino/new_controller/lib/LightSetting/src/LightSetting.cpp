@@ -165,7 +165,7 @@ byte LightSetting::get_state(unsigned long now, byte lightid)
           
           if(rising()){
             
-            if(_bezierstep >= 100){
+            if(_bezierstep >= _beziersteps){
               _state = _state2;
               if(_type == BEZIERDIMM){
                 _type = STATICLIGHT;
@@ -222,7 +222,7 @@ float LightSetting::lerp(float n1, float n2, float perc)
 float LightSetting::bezier(byte step)
 { 
   // There are a total of 100 steps
-  _i = _beziersteps * step;
+  _i = (1/_beziersteps) * step;
 
   // The Green Lines
   _ya = lerp( 0 , _set2 , _i );
