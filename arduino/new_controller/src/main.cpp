@@ -1,7 +1,7 @@
 #include <Light.h>
-#include <Setting.h>
 #include <Effect.h>
 #include <Channel.h>
+#include <Setting.h>
 #include <Controlls.h>
 #include <SerialInterpreter.h>
 
@@ -239,15 +239,15 @@ void parse_data() {
     case EFFECT_UPVIBRATO: 
     case EFFECT_DOWNVIBRATO:
     case EFFECT_UPDOWNVIBRATO: {
-      //set1: amplitude
-      //set2: steptime
+      //set1: amplitude channel index
+      //set2: steptime channel index
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
     } break;
 
     case EFFECT_STROBE: {
-      //set1: amplitude
-      //set2: steptime
+      //set1: amplitude channel index
+      //set2: steptime channel index
       //set3: steptime factor
       //set4: multisetting
       set1 = interpreter.inputBuffer[2];
@@ -308,7 +308,9 @@ void parse_data() {
     setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6, set7, set8));
   } 
   else if(type < 150){
-    effect_add(target, Effect(type, set1, set2, set3, set4, set5, set6, set7, set8));
+    if(set1 < numberOfChannels && set2 < numberOfChannels){
+      effect_add(target, Effect(type, &channels[set1], &channels[set2], set3, set4, set5, set6, set7, set8));
+    }
   }
 }
 

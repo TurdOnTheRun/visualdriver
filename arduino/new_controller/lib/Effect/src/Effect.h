@@ -1,22 +1,19 @@
 /*
   Effect.h - Library for controlling Effect.
   Created by Maximilian Weber, April 9, 2023.
-
-  Types:
-  100-109 - Vibrato Types
-  110-119 - Strobe Types
-  190-199 - Effect Settings
 */
 #ifndef Effect_h
 #define Effect_h
 
 #include "Arduino.h"
 
+class Channel;
+
 class Effect {
   private:
     byte _type;
-    float _amplitude;
-    unsigned int _steptime;
+    Channel* _amplitude;
+    Channel* _steptime;
     byte _set1;
     byte _set2;
     byte _set3;
@@ -26,8 +23,12 @@ class Effect {
 
     float _delta = 0.0;
     int _newstate;
+    unsigned int _newsteptime;
+    float _newamplitude;
     unsigned long _passed;
     unsigned long _laststep = 0;
+    int _amplitudedirection = 1;
+    byte _steptimefactor = 1;
     byte _usercount = 0;
 
     // Vibrato variables and functions
@@ -45,7 +46,7 @@ class Effect {
     
   public:
     Effect();
-    Effect(byte type, byte amplitude, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
+    Effect(byte type, Channel* amplitude, Channel* steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
     void init(unsigned long now);
     // get state at current timestamp
     // Always works with _delta. Either multiplied or added

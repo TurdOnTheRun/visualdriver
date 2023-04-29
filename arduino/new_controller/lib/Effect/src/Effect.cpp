@@ -6,14 +6,15 @@
 // #include "Arduino.h"
 #include "Effect.h"
 #include "Controlls.h"
+#include "Channel.h"
 #include <math.h>
 
 Effect::Effect(){}
-Effect::Effect(byte type, byte amplitude, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
+Effect::Effect(byte type, Channel* amplitude, Channel* steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
 {
   _type = type;
-  _amplitude = (float) amplitude / 100;
-  _steptime = (int) steptime;
+  _amplitude = amplitude;
+  _steptime = steptime;
   _set1 = set1;
   _set2 = set2;
   _set3 = set3;
@@ -26,10 +27,9 @@ void Effect::init(unsigned long now)
 {
   switch(_type) {
     case EFFECT_STROBE: {
+      _amplitudedirection = -1;
       if(_set1){
-        _amplitude = -1 * _amplitude * _set1;
-      } else {
-        _amplitude = -1 * _amplitude;
+        _steptimefactor = _set1;
       }
     } break;
   }
@@ -43,29 +43,31 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
     return state;
   }
   _passed = now - _laststep;
+  _newsteptime = (unsigned int) _steptime->get_state(now,lightid) * _steptimefactor;
+  _newamplitude = (float) (_amplitude->get_state(now,lightid) / 100.0) * _amplitudedirection;
   // If step
-  if (_passed >= _steptime){
+  if (_passed >= _newsteptime){
     switch(_type) {
       case EFFECT_UPVIBRATO: {
-        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
+        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_newsteptime;
         // if(_vibratoangle > 2 * M_PI){
         //   _vibratoangle = _vibratoangle - (2 * M_PI);
         // }
-        _delta = _upvibrato(_vibratoangle) * _amplitude;
+        _delta = _upvibrato(_vibratoangle) * _newamplitude;
       } break;
       case EFFECT_DOWNVIBRATO: {
-        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
+        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_newsteptime;
         // if(_vibratoangle > 2 * M_PI){
         //   _vibratoangle = _vibratoangle - (2 * M_PI);
         // }
-        _delta = _downvibrato(_vibratoangle) * _amplitude;
+        _delta = _downvibrato(_vibratoangle) * _newamplitude;
       } break;
       case EFFECT_UPDOWNVIBRATO: {
-        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
+        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_newsteptime;
         // if(_vibratoangle > 2 * M_PI){
         //   _vibratoangle = _vibratoangle - (2 * M_PI);
         // }
-        _delta = _updownvibrato(_vibratoangle) * _amplitude;
+        _delta = _updownvibrato(_vibratoangle) * _newamplitude;
       } break;
       case EFFECT_STROBE: {
         _on = !_on;
@@ -97,11 +99,11 @@ void Effect::_set_strobe_delta(byte lightid)
     if(bitRead(_set2, lightid)){
       _delta = 0.0;
     } else {
-      _delta = _amplitude;
+      _delta = _newamplitude;
     };
   } else {
     if(bitRead(_set2, lightid)){
-      _delta = _amplitude;
+      _delta = _newamplitude;
     } else {
       _delta = 0.0;
     }

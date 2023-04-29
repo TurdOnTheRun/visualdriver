@@ -6,8 +6,9 @@
 #define Channel_h
 
 #include "Arduino.h"
-#include "Setting.h"
 #include "Effect.h"
+
+class Setting;
 
 static const byte EFFECTSPERCHANNEL = 3;
 
@@ -28,7 +29,6 @@ class Channel {
     Channel(Setting* setting, Channel* channel);
     void init();
     byte get_state(unsigned long now, byte lightid);
-    Setting* get_setting();
     void set_setting(Setting* setting);
     void set_channel(Channel* channel);
     void add_effect(Effect* effect, byte index);
