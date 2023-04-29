@@ -10,6 +10,7 @@
 
 // #include "Arduino.h"
 #include "Setting.h"
+#include "Controlls.h"
 #include <math.h>
 
 Setting::Setting(){}
@@ -29,41 +30,41 @@ Setting::Setting(byte type, byte state1, byte state2, byte steptime, byte set1, 
 void Setting::init(unsigned long now)
 {
   switch(_type) {
-    case STATICLIGHT: {
+    case SETTING_STATICLIGHT: {
       _state = _state1;
     } break;
 
-    case STATICFLASH: {
+    case SETTING_STATICFLASH: {
       // Goes from state1 to state2 after steptime
       if(_steptime == 0){
         _state = _state2;
-        _type = STATICLIGHT;
+        _type = SETTING_STATICLIGHT;
       } else {
         _state = _state1;
       }
     } break;
 
-    case STATICMACHINE: {
+    case SETTING_STATICMACHINE: {
       //Goes from state1 to state2 after steptime, stays at state2 for set1, then returns to state1. Repeats set2 times
       _state = _state1;
     } break;
 
-    case LINEARDIMM: {
+    case SETTING_LINEARDIMM: {
       // Goes from state1 to state2 taking steptime for each increment
       if(_steptime == 0){
         _state = _state2;
-        _type = STATICLIGHT;
+        _type = SETTING_STATICLIGHT;
       } else {
         _state = _state1;
       }
       // _set1 = 0;
     } break;
 
-    case BEZIERDIMM: {
+    case SETTING_BEZIERDIMM: {
       // Bezier Dimm from state1 to state2
       if(_steptime == 0){
         _state = _state2;
-        _type = STATICLIGHT;
+        _type = SETTING_STATICLIGHT;
       } else {
         _bezierstep = 0;
         _beziersteps = (unsigned int) _set1/0.1;
@@ -76,10 +77,14 @@ void Setting::init(unsigned long now)
 
 byte Setting::get_state(unsigned long now, byte lightid)
 {
+  if(_laststep == 0){
+    init(now);
+    return _state;
+  }
   if(_laststep == now){
     return _state;
   }
-  if(_type == STATICLIGHT){
+  if(_type == SETTING_STATICLIGHT){
     return _state;
   }
   else{
@@ -89,14 +94,14 @@ byte Setting::get_state(unsigned long now, byte lightid)
     if (_passed >= _steptime){
 
       switch(_type) {
-        case STATICFLASH: {
+        case SETTING_STATICFLASH: {
           _state = _state2;
-          _type = STATICLIGHT;
+          _type = SETTING_STATICLIGHT;
         } break;
 
-        case STATICMACHINE: {
+        case SETTING_STATICMACHINE: {
           if(_set2 == 0){
-            _type = STATICLIGHT;
+            _type = SETTING_STATICLIGHT;
             break;
           }
           if(_state == _state1){
@@ -110,7 +115,7 @@ byte Setting::get_state(unsigned long now, byte lightid)
           _set1 = _set3;
         } break;
         // case LINEARAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
-        case LINEARDIMM: {
+        case SETTING_LINEARDIMM: {
           _steps = (int) round(_passed/_steptime);
 
           if(_steps == 0){
@@ -124,8 +129,8 @@ byte Setting::get_state(unsigned long now, byte lightid)
             
             if(_newstate >= _state2 || _newstate > 100){
               _state = _state2;
-              if(_type == LINEARDIMM){
-                _type = STATICLIGHT;
+              if(_type == SETTING_LINEARDIMM){
+                _type = SETTING_STATICLIGHT;
               }
               // // else For Lightning Appear (6)
               // // Set how long light should stay at _tostate
@@ -144,7 +149,7 @@ byte Setting::get_state(unsigned long now, byte lightid)
             
             if (_newstate <= _state2 || _newstate < 0){
               _state = _state2;
-              _type = STATICLIGHT;
+              _type = SETTING_STATICLIGHT;
             } else {
               _state = lowByte(_newstate);
             }
@@ -153,7 +158,7 @@ byte Setting::get_state(unsigned long now, byte lightid)
         } break;
 
         // case BEZIERAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
-        case BEZIERDIMM: {
+        case SETTING_BEZIERDIMM: {
           //  Bezier Dimming & Direct to Bezier
           _steps = (int) round(_passed/_steptime);
 
@@ -167,8 +172,8 @@ byte Setting::get_state(unsigned long now, byte lightid)
             
             if(_bezierstep >= _beziersteps){
               _state = _state2;
-              if(_type == BEZIERDIMM){
-                _type = STATICLIGHT;
+              if(_type == SETTING_BEZIERDIMM){
+                _type = SETTING_STATICLIGHT;
               }
               // elif BEZIERAPPEARFLASH{}
               // if(_set5 > 0){
@@ -186,7 +191,7 @@ byte Setting::get_state(unsigned long now, byte lightid)
             
             if (_bezierstep >= _beziersteps){
               _state = _state2;
-              _type = STATICLIGHT;
+              _type = SETTING_STATICLIGHT;
             } else {
               _bz = bezier(_bezierstep);
               _newstate = (int) round(_state1 - _bz * (_state1 - _state2));

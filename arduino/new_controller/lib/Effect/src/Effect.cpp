@@ -5,6 +5,7 @@
 
 // #include "Arduino.h"
 #include "Effect.h"
+#include "Controlls.h"
 #include <math.h>
 
 Effect::Effect(){}
@@ -24,7 +25,7 @@ Effect::Effect(byte type, byte amplitude, byte steptime, byte set1, byte set2, b
 void Effect::init(unsigned long now)
 {
   switch(_type) {
-    case STROBE: {
+    case EFFECT_STROBE: {
       if(_set1){
         _amplitude = -1 * _amplitude * _set1;
       } else {
@@ -37,32 +38,36 @@ void Effect::init(unsigned long now)
 
 byte Effect::get_state(unsigned long now, byte lightid, byte state)
 {
+  if(_laststep == 0){
+    init(now);
+    return state;
+  }
   _passed = now - _laststep;
   // If step
   if (_passed >= _steptime){
     switch(_type) {
-      case UPVIBRATO: {
+      case EFFECT_UPVIBRATO: {
         _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
         // if(_vibratoangle > 2 * M_PI){
         //   _vibratoangle = _vibratoangle - (2 * M_PI);
         // }
         _delta = _upvibrato(_vibratoangle) * _amplitude;
       } break;
-      case DOWNVIBRATO: {
+      case EFFECT_DOWNVIBRATO: {
         _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
         // if(_vibratoangle > 2 * M_PI){
         //   _vibratoangle = _vibratoangle - (2 * M_PI);
         // }
         _delta = _downvibrato(_vibratoangle) * _amplitude;
       } break;
-      case UPDOWNVIBRATO: {
+      case EFFECT_UPDOWNVIBRATO: {
         _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_steptime;
         // if(_vibratoangle > 2 * M_PI){
         //   _vibratoangle = _vibratoangle - (2 * M_PI);
         // }
         _delta = _updownvibrato(_vibratoangle) * _amplitude;
       } break;
-      case STROBE: {
+      case EFFECT_STROBE: {
         _on = !_on;
         _set_strobe_delta(lightid);
       } break;
@@ -70,7 +75,7 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
     _laststep = now;
   } else {
     switch(_type) {
-      case STROBE: {
+      case EFFECT_STROBE: {
         _set_strobe_delta(lightid);
       } break;
     }
