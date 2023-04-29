@@ -1,5 +1,5 @@
 /*
-  LightEffect.h - Library for controlling LightEffect.
+  Effect.h - Library for controlling Effect.
   Created by Maximilian Weber, April 9, 2023.
 
   Types:
@@ -7,8 +7,8 @@
   110-119 - Strobe Types
   190-199 - Effect Settings
 */
-#ifndef LightEffect_h
-#define LightEffect_h
+#ifndef Effect_h
+#define Effect_h
 
 #include "Arduino.h"
 
@@ -22,7 +22,7 @@ static const byte STROBE = 110;
 static const byte RESETEFFECTS = 190;
 static const byte REMOVEEFFECT = 191;
 
-class LightEffect {
+class Effect {
   private:
     byte _type;
     float _amplitude;
@@ -54,8 +54,8 @@ class LightEffect {
     int _steps;
     
   public:
-    LightEffect();
-    LightEffect(byte type, byte amplitude, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
+    Effect();
+    Effect(byte type, byte amplitude, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
     void init(unsigned long now);
     // get state at current timestamp
     // Always works with _delta. Either multiplied or added

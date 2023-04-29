@@ -1,6 +1,6 @@
 #include <Light.h>
-#include <LightSetting.h>
-#include <LightEffect.h>
+#include <Setting.h>
+#include <Effect.h>
 #include <SerialInterpreter.h>
 
 
@@ -40,22 +40,22 @@ const byte numberOfEffects = (numberOfLights * EFFECTSPERLIGHT) + 1;
 
 // ARDUINO SPECIFIC
 // Always must be one more than numberOfLights
-LightSetting lightSettings[numberOfSettings] = {
-  LightSetting(LINEARDIMM,0,30,40,0,0,0,0,0),
-  LightSetting(),
-  LightSetting(),
-  LightSetting(),
-  LightSetting(),
+Setting Settings[numberOfSettings] = {
+  Setting(LINEARDIMM,0,30,40,0,0,0,0,0),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
 };
 
-LightEffect lightEffects[numberOfEffects];
+Effect Effects[numberOfEffects];
 
 // ARDUINO SPECIFIC
 Light lights[numberOfLights] = {
-  Light(0, light1, &lightSettings[0]),
-  Light(1, light2, &lightSettings[0]),
-  Light(2, light3, &lightSettings[0]),
-  Light(3, light4, &lightSettings[0]),
+  Light(0, light1, &Settings[0]),
+  Light(1, light2, &Settings[0]),
+  Light(2, light3, &Settings[0]),
+  Light(3, light4, &Settings[0]),
 //  Light(5, light5),
 //  Light(6, light6),
 //  Light(7, light7),
@@ -81,43 +81,43 @@ byte set7;
 byte set8;
 
 
-void set_setting(byte targetlights, LightSetting setting){
+void set_setting(byte targetlights, Setting setting){
 
   byte i;
 
   // Write setting into array
   for(i=0; i < numberOfSettings; i++) {
-    if(lightSettings[i].is_unused()){
-      lightSettings[i] = setting;
-      lightSettings[i].init(now);
+    if(Settings[i].is_unused()){
+      Settings[i] = setting;
+      Settings[i].init(now);
       break;
     }
   };
 
   for(byte j = 0; j < numberOfLights; j++) {
     if(bitRead(targetlights, j)){
-      lights[j].set_setting(&lightSettings[i]);
+      lights[j].set_setting(&Settings[i]);
     }
   };
 }
 
 
-void add_effect(byte targetlights, LightEffect effect){
+void add_effect(byte targetlights, Effect effect){
 
   byte i;
 
   // Write setting into array
   for(i=0; i < numberOfEffects; i++) {
-    if(lightEffects[i].is_unused()){
-      lightEffects[i] = effect;
-      lightEffects[i].init(now);
+    if(Effects[i].is_unused()){
+      Effects[i] = effect;
+      Effects[i].init(now);
       break;
     }
   };
 
   for(byte j=0; j < numberOfLights; j++) {
     if(bitRead(targetlights, j)){
-      lights[j].add_effect(&lightEffects[i]);
+      lights[j].add_effect(&Effects[i]);
     }
   };
 }
@@ -154,8 +154,8 @@ void parse_data() {
   set7 = 0;
   set8 = 0;
 
-  LightSetting setting;
-  LightSetting effect;
+  Setting setting;
+  Setting effect;
 
   type = interpreter.inputBuffer[0];
   targetlights = interpreter.inputBuffer[1];
@@ -252,10 +252,10 @@ void parse_data() {
 
   // Settings
   if(type < 100){
-    set_setting(targetlights, LightSetting(type, set1, set2, set3, set4, set5, set6, set7, set8));
+    set_setting(targetlights, Setting(type, set1, set2, set3, set4, set5, set6, set7, set8));
   } 
   else if(type < 200){
-    add_effect(targetlights, LightEffect(type, set1, set2, set3, set4, set5, set6, set7, set8));
+    add_effect(targetlights, Effect(type, set1, set2, set3, set4, set5, set6, set7, set8));
   }
 }
 
@@ -266,7 +266,7 @@ void lights_setup() {
 }
 
 void settings_setup() {
-  lightSettings[0].init(now);
+  Settings[0].init(now);
 }
 
 void update_lights() {

@@ -7,7 +7,7 @@
 #include "Light.h"
 #include <math.h>
 
-Light::Light(byte id, byte pin, LightSetting* setting)
+Light::Light(byte id, byte pin, Setting* setting)
 {
   _id = id;
   _pin = pin;
@@ -46,14 +46,14 @@ void Light::pin_write()
 }
 
 
-void Light::set_setting(LightSetting* setting)
+void Light::set_setting(Setting* setting)
 {
   _setting->usercount_down();
   _setting = setting;
   _setting->usercount_up();
 }
 
-void Light::add_effect(LightEffect* effect)
+void Light::add_effect(Effect* effect)
 {
   for(byte i=0; i<EFFECTSPERLIGHT; i++){
     if(_effects[i] == NULL){
@@ -64,7 +64,7 @@ void Light::add_effect(LightEffect* effect)
   }
 }
 
-void Light::remove_effect(LightEffect* effect)
+void Light::remove_effect(Effect* effect)
 {
   for(byte i=0; i<EFFECTSPERLIGHT; i++){
     if(_effects[i] == effect){

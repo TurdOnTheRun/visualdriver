@@ -1,14 +1,14 @@
 /*
-  LightEffect.cpp - Library for controlling LightEffect.
+  Effect.cpp - Library for controlling Effect.
   Created by Maximilian Weber, April 2, 2023.
 */
 
 // #include "Arduino.h"
-#include "LightEffect.h"
+#include "Effect.h"
 #include <math.h>
 
-LightEffect::LightEffect(){}
-LightEffect::LightEffect(byte type, byte amplitude, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
+Effect::Effect(){}
+Effect::Effect(byte type, byte amplitude, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
 {
   _type = type;
   _amplitude = (float) amplitude / 100;
@@ -21,7 +21,7 @@ LightEffect::LightEffect(byte type, byte amplitude, byte steptime, byte set1, by
   _set6 = set6;
 }
 
-void LightEffect::init(unsigned long now)
+void Effect::init(unsigned long now)
 {
   switch(_type) {
     case STROBE: {
@@ -35,7 +35,7 @@ void LightEffect::init(unsigned long now)
   _laststep = now;
 }
 
-byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
+byte Effect::get_state(unsigned long now, byte lightid, byte state)
 {
   _passed = now - _laststep;
   // If step
@@ -85,7 +85,7 @@ byte LightEffect::get_state(unsigned long now, byte lightid, byte state)
   return lowByte(_newstate);
 }
 
-void LightEffect::_set_strobe_delta(byte lightid)
+void Effect::_set_strobe_delta(byte lightid)
 {
   if(_on){
     // If lightbit is 0 _on means on
@@ -103,35 +103,35 @@ void LightEffect::_set_strobe_delta(byte lightid)
   }
 }
 
-float LightEffect::_updownvibrato(float angle)
+float Effect::_updownvibrato(float angle)
 { 
   return sin(angle);
 }
 
-float LightEffect::_upvibrato(float angle)
+float Effect::_upvibrato(float angle)
 { 
   return (cos(angle) * (-1) + 1)/2;
 }
 
-float LightEffect::_downvibrato(float angle)
+float Effect::_downvibrato(float angle)
 { 
   return (cos(angle)-1)/2;
 }
 
-byte LightEffect::get_type()
+byte Effect::get_type()
 {
   return _type;
 }
 
-void LightEffect::usercount_up()
+void Effect::usercount_up()
 {
   _usercount += 1;
 }
 
-void LightEffect::usercount_down(){
+void Effect::usercount_down(){
   _usercount -= 1;
 }
 
-boolean LightEffect::is_unused(){
+boolean Effect::is_unused(){
   return _usercount < 1;
 }

@@ -1,5 +1,5 @@
 /*
-  LightSetting.cpp - Library for controlling LightSetting.
+  Setting.cpp - Library for controlling Setting.
   Created by Maximilian Weber, April 2, 2023.
 
   Types:
@@ -9,11 +9,11 @@
 */
 
 // #include "Arduino.h"
-#include "LightSetting.h"
+#include "Setting.h"
 #include <math.h>
 
-LightSetting::LightSetting(){}
-LightSetting::LightSetting(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5)
+Setting::Setting(){}
+Setting::Setting(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5)
 {
   _type = type;
   _state1 = state1;
@@ -26,7 +26,7 @@ LightSetting::LightSetting(byte type, byte state1, byte state2, byte steptime, b
   _set5 = set5;
 }
 
-void LightSetting::init(unsigned long now)
+void Setting::init(unsigned long now)
 {
   switch(_type) {
     case STATICLIGHT: {
@@ -74,7 +74,7 @@ void LightSetting::init(unsigned long now)
   _laststep = now;
 }
 
-byte LightSetting::get_state(unsigned long now, byte lightid)
+byte Setting::get_state(unsigned long now, byte lightid)
 {
   if(_laststep == now){
     return _state;
@@ -204,7 +204,7 @@ byte LightSetting::get_state(unsigned long now, byte lightid)
   }
 }
 
-void LightSetting::set_state(unsigned long now, byte newstate)
+void Setting::set_state(unsigned long now, byte newstate)
 {
   if(newstate > 100){
     newstate = 100;
@@ -213,13 +213,13 @@ void LightSetting::set_state(unsigned long now, byte newstate)
   _laststep = now;
 }
 
-float LightSetting::lerp(float n1, float n2, float perc)
+float Setting::lerp(float n1, float n2, float perc)
 {
   _diff = n2 - n1;
   return n1 + ( _diff * perc );
 }
 
-float LightSetting::bezier(unsigned int step)
+float Setting::bezier(unsigned int step)
 { 
   // There are a total of 100 steps
   _i = (1.0/_beziersteps) * step;
@@ -238,30 +238,30 @@ float LightSetting::bezier(unsigned int step)
   return _y;
 }
 
-bool LightSetting::changing()
+bool Setting::changing()
 {
   return !(_state == _state2);
 }
     
-bool LightSetting::rising()
+bool Setting::rising()
 {
   return (_state < _state2);
 }
 
-byte LightSetting::get_type()
+byte Setting::get_type()
 {
   return _type;
 }
 
-void LightSetting::usercount_up()
+void Setting::usercount_up()
 {
   _usercount += 1;
 }
 
-void LightSetting::usercount_down(){
+void Setting::usercount_down(){
   _usercount -= 1;
 }
 
-boolean LightSetting::is_unused(){
+boolean Setting::is_unused(){
   return _usercount < 1;
 }
