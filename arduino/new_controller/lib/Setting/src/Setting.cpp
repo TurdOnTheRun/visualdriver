@@ -13,7 +13,11 @@
 #include "Controlls.h"
 #include <math.h>
 
-Setting::Setting(){}
+Setting::Setting()
+{
+  _type = SETTING_STATICLIGHT;
+  _state = 0;
+}
 Setting::Setting(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5)
 {
   _type = type;

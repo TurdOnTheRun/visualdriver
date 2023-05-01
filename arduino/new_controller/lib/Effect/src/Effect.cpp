@@ -9,7 +9,9 @@
 #include "Channel.h"
 #include <math.h>
 
-Effect::Effect(){}
+Effect::Effect(){
+  _type = EFFECT_NONE;
+}
 Effect::Effect(byte type, Channel* amplitude, Channel* steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
 {
   _type = type;
@@ -40,6 +42,9 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
 {
   if(_laststep == 0){
     init(now);
+    return state;
+  }
+  if(_type == EFFECT_NONE){
     return state;
   }
   _passed = now - _laststep;

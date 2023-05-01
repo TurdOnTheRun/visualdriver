@@ -65,10 +65,15 @@ class VisualDriver:
             self.kr = KinectReader(self.kinectLock, self.kinectQueue, self.shutdownQueue)
     
     def shutdown(self):
-        self.bottomQueue.put((220,0,50))
-        # TODO: Trigger Effect reset
-        self.topQueue.put((1,255,30))
-        self.bottomQueue.put((1,255,0))
+        self.bottomQueue.put((220,0,50)) #stop motor
+        self.topQueue.put((180,)) #reset settings
+        self.topQueue.put((181,)) #reset effects
+        self.topQueue.put((182,)) #reset channels
+        self.topQueue.put((150,255,3)) #set all lights to 30
+        self.bottomQueue.put((180,)) #reset settings
+        self.bottomQueue.put((181,)) #reset effects
+        self.bottomQueue.put((182,)) #reset channels
+        self.bottomQueue.put((150,255,0)) #set all lights to 0
         time.sleep(1)
         self.shutdownQueue.put('STOP')
         time.sleep(3)
@@ -84,8 +89,8 @@ class VisualDriver:
         print('Setting Up...')
         time.sleep(3)
         self.bottomQueue.put((220,0,50))
-        self.topQueue.put((1,255,0))
-        self.bottomQueue.put((1,255,0))
+        self.topQueue.put((150,255,0))
+        self.bottomQueue.put((150,255,0))
         time.sleep(4)
         print('Setup Complete!')
 

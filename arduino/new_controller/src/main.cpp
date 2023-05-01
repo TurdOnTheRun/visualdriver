@@ -163,6 +163,25 @@ void channel_remove_effects(byte index){
   }
 }
 
+void channels_reset(){
+  //starts at 11 to preserve the static channels
+  for(byte i = 11; i < numberOfChannels; i++) {
+    channels[i] = Channel();
+  };
+}
+
+void settings_reset(){
+  for(byte i = 0; i < numberOfSettings; i++) {
+    settings[i] = Setting();
+  };
+}
+
+void effects_reset(){
+  for(byte i = 0; i < numberOfEffects; i++) {
+    effects[i] = Effect();
+  };
+}
+
 void parse_data() {
   // split the data into its parts
 
@@ -295,6 +314,21 @@ void parse_data() {
 
     case CHANNEL_REMOVE_EFFECTS: {
       channel_remove_effects(target);
+      return;
+    } break;
+
+    case SETTINGS_RESET: {
+      settings_reset();
+      return;
+    } break;
+
+    case EFFECTS_RESET: {
+      effects_reset();
+      return;
+    } break;
+
+    case CHANNELS_RESET: {
+      channels_reset();
       return;
     } break;
 
