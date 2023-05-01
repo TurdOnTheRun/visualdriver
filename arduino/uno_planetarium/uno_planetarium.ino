@@ -161,18 +161,12 @@ const byte light2 = 10;
 // ARDUINO SPECIFIC
 const byte numberOfLights = 2;
 
-const byte numberOfSettings = 10;
-const byte numberOfEffects = 10;
+const byte numberOfSettings = 4;
+const byte numberOfEffects = 8;
 const byte numberOfChannels = 21;
 
 // ARDUINO SPECIFIC
 Setting settings[numberOfSettings] = {
-  Setting(),
-  Setting(),
-  Setting(),
-  Setting(),
-  Setting(),
-  Setting(),
   Setting(),
   Setting(),
   Setting(),
@@ -217,7 +211,7 @@ unsigned long now;
 
 // One message consists of a maximum of 10 bytes
 byte type; //id of setting or effect
-byte targetlights; //bit map for what lights the effect is for
+byte target; //bit map for what lights the effect is for
 // settings
 byte set1;
 byte set2;
@@ -520,10 +514,10 @@ void setup() {
   motor.init();
 
   lights_setup();
-  sleep(2000);
-  light_set_channel(0, 255);
   now = millis();
   update_lights();
+  delay(2000);
+  light_set_channel(0, 255);
 }
 
 void loop() {
