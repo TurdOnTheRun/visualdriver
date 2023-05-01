@@ -1,6 +1,8 @@
 #include <Light.h>
-#include <LightSetting.h>
-#include <LightEffect.h>
+#include <Effect.h>
+#include <Channel.h>
+#include <Setting.h>
+#include <Controlls.h>
 #include <SerialInterpreter.h>
 #include <PWM.h>
 
@@ -158,23 +160,56 @@ const byte light2 = 10;
 
 // ARDUINO SPECIFIC
 const byte numberOfLights = 2;
-const byte numberOfSettings = 3;
-const byte numberOfEffects = (numberOfLights * EFFECTSPERLIGHT) + 1;
+
+const byte numberOfSettings = 10;
+const byte numberOfEffects = 10;
+const byte numberOfChannels = 21;
 
 // ARDUINO SPECIFIC
-// Always must be one more than numberOfLights
-LightSetting lightSettings[numberOfSettings] = {
-  LightSetting(STATICMACHINE,60,0,200,100,3,0,0,0),
-  LightSetting(),
-  LightSetting(),
+Setting settings[numberOfSettings] = {
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
 };
 
-LightEffect lightEffects[numberOfEffects];
+Effect effects[numberOfEffects];
+
+Channel channels[numberOfChannels] = {
+  Channel(0),
+  Channel(10),
+  Channel(20),
+  Channel(30),
+  Channel(40),
+  Channel(50),
+  Channel(60),
+  Channel(70),
+  Channel(80),
+  Channel(90),
+  Channel(100),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+};
+
 
 // ARDUINO SPECIFIC
 UnoLight lights[numberOfLights] = {
-  UnoLight(0, light1, &lightSettings[0]),
-  UnoLight(1, light2, &lightSettings[0]),
+  UnoLight(0, light1, &channels[3]),
+  UnoLight(1, light2, &channels[3]),
 };
 
 SerialInterpreter interpreter = SerialInterpreter();
@@ -194,69 +229,87 @@ byte set7;
 byte set8;
 
 
-void set_setting(byte targetlights, LightSetting setting){
-
-  byte i;
-
-  // Write setting into array
-  for(i=0; i < numberOfSettings; i++) {
-    if(lightSettings[i].is_unused()){
-      lightSettings[i] = setting;
-      lightSettings[i].init(now);
-      break;
-    }
-  };
-
-  for(byte j = 0; j < numberOfLights; j++) {
-    if(bitRead(targetlights, j)){
-      lights[j].set_setting(&lightSettings[i]);
-    }
-  };
+void setting_add(byte index, Setting setting){
+  if(index < numberOfSettings){
+    settings[index] = setting;
+  }
 }
 
 
-void add_effect(byte targetlights, LightEffect effect){
+void effect_add(byte index, Effect effect){
+  if(index < numberOfEffects){
+    effects[index] = effect;
+  }
+}
 
-  byte i;
-
-  // Write setting into array
-  for(i=0; i < numberOfEffects; i++) {
-    if(lightEffects[i].is_unused()){
-      lightEffects[i] = effect;
-      lightEffects[i].init(now);
-      break;
-    }
-  };
-
+void light_set_channel(byte index, byte targetlights){
   for(byte j=0; j < numberOfLights; j++) {
     if(bitRead(targetlights, j)){
-      lights[j].add_effect(&lightEffects[i]);
+      lights[j].set_channel(&channels[index]);
     }
   };
 }
 
-void reset_effects(byte targetlights){
-  for(byte j=0; j < numberOfLights; j++) {
-    if(bitRead(targetlights, j)){
-      lights[j].remove_effects();
-    }
+
+void channel_set_setting(byte channelindex, byte settingindex){
+  if(channelindex < numberOfChannels && settingindex < numberOfSettings){
+    channels[channelindex].set_setting(&settings[settingindex]);
+    channels[channelindex].set_channel(nullptr);
+  }
+}
+
+
+void channel_set_channel(byte channelindex, byte inputchannelindex){
+  if(channelindex < numberOfChannels && inputchannelindex < numberOfChannels){
+    channels[channelindex].set_channel(&channels[inputchannelindex]);
+    channels[channelindex].set_setting(nullptr);
+  }
+}
+
+
+void channel_add_effect(byte channelindex, byte effectindex, byte channeleffectindex){
+  if(channelindex < numberOfChannels && effectindex < numberOfEffects && channeleffectindex < EFFECTSPERCHANNEL){
+    channels[channelindex].add_effect(&effects[effectindex], channeleffectindex);
+  }
+}
+
+
+void channel_remove_effect(byte channelindex, byte effectindex){
+  if(channelindex < numberOfChannels && effectindex < EFFECTSPERCHANNEL){
+    channels[channelindex].remove_effect(effectindex);
+  }
+}
+
+void channel_remove_effects(byte index){
+  if(index < numberOfChannels){
+    channels[index].remove_effects();
+  }
+}
+
+void channels_reset(){
+  //starts at 11 to preserve the static channels
+  for(byte i = 11; i < numberOfChannels; i++) {
+    channels[i] = Channel();
   };
 }
 
-void remove_effect(byte targetlights, byte effectindex){
-  for(byte j=0; j < numberOfLights; j++) {
-    if(bitRead(targetlights, j)){
-      lights[j].remove_effect(effectindex);
-    }
+void settings_reset(){
+  for(byte i = 0; i < numberOfSettings; i++) {
+    settings[i] = Setting();
   };
 }
 
+void effects_reset(){
+  for(byte i = 0; i < numberOfEffects; i++) {
+    effects[i] = Effect();
+  };
+}
 
 void parse_data() {
   // split the data into its parts
 
   type = 0; //id of setting or effect
-  targetlights = 0; //bit map for what lights the effect is for
+  target = 0; //bit map for what lights the effect is for
   // Setting Variables
   set1 = 0;
   set2 = 0;
@@ -267,11 +320,11 @@ void parse_data() {
   set7 = 0;
   set8 = 0;
 
-  LightSetting setting;
-  LightSetting effect;
+  Setting setting;
+  Setting effect;
 
   type = interpreter.inputBuffer[0];
-  targetlights = interpreter.inputBuffer[1];
+  target = interpreter.inputBuffer[1];
 
   // ARDUINO SPECIFIC
   // Handles Motor Commands
@@ -288,12 +341,12 @@ void parse_data() {
   }
 
   switch(type){
-    case STATICLIGHT: {
+    case SETTING_STATICLIGHT: {
       //set1: state 
       set1 = interpreter.inputBuffer[2];
     } break;
 
-    case STATICFLASH: {
+    case SETTING_STATICFLASH: {
       //set1: start state
       //set2: to state
       //set3: flash time
@@ -302,7 +355,7 @@ void parse_data() {
       set3 = interpreter.inputBuffer[4];
     } break;
 
-    case STATICMACHINE: {
+    case SETTING_STATICMACHINE: {
       //set1: on state
       //set2: off state
       //set3: on time
@@ -315,7 +368,7 @@ void parse_data() {
       set5 = interpreter.inputBuffer[6];
     } break;
 
-    case LINEARDIMM: {
+    case SETTING_LINEARDIMM: {
       //set1: start state
       //set2: to state
       //set3: steptime
@@ -324,7 +377,7 @@ void parse_data() {
       set3 = interpreter.inputBuffer[4];
     } break;
 
-    case BEZIERDIMM: {
+    case SETTING_BEZIERDIMM: {
       //set1: start state
       //set2: to state
       //set3: steptime
@@ -339,18 +392,18 @@ void parse_data() {
       set6 = interpreter.inputBuffer[7];
     } break;
 
-    case UPVIBRATO: 
-    case DOWNVIBRATO:
-    case UPDOWNVIBRATO: {
-      //set1: amplitude
-      //set2: steptime
+    case EFFECT_UPVIBRATO: 
+    case EFFECT_DOWNVIBRATO:
+    case EFFECT_UPDOWNVIBRATO: {
+      //set1: amplitude channel index
+      //set2: steptime channel index
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
     } break;
 
-    case STROBE: {
-      //set1: amplitude
-      //set2: steptime
+    case EFFECT_STROBE: {
+      //set1: amplitude channel index
+      //set2: steptime channel index
       //set3: steptime factor
       //set4: multisetting
       set1 = interpreter.inputBuffer[2];
@@ -359,16 +412,60 @@ void parse_data() {
       set4 = interpreter.inputBuffer[5];
     } break;
 
-    case RESETEFFECTS: {
-      //only needs target lights
-      reset_effects(targetlights);
+    case LIGHT_SET_CHANNEL: {
+      //set1: channelindex
+      set1 = interpreter.inputBuffer[2];
+      light_set_channel(set1, target);
       return;
     } break;
 
-    case REMOVEEFFECT: {
-      //set1: effect index
+    case CHANNEL_SET_SETTING: {
+      //set1: settingindex
       set1 = interpreter.inputBuffer[2];
-      remove_effect(targetlights, set1);
+      channel_set_setting(target, set1);
+      return;
+    } break;
+
+    case CHANNEL_SET_CHANNEL: {
+      //set1: channelindex
+      set1 = interpreter.inputBuffer[2];
+      channel_set_channel(target, set1);
+      return;
+    } break;
+
+    case CHANNEL_ADD_EFFECT: {
+      //set1: effectindex
+      //set2: channeleffectindex
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      channel_add_effect(target,set1,set2);
+      return;
+    } break;
+
+    case CHANNEL_REMOVE_EFFECT: {
+      //set1: effectindex
+      set1 = interpreter.inputBuffer[2];
+      channel_remove_effect(target, set1);
+      return;
+    } break;
+
+    case CHANNEL_REMOVE_EFFECTS: {
+      channel_remove_effects(target);
+      return;
+    } break;
+
+    case SETTINGS_RESET: {
+      settings_reset();
+      return;
+    } break;
+
+    case EFFECTS_RESET: {
+      effects_reset();
+      return;
+    } break;
+
+    case CHANNELS_RESET: {
+      channels_reset();
       return;
     } break;
 
@@ -378,11 +475,13 @@ void parse_data() {
   }
 
   // Settings
-  if(type < 100){
-    set_setting(targetlights, LightSetting(type, set1, set2, set3, set4, set5, set6, set7, set8));
+  if(type < 60){
+    setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6, set7, set8));
   } 
-  else if(type < 200){
-    add_effect(targetlights, LightEffect(type, set1, set2, set3, set4, set5, set6, set7, set8));
+  else if(type < 150){
+    if(set1 < numberOfChannels && set2 < numberOfChannels){
+      effect_add(target, Effect(type, &channels[set1], &channels[set2], set3, set4, set5, set6, set7, set8));
+    }
   }
 }
 
@@ -390,10 +489,6 @@ void lights_setup() {
   for(byte i = 0; i < numberOfLights; i++) {
     lights[i].init();
   };
-}
-
-void settings_setup() {
-  lightSettings[0].init(now);
 }
 
 void update_lights() {
@@ -405,9 +500,9 @@ void update_lights() {
 
 void read_serial() {
   // receive data from Python and save it into interpreter.inputBuffer
-  //ARDUINO SPECIFIC  
+  //ARDUINO SPECIFIC
   while(Serial.available() > 0) {
-    //ARDUINO SPECIFIC  
+    //ARDUINO SPECIFIC
     byte x = Serial.read();
     bool isEnd = interpreter.processByte(x);
     
@@ -422,11 +517,12 @@ void setup() {
   // ARDUINO SPECIFIC
   Serial.begin(115200);
   InitTimersSafe();
-  motor.init(); 
+  motor.init();
 
   lights_setup();
+  sleep(2000);
+  light_set_channel(0, 255);
   now = millis();
-  settings_setup();
   update_lights();
 }
 

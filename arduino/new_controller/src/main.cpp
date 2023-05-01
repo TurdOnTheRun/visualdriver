@@ -37,13 +37,19 @@ const byte light4 = 8;
 
 // ARDUINO SPECIFIC
 const byte numberOfLights = 4;
-const byte numberOfSettings = 4;
+const byte numberOfSettings = 10;
 const byte numberOfEffects = 10;
 const byte numberOfChannels = 21;
 
 // ARDUINO SPECIFIC
 Setting settings[numberOfSettings] = {
-  Setting(SETTING_LINEARDIMM,0,30,40,0,0,0,0,0),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
+  Setting(),
   Setting(),
   Setting(),
   Setting(),

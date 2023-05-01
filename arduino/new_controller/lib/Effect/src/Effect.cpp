@@ -49,6 +49,9 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
   }
   _passed = now - _laststep;
   _newsteptime = ((unsigned int) _steptime->get_state(now,lightid)) * _steptimefactor;
+  if(_newsteptime == 0){
+    _newsteptime = 1;
+  }
   _newamplitude = (((float) _amplitude->get_state(now,lightid)) / 100.0) * _amplitudedirection;
   // If step
   if (_passed >= _newsteptime){
