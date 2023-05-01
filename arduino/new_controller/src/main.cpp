@@ -300,7 +300,7 @@ void parse_data() {
       //set1: effectindex
       //set2: channeleffectindex
       set1 = interpreter.inputBuffer[2];
-      set2 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
       channel_add_effect(target,set1,set2);
       return;
     } break;
