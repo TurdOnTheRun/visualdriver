@@ -19,7 +19,7 @@ class UnoLight: public Light {
     }
     
   public:
-    UnoLight(byte id, byte pin, LightSetting* setting):Light(id, pin, setting){};
+    UnoLight(byte id, byte pin, Channel* channel):Light(id, pin, channel){};
 
 };
 
