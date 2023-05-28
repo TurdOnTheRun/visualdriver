@@ -408,7 +408,6 @@ void setup() {
   Serial1.begin(115200);
   pwm_setup();
 
-  perlin_setup();
   lights_setup();
   now = millis();
   update_lights();

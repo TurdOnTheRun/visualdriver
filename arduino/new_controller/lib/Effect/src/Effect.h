@@ -15,7 +15,7 @@ class Effect {
     byte _type;
     Channel* _amplitude;
     Channel* _steptime;
-    float* _perlinarray;
+    const float* _perlinarray;
     byte _set1;
     byte _set2;
     byte _set3;
@@ -56,7 +56,7 @@ class Effect {
     
   public:
     Effect();
-    Effect(byte type, Channel* amplitude, Channel* steptime, float* perlinarray, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
+    Effect(byte type, Channel* amplitude, Channel* steptime, const float* perlinarray, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
     void init(unsigned long now);
     // get state at current timestamp
     // Always works with _delta. Either multiplied or added

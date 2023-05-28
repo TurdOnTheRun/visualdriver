@@ -12,7 +12,7 @@
 Effect::Effect(){
   _type = EFFECT_NONE;
 }
-Effect::Effect(byte type, Channel* amplitude, Channel* steptime, float* perlinarray, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
+Effect::Effect(byte type, Channel* amplitude, Channel* steptime, const float* perlinarray, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
 {
   _type = type;
   _amplitude = amplitude;
