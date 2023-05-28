@@ -82,7 +82,7 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
         _delta = _strobe(lightid);
       } break;
       case EFFECT_PERLIN: {
-        _position = _position + _passed/_newsteptime;
+        _position = _position + _passed; //perlin looks at time passed not steps
         if(_position > PERLIN_SIZE){
           _position = _position - PERLIN_SIZE;
         }
