@@ -18,7 +18,8 @@ static const byte EFFECT_UPVIBRATO = 60;
 static const byte EFFECT_DOWNVIBRATO = 61;
 static const byte EFFECT_UPDOWNVIBRATO = 62;
 static const byte EFFECT_STROBE = 70;
-static const byte EFFECT_NONE = 80;
+static const byte EFFECT_PERLIN = 80;
+static const byte EFFECT_NONE = 140;
 
 static const byte LIGHT_SET_CHANNEL = 150;
 
@@ -32,5 +33,8 @@ static const byte SETTINGS_RESET = 180;
 static const byte EFFECTS_RESET = 181;
 static const byte CHANNELS_RESET = 182;
 
+// other global variables
+static const unsigned int PERLIN_SIZE = 255;
+static const unsigned long PERLIN_SETUP_SEED = 777;
 
 #endif
