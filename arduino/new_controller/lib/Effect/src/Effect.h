@@ -15,7 +15,6 @@ class Effect {
     byte _type;
     Channel* _amplitude;
     Channel* _steptime;
-    const float* _perlinarray;
     byte _set1;
     byte _set2;
     byte _set3;
@@ -47,16 +46,11 @@ class Effect {
     float _strobe(byte lightid);
 
     // Perlin Noise
-    unsigned int _index1;
-    unsigned int _index2;
-    float _inter; //distance between two indexes (>0; <1)
-    // float _perlin_array[PERLIN_SIZE] = {};
-    // void _perlin_setup();
     float _perlin_calculate();
     
   public:
     Effect();
-    Effect(byte type, Channel* amplitude, Channel* steptime, const float* perlinarray, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
+    Effect(byte type, Channel* amplitude, Channel* steptime, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
     void init(unsigned long now);
     // get state at current timestamp
     // Always works with _delta. Either multiplied or added
