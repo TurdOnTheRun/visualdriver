@@ -55,7 +55,7 @@ Setting settings[numberOfSettings] = {
   Setting(),
 };
 
-float perlinSeed[PERLIN_SIZE];
+const PROGMEM float perlinSeed[PERLIN_SIZE] = {};
 Effect effects[numberOfEffects];
 
 // ARDUINO SPECIFIC
@@ -368,12 +368,12 @@ void parse_data() {
   }
 }
 
-void perlin_setup() {
-  for(unsigned int i = 0; i < PERLIN_SIZE; i++){
-    randomSeed(PERLIN_SETUP_SEED + i);
-    perlinSeed[i] = (float) random() / (float) RANDOM_MAX;
-  }
-}
+// void perlin_setup() {
+//   for(unsigned int i = 0; i < PERLIN_SIZE; i++){
+//     randomSeed(PERLIN_SETUP_SEED + i);
+//     perlinSeed[i] = (float) random() / (float) RANDOM_MAX;
+//   }
+// }
 
 void lights_setup() {
   for(byte i = 0; i < numberOfLights; i++) {

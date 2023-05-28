@@ -183,7 +183,7 @@ float Effect::_perlin_calculate(){
   if(_index2 == PERLIN_SIZE){
     _index2 = 0;
   }
-  return (float) _perlinarray[_index1] + ((float) _perlinarray[_index2] - (float) _perlinarray[_index1]) * _inter;
+  return (float) pgm_read_float(&_perlinarray[_index1]) + ((float) pgm_read_float(&_perlinarray[_index2]) - (float) pgm_read_float(&_perlinarray[_index1])) * _inter;
 }
 
 int Effect::_get_direction(byte lightid){
