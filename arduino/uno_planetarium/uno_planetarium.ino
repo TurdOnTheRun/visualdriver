@@ -173,6 +173,7 @@ Setting settings[numberOfSettings] = {
   Setting(),
 };
 
+float perlinSeed[PERLIN_SIZE];
 Effect effects[numberOfEffects];
 
 Channel channels[numberOfChannels] = {
@@ -406,6 +407,19 @@ void parse_data() {
       set4 = interpreter.inputBuffer[5];
     } break;
 
+    case EFFECT_PERLIN: {
+      //set1: amplitude channel index
+      //set2: steptime channel index
+      //set3: octaves (1-8)
+      //set4: bias (20 up)
+      //set5: multisetting
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+    } break;
+
     case LIGHT_SET_CHANNEL: {
       //set1: channelindex
       set1 = interpreter.inputBuffer[2];
@@ -474,8 +488,15 @@ void parse_data() {
   } 
   else if(type < 150){
     if(set1 < numberOfChannels && set2 < numberOfChannels){
-      effect_add(target, Effect(type, &channels[set1], &channels[set2], set3, set4, set5, set6, set7, set8));
+      effect_add(target, Effect(type, &channels[set1], &channels[set2], perlinSeed, set3, set4, set5, set6, set7, set8));
     }
+  }
+}
+
+void perlin_setup() {
+  for(unsigned int i = 0; i < PERLIN_SIZE; i++){
+    randomSeed(PERLIN_SETUP_SEED + i);
+    perlinSeed[i] = (float) random() / (float) RANDOM_MAX;
   }
 }
 
