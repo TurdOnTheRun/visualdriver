@@ -12,12 +12,12 @@
 Effect::Effect(){
   _type = EFFECT_NONE;
 }
-Effect::Effect(byte type, Channel* amplitude, Channel* steptime, float* perlinSeed, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
+Effect::Effect(byte type, Channel* amplitude, Channel* steptime, float* perlinarray, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
 {
   _type = type;
   _amplitude = amplitude;
   _steptime = steptime;
-  _perlinSeed = perlinSeed;
+  _perlinarray = perlinarray;
   _set1 = set1;
   _set2 = set2;
   _set3 = set3;
@@ -32,9 +32,6 @@ Effect::Effect(byte type, Channel* amplitude, Channel* steptime, float* perlinSe
         _steptimefactor = _set1;
       }
     } break;
-    case EFFECT_PERLIN: {
-      _perlin_setup();
-    }
   }
 }
 
@@ -146,47 +143,47 @@ float Effect::_downvibrato(float angle)
   return (cos(angle)-1)/2;
 }
 
-void Effect::_perlin_setup()
-{ 
-  // _set1 are octaves
-  byte nOctaves = _set1;
-  // _set2 is bias
-  float fBias = (float)_set2/100.0f;
+// void Effect::_perlin_setup()
+// { 
+//   // _set1 are octaves
+//   byte nOctaves = _set1;
+//   // _set2 is bias
+//   float fBias = (float)_set2/100.0f;
 
-  for (unsigned int x = 0; x < PERLIN_SIZE; x++)
-  {
-    float fNoise = 0.0f;
-    float fScaleAcc = 0.0f;
-    float fScale = 1.0f;
+//   for (unsigned int x = 0; x < PERLIN_SIZE; x++)
+//   {
+//     float fNoise = 0.0f;
+//     float fScaleAcc = 0.0f;
+//     float fScale = 1.0f;
 
-    for (int o = 0; o < nOctaves; o++)
-    {
-      int nPitch = PERLIN_SIZE >> o;
-      int nSample1 = (x / nPitch) * nPitch;
-      int nSample2 = (nSample1 + nPitch) % PERLIN_SIZE;
+//     for (int o = 0; o < nOctaves; o++)
+//     {
+//       int nPitch = PERLIN_SIZE >> o;
+//       int nSample1 = (x / nPitch) * nPitch;
+//       int nSample2 = (nSample1 + nPitch) % PERLIN_SIZE;
 
-      float fBlend = (float)(x - nSample1) / (float)nPitch;
+//       float fBlend = (float)(x - nSample1) / (float)nPitch;
 
-      float fSample = (1.0f - fBlend) * _perlinSeed[nSample1] + fBlend * + _perlinSeed[nSample2];
+//       float fSample = (1.0f - fBlend) * _perlinSeed[nSample1] + fBlend * + _perlinSeed[nSample2];
 
-      fScaleAcc += fScale;
-      fNoise += fSample * fScale;
-      fScale = fScale / fBias;
-    }
+//       fScaleAcc += fScale;
+//       fNoise += fSample * fScale;
+//       fScale = fScale / fBias;
+//     }
 
-    // Scale to seed range
-    _perlin_array[x] = fNoise / fScaleAcc;
-  }
-}
+//     // Scale to seed range
+//     _perlin_array[x] = fNoise / fScaleAcc;
+//   }
+// }
 
 float Effect::_perlin_calculate(){
-  _index1 = (unsigned long) _position;
+  _index1 = (unsigned long) (_position * 4); //One index every 250ms
   _inter = _position - _index1;
   _index2 = _index1 + 1;
   if(_index2 == PERLIN_SIZE){
     _index2 = 0;
   }
-  return (float) _perlin_array[_index1] + ((float) _perlin_array[_index2] - (float) _perlin_array[_index1]) * _inter;
+  return (float) _perlinarray[_index1] + ((float) _perlinarray[_index2] - (float) _perlinarray[_index1]) * _inter;
 }
 
 int Effect::_get_direction(byte lightid){
