@@ -1,5 +1,5 @@
 /*
-  LightSetting.h - Library for controlling LightSetting.
+  Setting.h - Library for controlling Setting.
   Created by Maximilian Weber, April 2, 2023.
 
   Types:
@@ -7,19 +7,12 @@
   10-19 - Linear Types
   20-29 - Bezier Types
 */
-#ifndef LightSetting_h
-#define LightSetting_h
+#ifndef Setting_h
+#define Setting_h
 
 #include "Arduino.h"
 
-//Possible Settings 
-static const byte STATICLIGHT = 1;
-static const byte STATICFLASH = 2;
-static const byte STATICMACHINE = 3;
-static const byte LINEARDIMM = 10;
-static const byte BEZIERDIMM = 20;
-
-class LightSetting {
+class Setting {
   private:
     byte _type;
     byte _state1;
@@ -42,8 +35,9 @@ class LightSetting {
 
     // Bezier
     unsigned int _bezierstep;
+    unsigned int _beziersteps;
     float lerp(float n1, float n2, float perc);
-    float bezier(byte step);
+    float bezier(unsigned int step);
 
     float _bz;
 
@@ -61,8 +55,8 @@ class LightSetting {
     float _y;
     
   public:
-    LightSetting();
-    LightSetting(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5);
+    Setting();
+    Setting(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5);
     void init(unsigned long now);
     // get state at current timestamp
     byte get_state(unsigned long now, byte lightid);

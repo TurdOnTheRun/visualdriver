@@ -1,5 +1,7 @@
 from visualdriver import VisualDriver
 from controllers import * 
+from conditions import *
+from channels import *
 from agents import *
 from events import *
 
@@ -8,52 +10,34 @@ eventDict = {
     'time': []
 }
 
-eventDict['time'].append(StaticLight(At(0), TopController, [Light1, Light2, Light3, Light4], 20))
-eventDict['time'].append(StaticLight(At(0), BottomController, [Light1, Light2], 20))
+controllers = [BottomController, TopController]
+
+for controller in controllers:
+    eventDict['time'].append(EffectUpDownVibrato(At(0), controller, 0, StaticChannel5, StaticChannel10))
+    # eventDict['time'].append(EffectStrobe(At(0), controller, 1, StaticChannel10, StaticChannel5, 2, [Light1, Light3]))
+
+    # Strobe Effect
+    eventDict['time'].append(ChannelSetChannel(At(0), controller, Channel2, StaticChannel5))
+    eventDict['time'].append(ChannelAddEffect(At(0), controller, Channel2, 0, 0))
+    eventDict['time'].append(EffectStrobe(At(0), controller, 1, StaticChannel10, Channel2, 1, [Light1, Light3]))
+
+    eventDict['time'].append(ChannelSetChannel(At(0), controller, Channel1, StaticChannel10))
+    eventDict['time'].append(ChannelAddEffect(At(0), controller, Channel1, 1, 0))
+    eventDict['time'].append(LightSetChannel(At(0), controller, [Light1, Light2, Light3, Light4], Channel1))
+
+    # eventDict['time'].append(ChannelAddEffect(At(2), controller, Channel1, 0, 0))
+    # eventDict['time'].append(ChannelAddEffect(At(5), controller, Channel1, 1, 0))
 
 
-eventDict['time'].append(StaticFlash(At(4), TopController, [Light1, Light2, Light3, Light4], 100, 30, 200))
-eventDict['time'].append(StaticFlash(At(4), BottomController, [Light1, Light2], 100, 30, 200))
+    # eventDict['time'].append(EffectStrobe(At(10), controller, 1, StaticChannel10, StaticChannel5, 2, [Light1, Light3]))
+    # eventDict['time'].append(ChannelRemoveEffect(At(10), controller, Channel1, 0))
+
+    # eventDict['time'].append(ChannelAddEffect(At(12), controller, Channel1, 1, 0))
 
 
-eventDict['time'].append(StaticMachine(At(8), TopController, [Light1, Light2, Light3, Light4], 50, 0, 200, 100, 50))
-eventDict['time'].append(StaticMachine(At(8), BottomController, [Light1, Light2], 50, 0, 200, 100, 50))
+    eventDict['time'].append(LightSetChannel(At(15), controller, [Light1, Light2, Light3, Light4], StaticChannel0))
 
-
-eventDict['time'].append(LinearDimm(At(12), TopController, [Light1, Light2, Light3, Light4], 0, 50, 6))
-eventDict['time'].append(LinearDimm(At(12), BottomController, [Light1, Light2], 0, 50, 6))
-
-
-eventDict['time'].append(BezierDimm(At(16), TopController, [Light1, Light2, Light3, Light4], 0, 100, 30, 80, 20))
-eventDict['time'].append(BezierDimm(At(16), BottomController, [Light1, Light2], 0, 100, 30, 80, 20))
-
-
-eventDict['time'].append(StaticLight(At(20), TopController, [Light1, Light2, Light3, Light4], 50))
-eventDict['time'].append(StaticLight(At(20), BottomController, [Light1, Light2], 50))
-
-
-eventDict['time'].append(UpDownVibrato(At(20), TopController, [Light1, Light2, Light3, Light4], 50, 10))
-eventDict['time'].append(UpDownVibrato(At(20), BottomController, [Light1, Light2], 50, 10))
-
-
-eventDict['time'].append(Strobe(At(24), TopController, [Light1, Light2, Light3, Light4], 100, 130, 1, [Light1, Light3]))
-eventDict['time'].append(Strobe(At(24), BottomController, [Light1, Light2], 100, 130, 1, [Light1,]))
-
-
-eventDict['time'].append(RemoveEffect(At(28), TopController, [Light1, Light2], 1))
-eventDict['time'].append(RemoveEffect(At(28), BottomController, [Light1, ], 1))
-
-
-eventDict['time'].append(RemoveEffect(At(32), TopController, [Light3, Light4], 1))
-eventDict['time'].append(RemoveEffect(At(32), BottomController, [Light2,], 1))
-
-
-eventDict['time'].append(ResetEffects(At(36), TopController,  [Light1, Light2, Light3, Light4]))
-eventDict['time'].append(ResetEffects(At(36), BottomController,  [Light1, Light2]))
-
-
-eventDict['time'].append(StaticLight(At(36), TopController, [Light1, Light2, Light3, Light4], 20))
-eventDict['time'].append(StaticLight(At(36), BottomController, [Light1, Light2], 20))
+eventDict['time'] = sorted(eventDict['time'], key=lambda event: event.condition.value)
 
 
 vd = VisualDriver(eventDict, startTime=0)
