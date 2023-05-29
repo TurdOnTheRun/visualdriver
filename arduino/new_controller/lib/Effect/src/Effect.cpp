@@ -23,25 +23,22 @@ Effect::Effect(byte type, Channel* amplitude, Channel* steptime, byte set1, byte
   _set4 = set4;
   _set5 = set5;
   _set6 = set6;
-}
 
-void Effect::init(unsigned long now)
-{
   switch(_type) {
-    case EFFECT_STROBE: {
-      _amplitudedirection = -1;
+    case EFFECT_STROBE: 
+    case EFFECT_PERLIN: {
+      _direction = -1;
       if(_set1){
         _steptimefactor = _set1;
       }
     } break;
   }
-  _laststep = now;
 }
 
 byte Effect::get_state(unsigned long now, byte lightid, byte state)
 {
   if(_laststep == 0){
-    init(now);
+    _laststep = now;
     return state;
   }
   if(_type == EFFECT_NONE){
@@ -52,45 +49,58 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
   if(_newsteptime == 0){
     _newsteptime = 1;
   }
-  _newamplitude = (((float) _amplitude->get_state(now,lightid)) / 100.0) * _amplitudedirection;
+  _newamplitude = (((float) _amplitude->get_state(now,lightid)) / 100.0f);
   // If step
   if (_passed >= _newsteptime){
     switch(_type) {
       case EFFECT_UPVIBRATO: {
-        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_newsteptime;
-        // if(_vibratoangle > 2 * M_PI){
-        //   _vibratoangle = _vibratoangle - (2 * M_PI);
+        _position = _position + _vibratostepangle * _passed/_newsteptime;
+        // if(_position > 2 * M_PI){
+        //   _position = _position - (2 * M_PI);
         // }
-        _delta = _upvibrato(_vibratoangle) * _newamplitude;
+        _delta = _upvibrato(_position) * _newamplitude;
       } break;
       case EFFECT_DOWNVIBRATO: {
-        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_newsteptime;
-        // if(_vibratoangle > 2 * M_PI){
-        //   _vibratoangle = _vibratoangle - (2 * M_PI);
+        _position = _position + _vibratostepangle * _passed/_newsteptime;
+        // if(_position > 2 * M_PI){
+        //   _position = _position - (2 * M_PI);
         // }
-        _delta = _downvibrato(_vibratoangle) * _newamplitude;
+        _delta = _downvibrato(_position) * _newamplitude;
       } break;
       case EFFECT_UPDOWNVIBRATO: {
-        _vibratoangle = _vibratoangle + _vibratostepangle * _passed/_newsteptime;
-        // if(_vibratoangle > 2 * M_PI){
-        //   _vibratoangle = _vibratoangle - (2 * M_PI);
+        _position = _position + _vibratostepangle * _passed/_newsteptime;
+        // if(_position > 2 * M_PI){
+        //   _position = _position - (2 * M_PI);
         // }
-        _delta = _updownvibrato(_vibratoangle) * _newamplitude;
+        _delta = _updownvibrato(_position) * _newamplitude;
       } break;
       case EFFECT_STROBE: {
         _on = !_on;
-        _set_strobe_delta(lightid);
+        _delta = _strobe(lightid);
+      } break;
+      case EFFECT_PERLIN: {
+        _position = _position + _passed/_newsteptime;
+        if(_position >= PERLIN_SIZE){
+          _position = _position - PERLIN_SIZE;
+        }
+        _delta = _perlin_calculate() * _newamplitude;
+        _direction = _get_direction(lightid);
       } break;
     }
     _laststep = now;
   } else {
+    // In case no step has passed
+    // Covers multisettings
     switch(_type) {
       case EFFECT_STROBE: {
-        _set_strobe_delta(lightid);
+        _delta = _strobe(lightid);
+      } break;
+      case EFFECT_PERLIN: {
+        _direction = _get_direction(lightid);
       } break;
     }
   }
-  _newstate = (int) round(state + state * _delta);
+  _newstate = (int) round(state + (state * _delta * _direction));
   if(_newstate > 100){
     _newstate = 100;
   }
@@ -100,20 +110,20 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
   return lowByte(_newstate);
 }
 
-void Effect::_set_strobe_delta(byte lightid)
+float Effect::_strobe(byte lightid)
 {
   if(_on){
     // If lightbit is 0 _on means on
     if(bitRead(_set2, lightid)){
-      _delta = 0.0;
+      return 0.0f;
     } else {
-      _delta = _newamplitude;
+      return _newamplitude;
     };
   } else {
     if(bitRead(_set2, lightid)){
-      _delta = _newamplitude;
+      return _newamplitude;
     } else {
-      _delta = 0.0;
+      return 0.0f;
     }
   }
 }
@@ -131,6 +141,19 @@ float Effect::_upvibrato(float angle)
 float Effect::_downvibrato(float angle)
 { 
   return (cos(angle)-1)/2;
+}
+
+float Effect::_perlin_calculate(){
+  return (float) pgm_read_float(&PERLIN_NOISE[(unsigned int) _position]);
+}
+
+int Effect::_get_direction(byte lightid){
+  // If lightbit is 0 direction is -1
+  if(bitRead(_set3, lightid)){
+    return 1;
+  } else {
+    return -1;
+  };
 }
 
 byte Effect::get_type()

@@ -514,6 +514,33 @@ class EffectStrobe(ArduinoEvent):
             return command
 
 
+class EffectPerlin(ArduinoEvent):
+
+    def __init__(self, condition, controller, effectIndex, amplitudeChannel, steptimeChannel, steptimeFactor, mutliSettingAgents=[], hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.effectIndex = effectIndex
+        self.amplitudeChannel = amplitudeChannel
+        self.steptimeChannel = steptimeChannel
+        self.steptimeFactor = steptimeFactor
+        self.multiSettingByte = self.make_lightsbyte(mutliSettingAgents)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'EffectPerlin({}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.amplitudeChannel, self.steptimeChannel, self.steptimeFactor, self.multiSettingByte, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [80, self.effectIndex, self.amplitudeChannel.id, self.steptimeChannel.id, self.steptimeFactor, self.multiSettingByte]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
 class EffectsReset(ArduinoEvent):
 
     def __init__(self, condition, controller):

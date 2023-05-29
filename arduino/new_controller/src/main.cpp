@@ -281,6 +281,17 @@ void parse_data() {
       set4 = interpreter.inputBuffer[5];
     } break;
 
+    case EFFECT_PERLIN: {
+      //set1: amplitude channel index
+      //set2: steptime channel index
+      //set3: steptime factor
+      //set4: multisetting
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+    } break;
+
     case LIGHT_SET_CHANNEL: {
       //set1: channelindex
       set1 = interpreter.inputBuffer[2];
