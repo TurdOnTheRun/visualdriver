@@ -28,6 +28,10 @@ music = '/home/maximilian/music/guardians.mp3'
 # BOTTOM LIGHTS
 eventDict['time'].append(LightSetChannel(At(0), BottomController, [Light1], Channel1))
 eventDict['time'].append(LightSetChannel(At(0), BottomController, [Light2], Channel2))
+eventDict['time'].append(SettingStaticLight(At(0), BottomController, 0, 0))
+eventDict['time'].append(SettingStaticLight(At(0), BottomController, 1, 0))
+eventDict['time'].append(ChannelSetSetting(At(0), BottomController, Channel1, 0))
+eventDict['time'].append(ChannelSetSetting(At(0), BottomController, Channel2, 1))
 
 # BOTTOM EFFECTS:
 eventDict['time'].append(EffectPerlin(At(0), BottomController, 0, StaticChannel1, StaticChannel10, 1, [Light1,]))
@@ -55,7 +59,7 @@ eventDict['time'].append(ChannelAddEffect(At(0), BottomController, Channel2, 1, 
 # Setting 4: Strobe steptime
 
 # TOP LIGHTS
-eventDict['time'].append(LightSetChannel(At(0), TopController, [Light1, Light2], Channel1))
+eventDict['time'].append(LightSetChannel(At(0), TopController, [Light1, Light3], Channel1))
 
 # TOP EFFECTS
 eventDict['time'].append(EffectPerlin(At(0), TopController, 0, StaticChannel1, StaticChannel10, 1, [Light1,]))
@@ -75,14 +79,17 @@ eventDict['time'].append(ChannelAddEffect(At(0), TopController, Channel1, 1, 1))
 
 
 # Strobe Setup
-eventDict['time'].append(SettingStaticLight(At(0), TopController, 3, 80))
+#amplitude
+eventDict['time'].append(SettingStaticLight(At(0), TopController, 3, 20))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel4, 3))
+#steptime
 eventDict['time'].append(SettingStaticLight(At(0), TopController, 4, 20))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel5, 4))
 eventDict['time'].append(EffectStrobe(At(0), TopController, 2, Channel4, Channel5, 1, [Light1,]))
 
+eventDict['time'].append(MotorSpeed(At(0), 180))
 
-beginning = 0
+beginning = 5
 # Bottom Lights
 # 0-7 Fade In
 # 5 onwards strobe
@@ -90,9 +97,7 @@ beginning = 0
 duration = 1.75
 decisteps = 25
 eventDict['time'].append(SettingBezierDimm(At(beginning), BottomController, 0, 0, 90, int(duration*100/decisteps), decisteps, 20, 100))
-eventDict['time'].append(ChannelSetSetting(At(beginning), BottomController, Channel1, 0))
 eventDict['time'].append(SettingBezierDimm(At(beginning), BottomController, 1, 0, 90, int(duration*100/decisteps), decisteps, 20, 100))
-eventDict['time'].append(ChannelSetSetting(At(beginning), BottomController, Channel2, 1))
 
 # 4-7 strobe fades in
 # 1-1.75
@@ -172,6 +177,10 @@ eventDict['time'].append(SettingBezierDimm(At(beginning+7.75), TopController, 1,
 
 # 34
 # 8.5
+
+#Vibrato back up
+eventDict['time'].append(SettingStaticLight(At(beginning+8.5), TopController, 1, 20))
+
 # Top Strobe
 eventDict['time'].append(ChannelAddEffect(At(beginning+8.5), TopController, Channel1, 2, 2))
 
@@ -180,8 +189,10 @@ eventDict['time'].append(ChannelAddEffect(At(beginning+8.5), TopController, Chan
 # And Fade in
 duration = 0.5
 decisteps = 25
-eventDict['time'].append(SettingBezierDimm(At(beginning+8.5), TopController, 0, 15, 90, int(duration*100/decisteps), decisteps, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(beginning+8.5), TopController, 1, 5, 40, int(duration*100/decisteps), decisteps, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(beginning+8.5), TopController, 0, 15, 100, int(duration*100/decisteps), decisteps, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(beginning+8.5), TopController, 1, 20, 30, int(duration*100/decisteps), decisteps, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(beginning+8.5), TopController, 3, 20, 80, int(duration*100/decisteps), decisteps, 0, 25))
+
 
 
 # 35-36
@@ -192,7 +203,7 @@ duration = 0.25
 decisteps = 5
 eventDict['time'].append(SettingBezierDimm(At(beginning+8.75), TopController, 3, 80, 90, int(duration*100/decisteps), decisteps, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(beginning+8.75), TopController, 4, 20, 10, int(duration*100/decisteps), decisteps, 0, 60))
-eventDict['time'].append(SettingBezierDimm(At(beginning+8.75), TopController, 1, 40, 20, int(duration*100/decisteps), decisteps, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(beginning+8.75), TopController, 1, 30, 20, int(duration*100/decisteps), decisteps, 0, 100))
 
 # 37.5 - 39
 # 9.375-9.75
@@ -208,7 +219,7 @@ eventDict['time'].append(SettingBezierDimm(At(beginning+9.375), TopController, 3
 # Vibrato Fade In Delicately
 duration = 0.38
 decisteps = 19
-eventDict['time'].append(SettingBezierDimm(At(beginning+9.625), TopController, 1, 20, 40, int(duration*100/decisteps), decisteps, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(beginning+9.625), TopController, 1, 20, 30, int(duration*100/decisteps), decisteps, 0, 100))
 
 # 43-53
 # 10.75-13.25
@@ -216,7 +227,7 @@ eventDict['time'].append(SettingBezierDimm(At(beginning+9.625), TopController, 1
 duration = 2.5
 decisteps = 50
 #amplitude instead
-eventDict['time'].append(SettingBezierDimm(At(beginning+9.375), TopController, 3, 50, 70, int(duration*100/decisteps), decisteps, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(beginning+9.375), TopController, 3, 50, 80, int(duration*100/decisteps), decisteps, 0, 100))
 
 #eventDict['time'].append(SettingBezierDimm(At(beginning+10.75), TopController, 4, 2, 10, int(duration*100/decisteps), decisteps, 100, 100))
 
@@ -225,21 +236,21 @@ eventDict['time'].append(SettingBezierDimm(At(beginning+9.375), TopController, 3
 # Vibrato Fade Out
 duration = 0.25
 decisteps = 5
-eventDict['time'].append(SettingBezierDimm(At(beginning+11), TopController, 1, 40, 10, int(duration*100/decisteps), decisteps, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(beginning+11), TopController, 1, 30, 10, int(duration*100/decisteps), decisteps, 0, 100))
 
 # 53 - 55
 # 13.25-13.75
 # Top Strobe Increase amplitude
 duration = 0.5
 decisteps = 10
-eventDict['time'].append(SettingBezierDimm(At(beginning+13.25), TopController, 3, 70, 100, int(duration*100/decisteps), decisteps, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(beginning+13.25), TopController, 3, 80, 100, int(duration*100/decisteps), decisteps, 0, 100))
 
 # 60-61
 # 15-15.25
 # Vibrato Fade In
 duration = 0.25
 decisteps = 10
-eventDict['time'].append(SettingBezierDimm(At(beginning+15), TopController, 1, 10, 40, int(duration*100/decisteps), decisteps, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(beginning+15), TopController, 1, 10, 30, int(duration*100/decisteps), decisteps, 0, 100))
 
 # 62 Vibrato Off
 # 15.5
@@ -306,7 +317,7 @@ eventDict['time'].append(SettingBezierDimm(At(beginning+18.75), BottomController
 
 # # eventDict['time'].append(ChannelAddEffect(At(12), controller, Channel1, 1, 0))
 
-eventDict['time'].append(LightSetChannel(At(23), TopController, [Light1, Light2, Light3, Light4], StaticChannel0))
+eventDict['time'].append(LightSetChannel(At(28), TopController, [Light1, Light2, Light3, Light4], StaticChannel0))
 
-vd = VisualDriver(eventDict, music=music, usesMotor=False, startTime=0)
+vd = VisualDriver(eventDict, usesMotor=True, startTime=0)
 vd.start()
