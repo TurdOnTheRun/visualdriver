@@ -77,7 +77,9 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
         _delta = _updownvibrato(_position) * _newamplitude;
       } break;
       case EFFECT_STROBE: {
-        _on = !_on;
+        if(_steps % 2){
+          _on = !_on;
+        }
         _delta = _strobe(lightid);
       } break;
       case EFFECT_PERLIN: {
