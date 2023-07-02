@@ -24,13 +24,9 @@ eventDict = {
 # Effect 0: Perlin at 100
 
 # BOTTOM LIGHTS
-eventDict['time'].append(ChannelSetChannel(At(0), BottomController, Channel1, StaticChannel8))
+eventDict['time'].append(ChannelSetChannel(At(0), BottomController, Channel1, StaticChannel9))
 eventDict['time'].append(LightSetChannel(At(0), BottomController, [Light1, Light2], Channel1))
 
-# BOTTOM EFFECTS:
-eventDict['time'].append(EffectPerlin(At(0), BottomController, 0, StaticChannel1, StaticChannel10, 1, [Light1,]))
-eventDict['time'].append(ChannelAddEffect(At(0), BottomController, Channel1, 0, 0))
-eventDict['time'].append(ChannelAddEffect(At(0), BottomController, Channel2, 0, 0))
 
 eventDict['time'].append(SettingStaticLight(At(0),BottomController,1,0))
 eventDict['time'].append(ChannelSetSetting(At(0), BottomController, Channel2, 1))
@@ -43,9 +39,9 @@ pause = 2
 
 eventDict['time'].append(ChannelAddEffect(At(0), BottomController, Channel1, 1, 1))
 
-for steptime in range(60):
-    eventDict['time'].append(ChannelSetChannel(At(seconds), BottomController, Channel1, StaticChannel8))
-    eventDict['time'].append(SettingStaticLight(At(seconds),BottomController,1,steptime))
+for steptime in range(41, 81):
+    eventDict['time'].append(ChannelSetChannel(At(seconds), BottomController, Channel1, StaticChannel9))
+    eventDict['time'].append(SettingStaticLight(At(seconds), BottomController, 1, steptime))
     seconds += duration
     eventDict['time'].append(ChannelSetChannel(At(seconds), BottomController, Channel1, StaticChannel0))
     seconds += pause
