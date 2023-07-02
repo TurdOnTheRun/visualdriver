@@ -559,6 +559,52 @@ class EffectsReset(ArduinoEvent):
         return self.clean_bytes(command)
 
 
+class NowDeltaIncrease(ArduinoEvent):
+
+    def __init__(self, condition, controller, delta, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.delta = delta
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'NowDeltaIncrease({}, {}, {}, {})'.format(self.condition, self.controller, self.delta, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [190, self.delta]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class NowDeltaDecrease(ArduinoEvent):
+
+    def __init__(self, condition, controller, delta, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.delta = delta
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'NowDeltaDecrease({}, {}, {}, {})'.format(self.condition, self.controller, self.delta, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [191, self.delta]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
 class MotorSpeed(Event):
 
     def __init__(self, condition, speed):
