@@ -44,31 +44,33 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
   if(_type == EFFECT_NONE){
     return state;
   }
-  _passed = now - _laststep;
+
   _newsteptime = ((unsigned int) _steptime->get_state(now,lightid)) * _steptimefactor;
   if(_newsteptime == 0){
     _newsteptime = 1;
   }
   _newamplitude = (((float) _amplitude->get_state(now,lightid)) / 100.0f);
+
+  _steps = (unsigned int) (now - _laststep)/_newsteptime;
   // If step
-  if (_passed >= _newsteptime){
+  if (_steps > 0){
     switch(_type) {
       case EFFECT_UPVIBRATO: {
-        _position = _position + _vibratostepangle * _passed/_newsteptime;
+        _position = _position + _vibratostepangle * _steps;
         // if(_position > 2 * M_PI){
         //   _position = _position - (2 * M_PI);
         // }
         _delta = _upvibrato(_position) * _newamplitude;
       } break;
       case EFFECT_DOWNVIBRATO: {
-        _position = _position + _vibratostepangle * _passed/_newsteptime;
+        _position = _position + _vibratostepangle * _steps;
         // if(_position > 2 * M_PI){
         //   _position = _position - (2 * M_PI);
         // }
         _delta = _downvibrato(_position) * _newamplitude;
       } break;
       case EFFECT_UPDOWNVIBRATO: {
-        _position = _position + _vibratostepangle * _passed/_newsteptime;
+        _position = _position + _vibratostepangle * _steps;
         // if(_position > 2 * M_PI){
         //   _position = _position - (2 * M_PI);
         // }
@@ -79,7 +81,7 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
         _delta = _strobe(lightid);
       } break;
       case EFFECT_PERLIN: {
-        _position = _position + _passed/_newsteptime;
+        _position = _position + _steps;
         if(_position >= PERLIN_SIZE){
           _position = _position - PERLIN_SIZE;
         }
@@ -87,7 +89,7 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
         _direction = _get_direction(lightid);
       } break;
     }
-    _laststep = now;
+    _laststep = _laststep + (_steps * _newsteptime);
   } else {
     // In case no step has passed
     // Covers multisettings

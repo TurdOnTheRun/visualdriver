@@ -26,12 +26,11 @@ class Setting {
 
     byte _state;
     byte _usercount = 0;
-    unsigned long _passed;
+    unsigned int _steps;
     unsigned long _laststep = 0;
 
     // General
     int _newstate;
-    int _steps;
 
     // Bezier
     unsigned int _bezierstep;

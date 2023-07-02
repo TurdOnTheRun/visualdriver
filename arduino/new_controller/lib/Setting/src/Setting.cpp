@@ -93,9 +93,9 @@ byte Setting::get_state(unsigned long now, byte lightid)
   }
   else{
     
-    _passed = now - _laststep;
+    _steps = (unsigned int) (now - _laststep)/_steptime;
 
-    if (_passed >= _steptime){
+    if (_steps > 0){
 
       switch(_type) {
         case SETTING_STATICFLASH: {
@@ -120,11 +120,6 @@ byte Setting::get_state(unsigned long now, byte lightid)
         } break;
         // case LINEARAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
         case SETTING_LINEARDIMM: {
-          _steps = (int) round(_passed/_steptime);
-
-          if(_steps == 0){
-            break;
-          }
                 
           // If it is getting brighter
           if(rising()){
@@ -164,11 +159,6 @@ byte Setting::get_state(unsigned long now, byte lightid)
         // case BEZIERAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
         case SETTING_BEZIERDIMM: {
           //  Bezier Dimming & Direct to Bezier
-          _steps = (int) round(_passed/_steptime);
-
-          if(_steps == 0){
-            break;
-          }
       
           _bezierstep = _bezierstep + _steps;
           
@@ -204,10 +194,10 @@ byte Setting::get_state(unsigned long now, byte lightid)
           }
         } break;
       }
-      _laststep = now;
+      _laststep = _laststep + (_steps * _steptime);
       return _state;
     } else {
-      // If _passed < _steptime, state remains the same
+      // If _steps == 0,  state remains the same
       return _state;
     }
   }
