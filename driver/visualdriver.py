@@ -133,15 +133,19 @@ class VisualDriver:
                         except queue.Empty:
                             pass
 
-                if not timeEventsBlocked and timeEventsIndex < len(self.timeEvents):
-                    while timeEventsIndex < len(self.timeEvents) and self.timeEvents[timeEventsIndex].condition.met(now):
+                while not timeEventsBlocked and timeEventsIndex < len(self.timeEvents) and self.timeEvents[timeEventsIndex].condition.met(now):
+                    if self.timeEvents[timeEventsIndex].type == TIME_EVENTS_BLOCK_TYPE:
+                        timeEventsBlocked = True
+                    else:
                         events.append(self.timeEvents[timeEventsIndex])
-                        timeEventsIndex += 1
+                    timeEventsIndex += 1
                 
-                if not positionEventsBlocked and positionEventsIndex < len(self.positionEvents):
-                    while positionEventsIndex < len(self.positionEvents) and self.positionEvents[positionEventsIndex].condition.met(positionNow):
+                while not positionEventsBlocked and positionEventsIndex < len(self.positionEvents) and self.positionEvents[positionEventsIndex].condition.met(positionNow):
+                    if self.positionEvents[positionEventsIndex].type == POSITION_EVENTS_BLOCK_TYPE:
+                        positionEventsBlocked = True
+                    else:
                         events.append(self.positionEvents[positionEventsIndex])
-                        positionEventsIndex += 1
+                    positionEventsIndex += 1
 
                 for event in events:
                     if event.controller.type != MAIN_CONTROLLER:
@@ -165,9 +169,9 @@ class VisualDriver:
                         elif event.type == POSITION_RESET_TYPE:
                             # print(now, positionNow, 'POSITION_RESET_TYPE')
                             self.position.value = 0
-                        elif event.type == TIME_EVENTS_BLOCK_TYPE:
-                            # print(now, positionNow, 'TIME_EVENTS_BLOCK_TYPE')
-                            timeEventsBlocked = True
+                        elif event.type == POSITION_EVENTS_UNBLOCK_TYPE:
+                            # print(now, positionNow, 'TIME_EVENTS_UNBLOCK_TYPE')
+                            positionEventsBlocked = False
                         elif event.type == TIME_EVENTS_UNBLOCK_TYPE:
                             # print(now, positionNow, 'TIME_EVENTS_UNBLOCK_TYPE')
                             timeEventsBlocked = False
@@ -183,6 +187,7 @@ class VisualDriver:
                         elif event.type == TRIGGER_DETACH_TYPE and self.usesTrigger:
                             self.triggerQueue.put([0,])
                         elif event.type == MOTOR_SPEED_TYPE and self.usesMotor:
+                            # print(now, positionNow, 'MOTOR_SPEED_TYPE')
                             with self.targetSpeed.get_lock():
                                 self.targetSpeed.value = event.speed
                         elif event.type == MOTOR_DIRECTION_TYPE and self.usesMotor:

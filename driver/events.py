@@ -9,15 +9,17 @@ ARDUINO_COMMUNICATION_STOP_BYTE = 252
 TIME_RESET_TYPE = 0
 ADD_EVENTS_TYPE = 1
 POSITION_RESET_TYPE = 2
-TIME_EVENTS_BLOCK_TYPE = 3
-TIME_EVENTS_UNBLOCK_TYPE = 4
-TIME_EVENTS_CLEAR_TYPE = 5
-TIME_EVENTS_CLEAR_TO_MARKER_TYPE = 6
-MARKER_TYPE = 7
-TRIGGER_SET_ANGLE_TYPE = 8
-TRIGGER_DETACH_TYPE = 9
-MOTOR_SPEED_TYPE = 10
-MOTOR_DIRECTION_TYPE = 11
+POSITION_EVENTS_BLOCK_TYPE = 3
+POSITION_EVENTS_UNBLOCK_TYPE = 4
+TIME_EVENTS_BLOCK_TYPE = 5
+TIME_EVENTS_UNBLOCK_TYPE = 6
+TIME_EVENTS_CLEAR_TYPE = 7
+TIME_EVENTS_CLEAR_TO_MARKER_TYPE = 8
+MARKER_TYPE = 9
+TRIGGER_SET_ANGLE_TYPE = 10
+TRIGGER_DETACH_TYPE = 11
+MOTOR_SPEED_TYPE = 12
+MOTOR_DIRECTION_TYPE = 13
 
 
 class Event:
@@ -26,6 +28,7 @@ class Event:
         self.condition = condition
         self.controller = controller
         self.hasVariable = hasVariable
+        self.type = None
     
 
     def abort(self, message, error=None):
@@ -608,8 +611,8 @@ class NowDeltaDecrease(ArduinoEvent):
 class MotorSpeed(Event):
 
     def __init__(self, condition, speed):
-        self.type = MOTOR_SPEED_TYPE
         super().__init__(condition, MainController)
+        self.type = MOTOR_SPEED_TYPE
         if type(speed) != int or speed < 0:
             self.abort('Invalid speed: ' + str(speed))
         elif speed > MOTOR_MAXIMUM_SPEED:
@@ -621,8 +624,8 @@ class MotorSpeed(Event):
 class MotorChangeDirection(Event):
 
     def __init__(self, condition, direction):
-        self.type = MOTOR_DIRECTION_TYPE
         super().__init__(condition, MainController)
+        self.type = MOTOR_DIRECTION_TYPE
         if direction != MOTOR_CLOCKWISE or direction != MOTOR_COUNTERCLOCKWISE:
             self.abort('Invalid direction: ' + str(direction))
         else:
@@ -631,8 +634,8 @@ class MotorChangeDirection(Event):
 
 class TriggerAngle(Event):
     def __init__(self, condition, angle):
-        self.type = TRIGGER_SET_ANGLE_TYPE
         super().__init__(condition, MainController)
+        self.type = TRIGGER_SET_ANGLE_TYPE
         if type(angle) != int or angle > 180 or angle < 0:
             self.abort('Invalid angle: ' + str(angle))
         else:
@@ -641,65 +644,77 @@ class TriggerAngle(Event):
 
 class TriggerDetach(Event):
     def __init__(self, condition):
-        self.type = TRIGGER_DETACH_TYPE
         super().__init__(condition, MainController)
-
+        self.type = TRIGGER_DETACH_TYPE
 
 
 class Marker(Event):
     def __init__(self, condition):
-        self.type = MARKER_TYPE
         super().__init__(condition, MainController)
+        self.type = MARKER_TYPE
 
 
 class TimeReset(Event):
 
     def __init__(self, condition):
-        self.type = TIME_RESET_TYPE
         super().__init__(condition, MainController)
+        self.type = TIME_RESET_TYPE
 
 
 class TimeEventsBlock(Event):
 
     def __init__(self, condition):
-        self.type = TIME_EVENTS_BLOCK_TYPE
         super().__init__(condition, MainController)
+        self.type = TIME_EVENTS_BLOCK_TYPE
 
 
 class TimeEventsUnblock(Event):
 
     def __init__(self, condition):
-        self.type = TIME_EVENTS_UNBLOCK_TYPE
         super().__init__(condition, MainController)
+        self.type = TIME_EVENTS_UNBLOCK_TYPE
 
 
 class TimeEventsClear(Event):
 
     def __init__(self, condition):
-        self.type = TIME_EVENTS_CLEAR_TYPE
         super().__init__(condition, MainController)
+        self.type = TIME_EVENTS_CLEAR_TYPE
 
 
 class TimeEventsClearToMarker(Event):
 
     def __init__(self, condition, marker):
+        super().__init__(condition, MainController)
         self.type = TIME_EVENTS_CLEAR_TO_MARKER_TYPE
         self.marker = marker
-        super().__init__(condition, MainController)
-
 
 class EventsAdd(Event):
 
     def __init__(self, condition, events):
+        super().__init__(condition, MainController)
         self.type = ADD_EVENTS_TYPE
         if not events or type(events) != dict:
             self.abort('Events in EventsAdd is empty or not a dict')
         self.events = events
-        super().__init__(condition, MainController)
 
 
 class PositionReset(Event):
 
     def __init__(self, condition):
-        self.type = POSITION_RESET_TYPE
         super().__init__(condition, MainController)
+        self.type = POSITION_RESET_TYPE
+
+
+class PositionEventsBlock(Event):
+
+    def __init__(self, condition):
+        super().__init__(condition, MainController)
+        self.type = POSITION_EVENTS_BLOCK_TYPE
+
+
+class PositionEventsUnblock(Event):
+
+    def __init__(self, condition):
+        super().__init__(condition, MainController)
+        self.type = POSITION_EVENTS_UNBLOCK_TYPE
