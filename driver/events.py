@@ -621,7 +621,7 @@ class MotorSpeed(Event):
             self.speed = speed
 
 
-class MotorChangeDirection(Event):
+class MotorDirection(Event):
 
     def __init__(self, condition, direction):
         super().__init__(condition, MainController)

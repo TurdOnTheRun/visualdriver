@@ -53,7 +53,8 @@ class VisualDriver:
         if self.usesMotor:
             self.speed = Value('d', 0.0)
             self.targetSpeed = Value('i', 0)
-            self.sc = SpeedController(self.speed, self.targetSpeed, self.encoderLock, self.distance, self.bottomQueue, self.shutdownQueue)
+            self.targetDirection = Value('i', MOTOR_CLOCKWISE)
+            self.sc = SpeedController(self.speed, self.targetSpeed, self.targetDirection, self.encoderLock, self.distance, self.bottomQueue, self.shutdownQueue)
 
         if self.usesTrigger:
             self.triggerQueue = Queue()
@@ -191,7 +192,8 @@ class VisualDriver:
                             with self.targetSpeed.get_lock():
                                 self.targetSpeed.value = event.speed
                         elif event.type == MOTOR_DIRECTION_TYPE and self.usesMotor:
-                            pass
+                            with self.targetDirection.get_lock():
+                                self.targetDirection.value = event.direction
                     
                 if timeEventsIndex >= len(self.timeEvents) and positionEventsIndex >= len(self.positionEvents):
                     self.shutdown()
