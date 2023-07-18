@@ -626,7 +626,7 @@ class MotorDirection(Event):
     def __init__(self, condition, direction):
         super().__init__(condition, MainController)
         self.type = MOTOR_DIRECTION_TYPE
-        if direction != MOTOR_CLOCKWISE or direction != MOTOR_COUNTERCLOCKWISE:
+        if direction != MOTOR_CLOCKWISE and direction != MOTOR_COUNTERCLOCKWISE:
             self.abort('Invalid direction: ' + str(direction))
         else:
             self.direction = direction

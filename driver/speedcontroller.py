@@ -73,7 +73,7 @@ class SpeedController(Process):
             prevTime = currentTime
             prevDistance = currentDistance
             prevError = error
-            time.sleep(1)
+            time.sleep(0.1)
 
         print('SpeedController shutting down...')
         self.bottomQueue.put([220, 0, MOTOR_STEP_TIME])
