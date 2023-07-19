@@ -19,11 +19,11 @@ position = 0.5
 
 eventDict['time'].append(MotorSpeed(At(2), maxSpeed))
 eventDict['time'].append(TimeEventsBlock(At(2)))
-eventDict['position'].append(MotorDirection(At(position), MOTOR_COUNTERCLOCKWISE))
-eventDict['position'].append(MotorDirection(LE(0), MOTOR_CLOCKWISE))
-eventDict['position'].append(MotorSpeed(At(position), 0))
-eventDict['position'].append(TimeEventsUnblock(At(position)))
-eventDict['time'].append(LightSetChannel(At(0), TopController, [Light1, Light2, Light3, Light4], StaticChannel10))
+eventDict['position'].append(MotorDirection(At(1.5-0.25), MOTOR_COUNTERCLOCKWISE))
+eventDict['position'].append(MotorDirection(LE(0.25+0.25), MOTOR_CLOCKWISE))
+eventDict['position'].append(MotorDirection(At(1.5-0.25), MOTOR_CLOCKWISE))
+eventDict['position'].append(TimeEventsUnblock(At(1.5-0.25)))
+eventDict['time'].append(MotorSpeed(At(2), 0))
 
 
 vd = VisualDriver(eventDict, usesMotor=True, startTime=0)
