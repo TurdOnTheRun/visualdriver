@@ -70,7 +70,7 @@ class VisualDriver:
         self.topQueue.put((180,)) #reset settings
         self.topQueue.put((181,)) #reset effects
         self.topQueue.put((182,)) #reset channels
-        self.topQueue.put((150,255,3)) #set all lights to 30
+        self.topQueue.put((150,255,1)) #set all lights to 30
         self.bottomQueue.put((180,)) #reset settings
         self.bottomQueue.put((181,)) #reset effects
         self.bottomQueue.put((182,)) #reset channels
