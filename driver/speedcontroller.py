@@ -5,16 +5,19 @@ from settings import SPEED_KP, SPEED_KI, SPEED_KD, MOTOR_STEP_TIME, MOTOR_MAXIMU
 
 class SpeedController(Process):
 
-    def __init__(self, speed, targetSpeed, encoderLock, distance, bottomQueue, shutdownQueue):
+    def __init__(self, speed, targetSpeed, targetDirection, encoderLock, distance, bottomQueue, shutdownQueue):
         super().__init__()
         self.daemon = True
         self.speed = speed
         self.targetSpeed = targetSpeed
+        self.targetDirection = targetDirection
         self.encoderLock = encoderLock
         self.distance = distance
         self.bottomQueue = bottomQueue
         self.shutdownQueue = shutdownQueue
 
+        with self.targetDirection.get_lock():
+            self.direction = self.targetDirection.value
         self.arduinoSpeed = 0
 
 
@@ -38,11 +41,16 @@ class SpeedController(Process):
                 self.speed.value = speed
             with self.targetSpeed.get_lock():
                 targetSpeed = self.targetSpeed.value
+            with self.targetDirection.get_lock():
+                targetDirection = self.targetDirection.value
 
-            if targetSpeed == 0:
+            if targetSpeed == 0 or targetDirection != self.direction:
                 if speed != 0:
                     self.arduinoSpeed = 0
                     self.bottomQueue.put([220, self.arduinoSpeed, MOTOR_STEP_TIME])
+                elif targetDirection != self.direction:
+                    self.bottomQueue.put([221,])
+                    self.direction = targetDirection
                 error = 0
             else:
                 error = targetSpeed - speed
@@ -65,7 +73,7 @@ class SpeedController(Process):
             prevTime = currentTime
             prevDistance = currentDistance
             prevError = error
-            time.sleep(1)
+            time.sleep(0.1)
 
         print('SpeedController shutting down...')
         self.bottomQueue.put([220, 0, MOTOR_STEP_TIME])

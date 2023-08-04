@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "new_controller",
+			"path": "arduino/new_controller"
+		}
+	],
+	"settings": {}
+}

@@ -27,7 +27,7 @@ class Effect {
     int _newstate;
     unsigned int _newsteptime;
     float _newamplitude;
-    unsigned long _passed;
+    unsigned int _steps;
     unsigned long _laststep = 0;
     byte _steptimefactor = 1;
     byte _usercount = 0;

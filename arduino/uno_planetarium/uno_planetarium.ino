@@ -207,6 +207,7 @@ UnoLight lights[numberOfLights] = {
 };
 
 SerialInterpreter interpreter = SerialInterpreter();
+int nowDelta = 0;
 unsigned long now;
 
 // One message consists of a maximum of 10 bytes
@@ -297,6 +298,14 @@ void effects_reset(){
   for(byte i = 0; i < numberOfEffects; i++) {
     effects[i] = Effect();
   };
+}
+
+void now_delta_increase(byte num){
+  nowDelta += (int) num;
+}
+
+void now_delta_decrease(byte num){
+  nowDelta -= (int) num;
 }
 
 void parse_data() {
@@ -474,6 +483,18 @@ void parse_data() {
       return;
     } break;
 
+    case NOW_DELTA_INCREASE: {
+      //target: byte by which the delta should be increased
+      now_delta_increase(target);
+      return;
+    } break;
+
+    case NOW_DELTA_DECREASE: {
+      //target: byte by which the delta should be decreased
+      now_delta_decrease(target);
+      return;
+    } break;
+
     default: {
       return;
     } break;
@@ -497,7 +518,7 @@ void lights_setup() {
 }
 
 void update_lights() {
-  now = millis();
+  now = millis() + nowDelta;
   for(byte i = 0; i < numberOfLights; i++) {
     lights[i].update(now);
   };
