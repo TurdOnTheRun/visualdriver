@@ -10,6 +10,7 @@ eventDict = {
     'time': []
 }
 
+
 # BOTTOM LIGHTS
 eventDict['time'].append(SettingStaticLight(At(0), BottomController, 0, 0))
 eventDict['time'].append(ChannelSetSetting(At(0), BottomController, Channel1, 0))
@@ -32,6 +33,8 @@ eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel2, 1))
 # Effect 0: Vibrato
 eventDict['time'].append(EffectDownVibrato(At(0), TopController, 0, Channel2, StaticChannel1))
 eventDict['time'].append(ChannelAddEffect(At(0), TopController, Channel1, 0, 0))
+# Effect 1: Steptime
+eventDict['time'].append(EffectStrobe(At(0), TopController, 1, StaticChannel10, StaticChannel4, 1))
 
 
 # BOTTOM LIGHTS
@@ -62,24 +65,35 @@ eventDict['time'].append(SettingStaticLight(At(seconds), BottomController, 1, 50
 seconds += 3
 eventDict['time'].append(SettingStaticLight(At(seconds), BottomController, 1, 25))
 seconds += 3
-eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 1, 80, 25, 40, 7, 0,100))
-seconds += 6
-eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 1, 25, 80, 40, 7, 0,50))
-seconds += 6
-eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 1, 80, 25, 40, 7, 50,0))
-seconds += 6
-eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 1, 80, 25, 40, 7, 100,0))
-seconds += 6
+eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 1, 80, 25, 40, 7, 0, 100))
+seconds += 4
+eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 1, 25, 80, 40, 7, 0, 50))
+seconds += 4
+eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 1, 80, 25, 40, 7, 50, 0))
+seconds += 4
 
 eventDict['time'].append(SettingStaticLight(At(seconds), BottomController, 0, 0))
 eventDict['time'].append(LightSetChannel(At(seconds), TopController, [Light2, ], Channel1))
 eventDict['time'].append(SettingLinearDimm(At(seconds), TopController, 0, 0, 100, 25))
-seconds += 2
+seconds += 3
 eventDict['time'].append(SettingLinearDimm(At(seconds), TopController, 1, 0, 90, 20))
 seconds += 4
-eventDict['time'].append(LightSetChannel(At(seconds), TopController, [Light1, Light2, Light4], Channel1))
-seconds += 6
-eventDict['time'].append(SettingLinearDimm(At(seconds), TopController, 0, 100, 0, 5))
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 1, 0))
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 4, 20, 0, 100))
+seconds += .8
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 4, 20, 60, 80))
+seconds += .8
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 4, 20, 90, 90))
+seconds += .8
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 4, 20, 60, 80))
+seconds += .8
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 4, 20, 0, 100))
+seconds += .8
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 4, 20, 90, 90))
+seconds += .8
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 4, 20, 60, 80))
+seconds += .8
+
 
 # Set Strobe steptime to 40ms and new amplitude
 eventDict['time'].append(SettingStaticLight(At(seconds), BottomController, 1, 4))
@@ -92,16 +106,30 @@ seconds += 8
 
 # Top Vibrato Off
 eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 1, 0))
-eventDict['time'].append(LightSetChannel(At(seconds), TopController, [Light1, Light2, Light4], StaticChannel0))
+eventDict['time'].append(LightSetChannel(At(seconds), TopController, [Light2,], StaticChannel0))
 eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 0, 100, 20, 20, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 0, 100, 0, 20, 20, 0, 100))
-eventDict['time'].append(LightSetChannel(At(seconds), TopController, [Light3, ], Channel1))
+eventDict['time'].append(LightSetChannel(At(seconds), TopController, [Light4, ], Channel1))
 seconds += 6
 eventDict['time'].append(SettingLinearDimm(At(seconds), TopController, 1, 0, 90, 20))
 seconds += 4
 eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 15, 20, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 0, 0, 100, 15, 20, 0, 100))
+eventDict['time'].append(ChannelAddEffect(At(seconds), TopController, Channel1, 1, 1))
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 1, 0))
 seconds += 8
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 0, 100, 7, 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 0, 100, 0, 7, 10, 0, 100))
+seconds += 2
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 7, 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 0, 0, 100, 7, 10, 0, 100))
+seconds += 2
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 0, 100, 7, 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 0, 100, 0, 7, 10, 0, 100))
+seconds += 2
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 7, 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 0, 0, 100, 7, 10, 0, 100))
+seconds += 2
 eventDict['time'].append(SettingStaticLight(At(seconds), BottomController, 1, 8))
 seconds += 3
 eventDict['time'].append(SettingStaticLight(At(seconds), BottomController, 1, 4))
@@ -116,11 +144,15 @@ seconds += 1
 eventDict['time'].append(SettingStaticLight(At(seconds), BottomController, 0, 0))
 
 
+maxSpeed = 180
+eventDict['position'].append(MotorSpeed(At(0), maxSpeed))
+eventDict['position'].append(MotorDirection(At(1.5-0.25), MOTOR_COUNTERCLOCKWISE))
+eventDict['position'].append(MotorDirection(LE(0.25+0.26), MOTOR_CLOCKWISE))
+eventDict['position'].append(MotorDirection(At(1.5-0.25), MOTOR_COUNTERCLOCKWISE))
+eventDict['position'].append(MotorDirection(LE(0.75+0.25), MOTOR_CLOCKWISE))
+eventDict['position'].append(MotorDirection(At(4-0.25), MOTOR_COUNTERCLOCKWISE))
+eventDict['position'].append(MotorSpeed(At(3.9), 0))
 
 
-
-
-
-
-vd = VisualDriver(eventDict, usesMotor=False, startTime=0)
+vd = VisualDriver(eventDict, usesMotor=True, startTime=0)
 vd.start()

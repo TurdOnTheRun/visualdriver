@@ -58,11 +58,12 @@ eventDict['time'].append(ChannelAddEffect(At(0), TopController, Channel1, 0, 0))
 eventDict['time'].append(EffectDownVibrato(At(0), TopController, 1, Channel3, Channel4))
 eventDict['time'].append(ChannelAddEffect(At(0), TopController, Channel1, 1, 1))
 
+maxLight = 90
 
 seconds = 1
 eventDict['time'].append(LightSetChannel(At(seconds), BottomController, [Light1, Light2, ], Channel1))
 eventDict['time'].append(LightSetChannel(At(seconds), TopController, [Light1, Light2, Light4], Channel1))
-eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 0, 100, 10, 40, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 0, maxLight, 10, 40, 0, 100))
 seconds += 3
 eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 1, 40))
 seconds += 3
@@ -83,15 +84,46 @@ seconds += 3
 eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 1, 80))
 eventDict['time'].append(SettingLinearDimm(At(seconds), TopController, 2, 0, 70, 10))
 seconds += 3
-eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 10, 40, 0, 100))
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 1, 40))
+
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 0, maxLight))
+seconds += .5
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, maxLight, 0, 4, 20, 0, 100))
+seconds += .8
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 0, maxLight))
+seconds += .5
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, maxLight, 0, 4, 20, 60, 80))
+seconds += .8
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 0, maxLight))
+seconds += .5
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, maxLight, 0, 4, 20, 90, 90))
+seconds += .8
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 0, maxLight))
+seconds += .5
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, maxLight, 0, 4, 20, 60, 80))
+seconds += .8
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 0, maxLight))
+seconds += .5
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, maxLight, 0, 4, 20, 0, 100))
+seconds += .8
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 0, maxLight))
+seconds += .5
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, maxLight, 0, 4, 20, 90, 90))
+seconds += .8
+eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 0, maxLight))
+seconds += .5
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, maxLight, 0, 4, 20, 60, 80))
+seconds += .8
+
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, maxLight, 0, 10, 40, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 0, 0, 100, 10, 40, 0, 100))
-seconds += 4
-eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 0, 100, 10, 40, 0, 100))
+seconds += 5
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 0, maxLight, 10, 40, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 0, 100, 0, 10, 40, 0, 100))
-seconds += 4
-eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, 100, 0, 10, 40, 0, 100))
+seconds += 5
+eventDict['time'].append(SettingBezierDimm(At(seconds), TopController, 0, maxLight, 0, 10, 40, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(seconds), BottomController, 0, 0, 100, 10, 40, 0, 100))
-seconds += 4
+seconds += 8
 
 eventDict['time'].append(SettingStaticLight(At(seconds), TopController, 0, 0))
 
