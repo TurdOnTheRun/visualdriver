@@ -6,7 +6,36 @@
 #include <SerialInterpreter.h>
 
 
-// ARDUINO SPECIFIC
+//RTC Setup
+const byte rtcPin = 21;
+unsigned long now = 0;
+unsigned int fract = 0;
+
+bool syncing = false;
+const byte syncPin = 13;
+unsigned long lastSync = 0;
+
+void rtc_millis_routine() {
+  now += 1;
+  fract += 3;
+  if(fract >= 125){
+    now -= 1;
+    fract -= 125;
+  }
+}
+
+void rtc_sync() {
+  if(now % 5009 == 0 && now != lastSync){
+    digitalWrite(syncPin, !digitalRead(syncPin));
+    lastSync = now;
+  }
+}
+
+void rtc_setup(){
+  attachInterrupt(digitalPinToInterrupt(rtcPin), rtc_millis_routine, FALLING);
+  pinMode(syncPin, OUTPUT);
+}
+
 void pwm_setup(){
   //SET PIN FREQUENCIES TO 31kHz  
   int eraser = 7;       // this is 111 in binary and is used as an eraser
@@ -24,10 +53,10 @@ void pwm_setup(){
 // ARDUINO SPECIFIC
 //Available Pins:
 //2,3,5,6,7,8,9,10
-const byte light1 = 7;
+const byte light1 = 2;
 const byte light2 = 3;
-const byte light3 = 2;
-const byte light4 = 8; 
+const byte light3 = 5;
+const byte light4 = 6; 
 // const byte light4 = 5;
 // const byte light5 = 6;
 // const byte light6 = 9;
@@ -41,7 +70,6 @@ const byte numberOfSettings = 10;
 const byte numberOfEffects = 10;
 const byte numberOfChannels = 21;
 
-// ARDUINO SPECIFIC
 Setting settings[numberOfSettings] = {
   Setting(),
   Setting(),
@@ -97,8 +125,6 @@ Light lights[numberOfLights] = {
 };
 
 SerialInterpreter interpreter = SerialInterpreter();
-int nowDelta = 0;
-unsigned long now;
 
 // One message consists of a maximum of 10 bytes
 byte type; //id of setting or effect
@@ -189,12 +215,16 @@ void effects_reset(){
   };
 }
 
-void now_delta_increase(byte num){
-  nowDelta += (int) num;
+void now_increase(byte num){
+  now += (int) num;
 }
 
-void now_delta_decrease(byte num){
-  nowDelta -= (int) num;
+void now_decrease(byte num){
+  now -= (int) num;
+}
+
+void sync_toggle(){
+  syncing = !syncing;
 }
 
 void parse_data() {
@@ -358,15 +388,20 @@ void parse_data() {
       return;
     } break;
 
-    case NOW_DELTA_INCREASE: {
+    case NOW_INCREASE: {
       //target: byte by which the delta should be increased
-      now_delta_increase(target);
+      now_increase(target);
       return;
     } break;
 
-    case NOW_DELTA_DECREASE: {
+    case NOW_DECREASE: {
       //target: byte by which the delta should be decreased
-      now_delta_decrease(target);
+      now_decrease(target);
+      return;
+    } break;
+
+    case SYNC_TOGGLE: {
+      sync_toggle();
       return;
     } break;
 
@@ -393,7 +428,6 @@ void lights_setup() {
 }
 
 void update_lights() {
-  now = millis() + nowDelta;
   for(byte i = 0; i < numberOfLights; i++) {
     lights[i].update(now);
   };
@@ -417,14 +451,18 @@ void setup() {
   // ARDUINO SPECIFIC
   // Serial.begin(9600);
   Serial1.begin(115200);
+  delay(2000);
   pwm_setup();
-
+  rtc_setup();
   lights_setup();
-  now = millis();
   update_lights();
 }
 
 void loop() {
   read_serial();
-  update_lights();
+  if(syncing){
+    rtc_sync();
+  } else {
+    update_lights();
+  }
 }

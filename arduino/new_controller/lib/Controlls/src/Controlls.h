@@ -32,8 +32,9 @@ static const byte CHANNEL_REMOVE_EFFECTS = 172;
 static const byte SETTINGS_RESET = 180;
 static const byte EFFECTS_RESET = 181;
 static const byte CHANNELS_RESET = 182;
-static const byte NOW_DELTA_INCREASE = 190;
-static const byte NOW_DELTA_DECREASE = 191;
+static const byte NOW_INCREASE = 190;
+static const byte NOW_DECREASE = 191;
+static const byte SYNC_TOGGLE = 192;
 
 
 // other global variables
