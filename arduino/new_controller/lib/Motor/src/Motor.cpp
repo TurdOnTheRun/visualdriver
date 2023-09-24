@@ -1,0 +1,113 @@
+/*
+  Light.cpp - Library for controlling Light.
+  Created by Maximilian Weber, Dezember 25, 2020.
+*/
+
+#include "Arduino.h"
+#include "Motor.h"
+#include <math.h>
+
+Motor::Motor(byte LPWM_pin, byte RPWM_pin)
+{
+  _LPWM_pin = LPWM_pin;
+  _RPWM_pin = RPWM_pin;
+}
+
+void Motor::init()
+{
+  pinMode(_LPWM_pin, OUTPUT);
+  pinMode(_LPWM_pin, OUTPUT);
+}
+
+void Motor::set_pinstate()
+{
+  if(_pinstate != lowByte(_newstate)){
+    pin_write();
+    _pinstate = lowByte(_newstate);
+  }
+}
+
+void Motor::pin_write()
+{
+  analogWrite(_NOTOUT_pin, 0);
+  analogWrite(_OUT_pin, lowByte(_newstate));
+}
+
+void Motor::set_to(byte tostate, byte steptime, unsigned long now)
+{
+  if (_changingDirection){
+    return;
+  }
+  if (steptime < 20) {
+    byte difference;
+    if (_state > tostate) {
+      difference = _state-tostate;
+    } else {
+      difference = tostate-_state;
+    }
+    if (difference > MAXIMAL_SPEED_DIFFERENCE){
+      steptime = 20;
+    }
+  }
+  if (tostate > MAXIMUM_SPEED){
+    tostate = MAXIMUM_SPEED;
+  }
+  _tostate = tostate;
+  _steptime = steptime;
+  _laststep = now;
+}
+
+void Motor::update(unsigned long now)
+{
+  if (changing()){
+    
+    unsigned long passed = now - _laststep;
+    int steps;
+    
+    if (passed < _steptime){
+      return;
+    } else {
+      steps = (int) round(passed/_steptime);
+    }
+    
+    if (rising()){
+      
+      _newstate = ((int)_state) + steps;
+      
+      if (_newstate >= _tostate || _newstate > 255){
+        _newstate = _tostate;
+      }
+      
+    } else {
+      
+      _newstate = ((int)_state)-steps;
+      
+      if (_newstate <= _tostate || _newstate < 0){
+         _newstate = _tostate;
+      }
+
+    }
+    set_pinstate();
+  } else if (_changingDirection && _stopped) {
+    byte TEMP_pin = _OUT_pin;
+    _OUT_pin = _NOTOUT_pin;
+    _NOTOUT_pin = TEMP_pin;
+    _changingDirection = false;
+    set_to(_savestate, 20, now);
+  }
+}
+
+void Motor::changedirection() {
+  _savestate = _state;
+  _tostate = 0;
+  _steptime = 20;
+  _changingDirection = true;
+}
+
+bool Motor::rising() {
+  return (_state < _tostate);
+}
+
+bool Motor::changing() {
+  return !(_state == _tostate);
+}

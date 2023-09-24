@@ -1,4 +1,5 @@
 #include <Light.h>
+#include <Motor.h>
 #include <Effect.h>
 #include <Channel.h>
 #include <Setting.h>
@@ -52,20 +53,22 @@ void pwm_setup(){
 
 // ARDUINO SPECIFIC
 //Available Pins:
-//2,3,5,6,7,8,9,10
+//2,3,5,6,7,8,9,10,11,12
+
+Motor motor = Motor(11, 12);
+
+const byte numberOfLights = 4;
 const byte light1 = 2;
 const byte light2 = 3;
 const byte light3 = 5;
 const byte light4 = 6; 
-// const byte light4 = 5;
-// const byte light5 = 6;
-// const byte light6 = 9;
-// const byte light7 = 10;
-// const byte light8 = 11;
-// const byte light9 = 12;
+// const byte light5 = 7;
+// const byte light6 = 8;
+// const byte light7 = 9;
+// const byte light8 = 10;
+// const byte light9 = 11;
+// const byte light10 = 12;
 
-// ARDUINO SPECIFIC
-const byte numberOfLights = 4;
 const byte numberOfSettings = 10;
 const byte numberOfEffects = 10;
 const byte numberOfChannels = 21;
@@ -405,6 +408,19 @@ void parse_data() {
       return;
     } break;
 
+    case MOTOR_SPEED: {
+      // target: state
+      // set1: steptime
+      set1 = interpreter.inputBuffer[2];
+      motor.set_to(target, set1, now);
+      return;
+    } break;
+
+    case MOTOR_DIRECTION: {
+      motor.changedirection();
+      return;
+    } break;
+
     default: {
       return;
     } break;
@@ -451,6 +467,8 @@ void setup() {
   // ARDUINO SPECIFIC
   // Serial.begin(9600);
   Serial1.begin(115200);
+  motor.init();
+
   delay(2000);
   pwm_setup();
   rtc_setup();
@@ -464,5 +482,7 @@ void loop() {
     rtc_sync();
   } else {
     update_lights();
+    // ARDUINO SPECIFIC
+    motor.update(now);
   }
 }
