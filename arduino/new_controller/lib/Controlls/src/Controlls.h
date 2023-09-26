@@ -34,7 +34,9 @@ static const byte EFFECTS_RESET = 181;
 static const byte CHANNELS_RESET = 182;
 static const byte NOW_INCREASE = 190;
 static const byte NOW_DECREASE = 191;
-static const byte SYNC_TOGGLE = 192;
+static const byte SYNC_ON = 192;
+static const byte SYNC_OFF = 193;
+
 
 static const byte MOTOR_SPEED = 220;
 static const byte MOTOR_DIRECTION = 221;
@@ -54,5 +56,7 @@ const PROGMEM float PERLIN_NOISE[PERLIN_SIZE] = {
 static const byte MAXIMAL_SPEED_DIFFERENCE = 5;
 static const byte MAXIMUM_SPEED = 130;
 
+// sync controlls
+static const unsigned int SYNC_MILLIS = 5009;
 
 #endif
