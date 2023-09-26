@@ -14,7 +14,7 @@ unsigned int fract = 0;
 bool syncing = false;
 const byte syncPin = 13;
 unsigned long lastSync = 0;
-int syncDelta = 999999;
+int syncDelta = 9999;
 
 void rtc_millis_routine() {
   now += 1;
