@@ -16,7 +16,7 @@ Motor::Motor(byte LPWM_pin, byte RPWM_pin)
 void Motor::init()
 {
   pinMode(_LPWM_pin, OUTPUT);
-  pinMode(_LPWM_pin, OUTPUT);
+  pinMode(_RPWM_pin, OUTPUT);
   _OUT_pin = _LPWM_pin;
   _NOTOUT_pin = _RPWM_pin;
 }

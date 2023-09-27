@@ -464,9 +464,10 @@ void update_lights() {
 
 void read_serial() {
   // receive data from Python and save it into interpreter.inputBuffer
-  while(Serial1.available() > 0) {
+  // ARDUINO SPECIFIC: Serial
+  while(Serial.available() > 0) {
     
-    byte x = Serial1.read();
+    byte x = Serial.read();
     bool isEnd = interpreter.processByte(x);
     
     if(isEnd){
@@ -503,11 +504,11 @@ void setup() {
   // rtc_sync_setup_top();
 
   Serial.begin(115200);
+  pwm_setup();
   rtc_sync_setup_bottom();
   motor.init();
-
   delay(SYNC_MILLIS);
-  pwm_setup();
+  motor.set_to(5, 20, now);
   lights_setup();
   update_lights();
 }
