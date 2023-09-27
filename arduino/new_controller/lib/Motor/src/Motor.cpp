@@ -17,6 +17,8 @@ void Motor::init()
 {
   pinMode(_LPWM_pin, OUTPUT);
   pinMode(_LPWM_pin, OUTPUT);
+  _OUT_pin = _LPWM_pin;
+  _NOTOUT_pin = _RPWM_pin;
 }
 
 void Motor::set_pinstate()
@@ -74,7 +76,7 @@ void Motor::update(unsigned long now)
       
       _newstate = ((int)_state) + steps;
       
-      if (_newstate >= _tostate || _newstate > 255){
+      if (_newstate >= _tostate || _newstate > MAXIMUM_SPEED){
         _newstate = _tostate;
       }
       

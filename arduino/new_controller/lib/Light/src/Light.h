@@ -17,7 +17,6 @@ class Light {
     Channel* _channel;
     void set_pinstate();
     virtual void pin_write();
-    virtual void set_pin_frequency(); //only necessary for uno
   
   protected:
     byte _pin;
