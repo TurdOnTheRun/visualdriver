@@ -508,7 +508,6 @@ void setup() {
   rtc_sync_setup_bottom();
   motor.init();
   delay(SYNC_MILLIS);
-  motor.set_to(5, 20, now);
   lights_setup();
   update_lights();
 }

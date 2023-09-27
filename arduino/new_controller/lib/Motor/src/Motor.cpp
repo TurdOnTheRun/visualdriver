@@ -21,11 +21,16 @@ void Motor::init()
   _NOTOUT_pin = _RPWM_pin;
 }
 
-void Motor::set_pinstate()
+void Motor::set_state()
 {
-  if(_pinstate != lowByte(_newstate)){
+  if(_state != lowByte(_newstate)){
     pin_write();
-    _pinstate = lowByte(_newstate);
+    _state = lowByte(_newstate);
+    if (_state != 0){
+      _stopped = false;
+    } else {
+      _stopped = true;
+    }
   }
 }
 
@@ -89,7 +94,7 @@ void Motor::update(unsigned long now)
       }
 
     }
-    set_pinstate();
+    set_state();
   } else if (_changingDirection && _stopped) {
     byte TEMP_pin = _OUT_pin;
     _OUT_pin = _NOTOUT_pin;

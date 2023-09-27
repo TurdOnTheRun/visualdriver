@@ -17,8 +17,7 @@ class Motor {
     byte _NOTOUT_pin;
     boolean _stopped = true;
     boolean _changingDirection = false;
-    byte _pinstate;
-    byte _state;
+    byte _state = 0;
     byte _tostate;
     int _newstate;
     byte _savestate;
@@ -26,7 +25,7 @@ class Motor {
     unsigned long _laststep;
 
   protected:
-    void set_pinstate();
+    void set_state();
     virtual void pin_write();
 
   public:
