@@ -95,6 +95,7 @@ void Motor::update(unsigned long now)
 
     }
     set_state();
+    _laststep = now;
   } else if (_changingDirection && _stopped) {
     byte TEMP_pin = _OUT_pin;
     _OUT_pin = _NOTOUT_pin;

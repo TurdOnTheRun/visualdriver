@@ -8,7 +8,8 @@
 
 //RTC Setup
 const byte rtcPin = 21;
-unsigned long now = 0;
+unsigned long now = 1;
+unsigned long lastNow = 0;
 unsigned int fract = 0;
 
 bool syncing = false;
@@ -50,12 +51,14 @@ void rtc_sync_setup_bottom(){
 void pwm_setup(){
   //SET PIN FREQUENCIES TO 31kHz  
   int eraser = 7;       // this is 111 in binary and is used as an eraser
-  int prescaler = 1;    // this could be a number in [1 , 6]. 1 corresponds to 31000 Hz (fastest)   
-  TCCR1B &= ~eraser;    // this operation (AND plus NOT), set the three bits in TCCR2B to 0
+  int prescaler = 1;    // this could be a number in [1 , 6]. 1 corresponds to 31000 Hz (fastest)
+  // this operation (AND plus NOT), set the three bits in TCCR2B to 0   
+  // TCCR1B &= ~eraser; //uncomment to activate 31Hz for pins 11 and 12 (deactivated for motor)
   TCCR2B &= ~eraser;    
   TCCR3B &= ~eraser;
   TCCR4B &= ~eraser;
-  TCCR1B |= prescaler; //this operation (OR), replaces the last three bits in TCCR2B with our new value 001
+  //this operation (OR), replaces the last three bits in TCCR2B with our new value 001
+  // TCCR1B |= prescaler; //uncomment to activate 31Hz for pins 11 and 12 (deactivated for motor)
   TCCR2B |= prescaler;  
   TCCR3B |= prescaler;
   TCCR4B |= prescaler;
@@ -505,7 +508,7 @@ void setup() {
 
   Serial.begin(115200);
   pwm_setup();
-  rtc_sync_setup_bottom();
+  // rtc_sync_setup_bottom();
   motor.init();
   delay(SYNC_MILLIS);
   lights_setup();
@@ -517,9 +520,10 @@ void loop() {
   if(syncing){
     // ARDUINO SPECIFIC
     // rtc_sync_top();
-  } else {
+  } else if(now > lastNow){
     update_lights();
     // ARDUINO SPECIFIC
     motor.update(now);
+    lastNow = now;
   }
 }
