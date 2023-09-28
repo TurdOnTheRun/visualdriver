@@ -519,8 +519,7 @@ void setup() {
 }
 
 void loop() {
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-  {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
      now = NOW;
   }
   read_serial();
