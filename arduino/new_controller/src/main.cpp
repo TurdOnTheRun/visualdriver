@@ -5,12 +5,15 @@
 #include <Setting.h>
 #include <Controlls.h>
 #include <SerialInterpreter.h>
+#include <util/atomic.h>
 
 //RTC Setup
+unsigned long now = 0;
 const byte rtcPin = 21;
-unsigned long now = 1;
-unsigned long lastNow = 0;
-byte fract = 0;
+volatile byte fract = 0;
+volatile unsigned long NOW = 0;
+unsigned long now = 0;
+
 
 bool syncing = false;
 const byte syncPin = 13;
@@ -18,11 +21,11 @@ unsigned long lastSync = 0;
 int syncDelta = 9999;
 
 void rtc_millis_routine() {
-  now += 1;
   fract += 3;
   if(fract >= 128){
-    now -= 1;
     fract -= 128;
+  } else {
+    NOW += 1
   }
 }
 
@@ -516,6 +519,10 @@ void setup() {
 }
 
 void loop() {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+  {
+     now = NOW;
+  }
   read_serial();
   if(syncing){
     // ARDUINO SPECIFIC
