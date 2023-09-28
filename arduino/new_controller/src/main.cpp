@@ -10,7 +10,7 @@
 const byte rtcPin = 21;
 unsigned long now = 1;
 unsigned long lastNow = 0;
-unsigned int fract = 0;
+byte fract = 0;
 
 bool syncing = false;
 const byte syncPin = 13;
@@ -20,9 +20,9 @@ int syncDelta = 9999;
 void rtc_millis_routine() {
   now += 1;
   fract += 3;
-  if(fract >= 125){
+  if(fract >= 128){
     now -= 1;
-    fract -= 125;
+    fract -= 128;
   }
 }
 
