@@ -14,7 +14,6 @@ volatile byte fract = 0;
 volatile unsigned long NOW = 0;
 unsigned long now = 0;
 
-
 bool syncing = false;
 const byte syncPin = 13;
 unsigned long lastSync = 0;
