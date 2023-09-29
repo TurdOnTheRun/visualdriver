@@ -105,11 +105,12 @@ void Motor::update(unsigned long now)
   }
 }
 
-void Motor::changedirection() {
+void Motor::change_direction(unsigned long now) {
   _savestate = _state;
   _tostate = 0;
   _steptime = 20;
   _changingDirection = true;
+  _laststep = now;
 }
 
 bool Motor::rising() {

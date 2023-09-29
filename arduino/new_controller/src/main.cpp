@@ -463,7 +463,7 @@ void parse_data() {
     } break;
 
     case MOTOR_DIRECTION: {
-      motor.changedirection();
+      motor.change_direction(now);
       return;
     } break;
 

@@ -33,7 +33,7 @@ class Motor {
     void init();
     void set_to(byte state, byte steptime, unsigned long now);
     void update(unsigned long now);
-    void changedirection();
+    void change_direction(unsigned long now);
     bool changing();
     bool rising();
 };
