@@ -19,6 +19,7 @@ bool syncing = false;
 const byte syncPin = 13;
 unsigned long lastSync = 0;
 int syncDelta = 9999;
+volatile bool syncNow = false;
 
 void rtc_millis_routine() {
   fract += 3;
@@ -48,7 +49,9 @@ void rtc_sync_teardown_top(){
   pinMode(syncPin, INPUT);
 }
 
-void rtc_sync_routine_bottom();
+void rtc_sync_routine_bottom(){
+  syncNow = true;
+};
 
 void rtc_sync_setup_bottom(){
   pinMode(syncPin, INPUT_PULLUP);
@@ -515,11 +518,12 @@ void lights_setup() {
   };
 }
 
-void rtc_sync_routine_bottom(){
+void rtc_sync_bottom(){
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
     syncDelta = NOW % SYNC_MILLIS;
     NOW -= syncDelta;
   }
+  syncNow = false;
   if(syncDelta < 1 || syncDelta == SYNC_MILLIS - 1){
     lights[0].set_channel(&channels[3]);
     lights[1].set_channel(&channels[3]);
@@ -527,6 +531,7 @@ void rtc_sync_routine_bottom(){
     lights[0].set_channel(&channels[0]);
     lights[1].set_channel(&channels[0]);
   }
+  update_lights();
 }
 
 void setup() {
@@ -554,7 +559,12 @@ void loop() {
   read_serial();
   
   if(syncing){
-    if(!IS_BOTTOM){
+    if(IS_BOTTOM){
+      if(syncNow){
+        rtc_sync_bottom();
+      }
+    }
+    else {
       rtc_sync_top();
     }
   } 
