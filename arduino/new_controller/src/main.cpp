@@ -7,8 +7,9 @@
 #include <SerialInterpreter.h>
 #include <util/atomic.h>
 
+const bool IS_BOTTOM = true;
+
 //RTC Setup
-unsigned long now = 0;
 const byte rtcPin = 21;
 volatile byte fract = 0;
 volatile unsigned long NOW = 0;
@@ -24,16 +25,12 @@ void rtc_millis_routine() {
   if(fract >= 128){
     fract -= 128;
   } else {
-    NOW += 1
+    NOW += 1;
   }
 }
 
 void rtc_setup(){
   attachInterrupt(digitalPinToInterrupt(rtcPin), rtc_millis_routine, FALLING);
-}
-
-void rtc_sync_setup_top(){
-  pinMode(syncPin, OUTPUT);
 }
 
 void rtc_sync_top() {
@@ -43,6 +40,14 @@ void rtc_sync_top() {
   }
 }
 
+void rtc_sync_setup_top(){
+  pinMode(syncPin, OUTPUT);
+}
+
+void rtc_sync_teardown_top(){
+  pinMode(syncPin, INPUT);
+}
+
 void rtc_sync_routine_bottom();
 
 void rtc_sync_setup_bottom(){
@@ -50,25 +55,35 @@ void rtc_sync_setup_bottom(){
   attachInterrupt(digitalPinToInterrupt(syncPin), rtc_sync_routine_bottom, CHANGE);
 }
 
+void rtc_sync_teardown_bottom(){
+  detachInterrupt(digitalPinToInterrupt(syncPin));
+  pinMode(syncPin, INPUT);
+}
+
 void pwm_setup(){
   //SET PIN FREQUENCIES TO 31kHz  
   int eraser = 7;       // this is 111 in binary and is used as an eraser
   int prescaler = 1;    // this could be a number in [1 , 6]. 1 corresponds to 31000 Hz (fastest)
   // this operation (AND plus NOT), set the three bits in TCCR2B to 0   
-  // TCCR1B &= ~eraser; //uncomment to activate 31Hz for pins 11 and 12 (deactivated for motor)
   TCCR2B &= ~eraser;    
   TCCR3B &= ~eraser;
   TCCR4B &= ~eraser;
+  if(!IS_BOTTOM){ //deactivated 31Hz for pins 11 and 12 for motor
+    TCCR1B &= ~eraser; 
+  }
   //this operation (OR), replaces the last three bits in TCCR2B with our new value 001
-  // TCCR1B |= prescaler; //uncomment to activate 31Hz for pins 11 and 12 (deactivated for motor)
   TCCR2B |= prescaler;  
   TCCR3B |= prescaler;
   TCCR4B |= prescaler;
+  if(!IS_BOTTOM){ //deactivated 31Hz for pins 11 and 12 for motor
+    TCCR1B |= prescaler;
+  }
 }
 
 // ARDUINO SPECIFIC
 //Available Pins:
 //2,3,5,6,7,8,9,10,11,12
+
 
 Motor motor = Motor(11, 12);
 
@@ -163,7 +178,6 @@ void setting_add(byte index, Setting setting){
   }
 }
 
-
 void effect_add(byte index, Effect effect){
   if(index < numberOfEffects){
     effects[index] = effect;
@@ -178,7 +192,6 @@ void light_set_channel(byte index, byte targetlights){
   };
 }
 
-
 void channel_set_setting(byte channelindex, byte settingindex){
   if(channelindex < numberOfChannels && settingindex < numberOfSettings){
     channels[channelindex].set_setting(&settings[settingindex]);
@@ -186,21 +199,18 @@ void channel_set_setting(byte channelindex, byte settingindex){
   }
 }
 
-
 void channel_set_channel(byte channelindex, byte inputchannelindex){
   if(channelindex < numberOfChannels && inputchannelindex < numberOfChannels){
     channels[channelindex].set_channel(&channels[inputchannelindex]);
     channels[channelindex].set_setting(nullptr);
   }
-}
-
+} 
 
 void channel_add_effect(byte channelindex, byte effectindex, byte channeleffectindex){
   if(channelindex < numberOfChannels && effectindex < numberOfEffects && channeleffectindex < EFFECTSPERCHANNEL){
     channels[channelindex].add_effect(&effects[effectindex], channeleffectindex);
   }
 }
-
 
 void channel_remove_effect(byte channelindex, byte effectindex){
   if(channelindex < numberOfChannels && effectindex < EFFECTSPERCHANNEL){
@@ -242,10 +252,22 @@ void now_decrease(byte num){
 }
 
 void sync_on(){
+  if(IS_BOTTOM){
+    rtc_sync_setup_bottom();
+  } 
+  else {
+    rtc_sync_setup_top();
+  }
   syncing = true;
 }
 
 void sync_off(){
+  if(IS_BOTTOM){
+    rtc_sync_teardown_bottom();
+  } 
+  else {
+    rtc_sync_teardown_top();
+  }
   syncing = false;
 }
 
@@ -469,17 +491,25 @@ void update_lights() {
 
 void read_serial() {
   // receive data from Python and save it into interpreter.inputBuffer
-  // ARDUINO SPECIFIC: Serial
-  while(Serial.available() > 0) {
-    
-    byte x = Serial.read();
-    bool isEnd = interpreter.processByte(x);
-    
-    if(isEnd){
-      parse_data();
+  if(IS_BOTTOM){
+    while(Serial.available() > 0) {   
+      byte x = Serial.read();
+      bool isEnd = interpreter.processByte(x);
+      if(isEnd){
+        parse_data();
+      }
     }
-    
+  } 
+  else {
+    while(Serial1.available() > 0) {   
+      byte x = Serial1.read();
+      bool isEnd = interpreter.processByte(x);
+      if(isEnd){
+        parse_data();
+      }
+    }
   }
+
 }
 
 void lights_setup() {
@@ -489,30 +519,32 @@ void lights_setup() {
 }
 
 void rtc_sync_routine_bottom(){
-  syncDelta = now % SYNC_MILLIS;
-  if(syncDelta < 1 || syncDelta == SYNC_MILLIS-1){
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    syncDelta = NOW % SYNC_MILLIS;
+    NOW -= syncDelta;
+  }
+  if(syncDelta < 1 || syncDelta == SYNC_MILLIS - 1){
     lights[0].set_channel(&channels[3]);
     lights[1].set_channel(&channels[3]);
   } else {
     lights[0].set_channel(&channels[0]);
     lights[1].set_channel(&channels[0]);
   }
-  now -= syncDelta;
 }
 
 void setup() {
   rtc_setup();
-
-  // ARDUINO SPECIFIC
-  // Serial.begin(9600);
-  // Serial1.begin(115200);
-  // rtc_sync_setup_top();
-
-  Serial.begin(115200);
   pwm_setup();
-  // rtc_sync_setup_bottom();
-  motor.init();
-  delay(SYNC_MILLIS);
+
+  if(IS_BOTTOM){
+    Serial.begin(115200);
+    motor.init();
+  }
+  else{
+    // Serial.begin(9600);
+    Serial1.begin(115200);
+  }
+  delay(2000);
   lights_setup();
   update_lights();
 }
@@ -521,14 +553,18 @@ void loop() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
      now = NOW;
   }
+
   read_serial();
+  
   if(syncing){
-    // ARDUINO SPECIFIC
-    // rtc_sync_top();
-  } else if(now > lastNow){
+    if(!IS_BOTTOM){
+      rtc_sync_top();
+    }
+  } 
+  else {
     update_lights();
-    // ARDUINO SPECIFIC
-    motor.update(now);
-    lastNow = now;
+    if(IS_BOTTOM){
+      motor.update(now);
+    }
   }
 }
