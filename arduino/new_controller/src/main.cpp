@@ -81,23 +81,21 @@ void pwm_setup(){
 }
 
 // ARDUINO SPECIFIC
+Motor motor = Motor(11, 12);
+const byte numberOfLights = 2;
+
 //Available Pins:
 //2,3,5,6,7,8,9,10,11,12
-
-
-Motor motor = Motor(11, 12);
-
-const byte numberOfLights = 2;
 const byte light1 = 2;
 const byte light2 = 3;
-// const byte light3 = 5;
-// const byte light4 = 6; 
-// const byte light5 = 7;
-// const byte light6 = 8;
-// const byte light7 = 9;
-// const byte light8 = 10;
-// const byte light9 = 11;
-// const byte light10 = 12;
+const byte light3 = 5;
+const byte light4 = 6; 
+const byte light5 = 7;
+const byte light6 = 8;
+const byte light7 = 9;
+const byte light8 = 10;
+const byte light9 = 11;
+const byte light10 = 12;
 
 const byte numberOfSettings = 10;
 const byte numberOfEffects = 10;
@@ -118,7 +116,6 @@ Setting settings[numberOfSettings] = {
 
 Effect effects[numberOfEffects];
 
-// ARDUINO SPECIFIC
 Channel channels[numberOfChannels] = {
   Channel(0),
   Channel(10),
