@@ -16,7 +16,8 @@ volatile unsigned long NOW = 0;
 unsigned long now = 0;
 
 bool syncing = false;
-const byte syncPin = 13;
+const byte syncPinTop = 13;
+const byte syncPinBottom = 18;
 unsigned long lastSync = 0;
 int syncDelta = 9999;
 volatile bool syncNow = false;
@@ -36,17 +37,17 @@ void rtc_setup(){
 
 void rtc_sync_top() {
   if(now % SYNC_MILLIS == 0 && now != lastSync){
-    digitalWrite(syncPin, !digitalRead(syncPin));
+    digitalWrite(syncPinTop, !digitalRead(syncPinTop));
     lastSync = now;
   }
 }
 
 void rtc_sync_setup_top(){
-  pinMode(syncPin, OUTPUT);
+  pinMode(syncPinTop, OUTPUT);
 }
 
 void rtc_sync_teardown_top(){
-  pinMode(syncPin, INPUT);
+  pinMode(syncPinTop, INPUT);
 }
 
 void rtc_sync_routine_bottom(){
@@ -54,13 +55,13 @@ void rtc_sync_routine_bottom(){
 };
 
 void rtc_sync_setup_bottom(){
-  pinMode(syncPin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(syncPin), rtc_sync_routine_bottom, CHANGE);
+  pinMode(syncPinBottom, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(syncPinBottom), rtc_sync_routine_bottom, CHANGE);
 }
 
 void rtc_sync_teardown_bottom(){
-  detachInterrupt(digitalPinToInterrupt(syncPin));
-  pinMode(syncPin, INPUT);
+  detachInterrupt(digitalPinToInterrupt(syncPinBottom));
+  pinMode(syncPinBottom, INPUT);
 }
 
 void pwm_setup(){
@@ -524,12 +525,18 @@ void rtc_sync_bottom(){
     NOW -= syncDelta;
   }
   syncNow = false;
-  if(syncDelta < 1 || syncDelta == SYNC_MILLIS - 1){
-    lights[0].set_channel(&channels[3]);
-    lights[1].set_channel(&channels[3]);
-  } else {
+  if(syncDelta == 0){
     lights[0].set_channel(&channels[0]);
     lights[1].set_channel(&channels[0]);
+  } else if(syncDelta < 1 || syncDelta == SYNC_MILLIS - 1){
+    lights[0].set_channel(&channels[1]);
+    lights[1].set_channel(&channels[0]);
+  } else if(syncDelta < 2 || syncDelta == SYNC_MILLIS - 2){
+    lights[0].set_channel(&channels[0]);
+    lights[1].set_channel(&channels[1]);
+  } else {
+    lights[0].set_channel(&channels[1]);
+    lights[1].set_channel(&channels[1]);
   }
   update_lights();
 }
