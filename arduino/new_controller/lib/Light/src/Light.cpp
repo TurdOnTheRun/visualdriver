@@ -17,12 +17,6 @@ Light::Light(byte id, byte pin, Channel* channel)
 void Light::init()
 {
   pinMode(_pin, OUTPUT);
-  set_pin_frequency();
-}
-
-void Light::set_pin_frequency()
-{
-  //only necessary for uno
 }
 
 void Light::set_pinstate()
