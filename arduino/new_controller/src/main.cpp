@@ -122,16 +122,16 @@ Effect effects[numberOfEffects];
 
 Channel channels[numberOfChannels] = {
   Channel(0),
-  Channel(10),
-  Channel(20),
-  Channel(30),
   Channel(40),
-  Channel(50),
-  Channel(60),
-  Channel(70),
-  Channel(80),
-  Channel(90),
   Channel(100),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
   Channel(),
   Channel(),
   Channel(),
@@ -196,14 +196,18 @@ void light_set_channel(byte index, byte targetlights){
 void channel_set_setting(byte channelindex, byte settingindex){
   if(channelindex < numberOfChannels && settingindex < numberOfSettings){
     channels[channelindex].set_setting(&settings[settingindex]);
-    channels[channelindex].set_channel(nullptr);
   }
 }
 
 void channel_set_channel(byte channelindex, byte inputchannelindex){
   if(channelindex < numberOfChannels && inputchannelindex < numberOfChannels){
     channels[channelindex].set_channel(&channels[inputchannelindex]);
-    channels[channelindex].set_setting(nullptr);
+  }
+}
+
+void channel_set_static(byte channelindex, byte state){
+  if(channelindex < numberOfChannels){
+    channels[channelindex].set_static(state);
   }
 } 
 
@@ -376,6 +380,17 @@ void parse_data() {
       set4 = interpreter.inputBuffer[5];
     } break;
 
+    case EFFECT_UP: 
+    case EFFECT_DOWN:
+    case EFFECT_UPDOWN: {
+      //set1: amplitude channel index
+      //set2: steptime channel index
+      //set3: factor (5-5%, 100=100%, 200=200%)
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
     case LIGHT_SET_CHANNEL: {
       //set1: channelindex
       set1 = interpreter.inputBuffer[2];
@@ -394,6 +409,13 @@ void parse_data() {
       //set1: channelindex
       set1 = interpreter.inputBuffer[2];
       channel_set_channel(target, set1);
+      return;
+    } break;
+
+    case CHANNEL_SET_STATIC: {
+      //set1: staticState
+      set1 = interpreter.inputBuffer[2];
+      channel_set_static(target, set1);
       return;
     } break;
 

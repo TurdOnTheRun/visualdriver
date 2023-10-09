@@ -18,19 +18,20 @@ class Channel {
     Channel* _channel = nullptr;
     Effect* _effects[EFFECTSPERCHANNEL] = {};
     byte _isstatic = false;
-    byte _staticvalue = 0;
+    byte _staticstate = 0;
   
   protected:
     byte _newstate;
 
   public:
     Channel();
-    Channel(byte staticvalue);
+    Channel(byte staticstate);
     Channel(Setting* setting, Channel* channel);
     void init();
     byte get_state(unsigned long now, byte lightid);
     void set_setting(Setting* setting);
     void set_channel(Channel* channel);
+    void set_static(byte state);
     void add_effect(Effect* effect, byte index);
     void remove_effect(byte index);
     void remove_effects();

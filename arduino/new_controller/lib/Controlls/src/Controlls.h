@@ -19,12 +19,17 @@ static const byte EFFECT_DOWNVIBRATO = 61;
 static const byte EFFECT_UPDOWNVIBRATO = 62;
 static const byte EFFECT_STROBE = 70;
 static const byte EFFECT_PERLIN = 80;
+static const byte EFFECT_UP = 90;
+static const byte EFFECT_DOWN = 91;
+static const byte EFFECT_UPDOWN = 92;
 static const byte EFFECT_NONE = 140;
 
 static const byte LIGHT_SET_CHANNEL = 150;
 
 static const byte CHANNEL_SET_SETTING = 160;
 static const byte CHANNEL_SET_CHANNEL = 161;
+static const byte CHANNEL_SET_STATIC = 162;
+
 static const byte CHANNEL_ADD_EFFECT = 170;
 static const byte CHANNEL_REMOVE_EFFECT = 171;
 static const byte CHANNEL_REMOVE_EFFECTS = 172;

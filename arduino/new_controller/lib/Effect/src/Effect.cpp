@@ -32,6 +32,22 @@ Effect::Effect(byte type, Channel* amplitude, Channel* steptime, byte set1, byte
         _steptimefactor = _set1;
       }
     } break;
+    case EFFECT_UP: {
+      // Uses _position for factor
+      _position = _set1 / 100.0f;
+    }
+    break;
+    case EFFECT_DOWN: {
+      _direction = -1;
+      // Uses _position for factor
+      _position = _set1 / 100.0f;
+    }
+    break;
+    case EFFECT_UPDOWN: {
+      // Uses _position for factor
+      _position = _set1 / 100.0f;
+    }
+    break;
   }
 }
 
@@ -90,6 +106,20 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
         _delta = _perlin_calculate() * _newamplitude;
         _direction = _get_direction(lightid);
       } break;
+      case EFFECT_UP:
+      case EFFECT_DOWN: {
+        _delta = _position * _newamplitude;
+      } break;
+      case EFFECT_UPDOWN: {
+        if(_newamplitude < 0.5f){
+          _direction = -1;
+          _newamplitude = 0.5f - _newamplitude;
+        } else {
+          _direction = 1;
+          _newamplitude = _newamplitude - 0.5f;
+        }
+        _delta = _position * _newamplitude;
+      } break;
     }
     _laststep = _laststep + (_steps * _newsteptime);
   } else {
@@ -119,7 +149,8 @@ float Effect::_strobe(byte lightid)
   if(_on){
     // If lightbit is 0 _on means on
     if(bitRead(_set2, lightid)){
-      return 0.0f;
+      // 0 means there is no reduction in state. Strobe works with reverse amplitude
+      return 0.0f; 
     } else {
       return _newamplitude;
     };
@@ -127,6 +158,7 @@ float Effect::_strobe(byte lightid)
     if(bitRead(_set2, lightid)){
       return _newamplitude;
     } else {
+      // 0 means there is no reduction in state. Strobe works with reverse direction
       return 0.0f;
     }
   }

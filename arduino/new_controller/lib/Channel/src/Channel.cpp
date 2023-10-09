@@ -17,10 +17,13 @@ Channel::Channel()
   }
 }
 
-Channel::Channel(byte staticvalue)
+Channel::Channel(byte staticstate)
 {
   _isstatic = true;
-  _staticvalue = staticvalue;
+  _staticstate = staticstate;
+  for(byte i=0; i<EFFECTSPERCHANNEL; i++){
+    _effects[i] = nullptr;
+  }
 }
 
 Channel::Channel(Setting* setting, Channel* channel)
@@ -35,11 +38,25 @@ Channel::Channel(Setting* setting, Channel* channel)
 void Channel::set_setting(Setting* setting)
 {
   _setting = setting;
+  _channel = nullptr;
+  _isstatic = false;
+  _staticstate = 0;
 }
 
 void Channel::set_channel(Channel* channel)
 {
   _channel = channel;
+  _setting = nullptr;
+  _isstatic = false;
+  _staticstate = 0;
+}
+
+void Channel::set_static(byte staticstate)
+{
+  _channel = nullptr;
+  _setting = nullptr;
+  _isstatic = true;
+  _staticstate = staticstate;
 }
 
 void Channel::add_effect(Effect* effect, byte index)
@@ -65,7 +82,7 @@ void Channel::remove_effects()
 
 byte Channel::get_state(unsigned long now, byte lightid){
   if(_isstatic == true){
-    return _staticvalue;
+    _newstate = _staticstate;
   }
   else if(_setting != nullptr){
     _newstate = _setting->get_state(now, lightid);
