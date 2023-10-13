@@ -51,8 +51,11 @@ Effect::Effect(byte type, Channel* amplitude, Channel* steptime, byte set1, byte
   }
 }
 
-byte Effect::get_state(unsigned long now, byte lightid, byte state)
+byte Effect::get_state(unsigned long now, byte state)
 {
+  
+  byte lightid = 0;
+  
   if(_laststep == 0){
     _laststep = now;
     return state;
@@ -61,11 +64,11 @@ byte Effect::get_state(unsigned long now, byte lightid, byte state)
     return state;
   }
 
-  _newsteptime = ((unsigned int) _steptime->get_state(now,lightid)) * _steptimefactor;
+  _newsteptime = ((unsigned int) _steptime->get_state(now)) * _steptimefactor;
   if(_newsteptime == 0){
     _newsteptime = 1;
   }
-  _newamplitude = (((float) _amplitude->get_state(now,lightid)) / 100.0f);
+  _newamplitude = (((float) _amplitude->get_state(now)) / 100.0f);
 
   _steps = (unsigned int) (now - _laststep)/_newsteptime;
   // If step

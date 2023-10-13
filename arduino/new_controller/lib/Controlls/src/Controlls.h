@@ -14,9 +14,11 @@ static const byte SETTING_SINGULARBURST = 3;
 static const byte SETTING_SINGULARLINEAR = 10;
 static const byte SETTING_SINGULARBEZIER = 20;
 
+static const byte SETTING_SINGULAR_DIVIDER = 30;
 // 30-99 are continuous settings
+static const byte SETTING_SINWAVE = 30;
 
-
+static const byte SETTING_EFFECT_DIVIDER = 100;
 // 100-149 are Effects
 static const byte EFFECT_UPVIBRATO = 60;
 static const byte EFFECT_DOWNVIBRATO = 61;

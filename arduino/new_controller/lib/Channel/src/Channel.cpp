@@ -21,16 +21,7 @@ Channel::Channel()
 Channel::Channel(byte staticstate)
 {
   _isstatic = true;
-  _staticstate = staticstate;
-  for(byte i=0; i<EFFECTSPERCHANNEL; i++){
-    _effects[i] = nullptr;
-  }
-}
-
-Channel::Channel(Setting* setting, Channel* channel)
-{
-  _channel = channel;
-  _setting = setting;
+  _state = staticstate;
   for(byte i=0; i<EFFECTSPERCHANNEL; i++){
     _effects[i] = nullptr;
   }
@@ -41,7 +32,7 @@ void Channel::set_setting(Setting* setting)
   _setting = setting;
   _channel = nullptr;
   _isstatic = false;
-  _staticstate = 0;
+  _state = setting->get_state();
 }
 
 void Channel::set_channel(Channel* channel)
@@ -49,7 +40,7 @@ void Channel::set_channel(Channel* channel)
   _channel = channel;
   _setting = nullptr;
   _isstatic = false;
-  _staticstate = 0;
+  _state = channel->get_state();
 }
 
 void Channel::set_static(byte staticstate)
@@ -57,7 +48,7 @@ void Channel::set_static(byte staticstate)
   _channel = nullptr;
   _setting = nullptr;
   _isstatic = true;
-  _staticstate = staticstate;
+  _state = staticstate;
 }
 
 void Channel::add_effect(Effect* effect, byte index)
@@ -81,23 +72,31 @@ void Channel::remove_effects()
   }
 }
 
-byte Channel::get_state(unsigned long now, byte lightid){
+// Returns the last calculated state
+byte Channel::get_state()
+{
+  return _state;
+}
+
+// Returns the newly calculated state for now
+byte Channel::get_state(unsigned long now){
   if(_isstatic == true){
-    _newstate = _staticstate;
+    _newstate = _state;
   }
   else if(_setting != nullptr){
-    _newstate = _setting->get_state(now, lightid);
+    _newstate = _setting->get_state(now);
   }
   else if(_channel != nullptr){
-    _newstate = _channel->get_state(now, lightid);
+    _newstate = _channel->get_state(now);
   }
   else{
-    _newstate = 0;
+    _newstate = _state;
   }
   for(byte i=0; i<EFFECTSPERCHANNEL; i++){
     if(_effects[i] != nullptr){
-      _newstate = _effects[i]->get_state(now, lightid, _newstate);
+      _newstate = _effects[i]->get_state(now, _newstate);
     }
   }
-  return _newstate;
+  _state = _newstate;
+  return _state;
 }

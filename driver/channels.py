@@ -29,3 +29,11 @@ Channel18 = Channel(17)
 Channel19 = Channel(18)
 Channel20 = Channel(19)
 Channel21 = Channel(20)
+
+StaticChannel0 = Channel1
+StaticChannel5 = Channel2
+StaticChannel20 = Channel3
+StaticChannel40 = Channel4
+StaticChannel50 = Channel5
+StaticChannel80 = Channel6
+StaticChannel100 = Channel7

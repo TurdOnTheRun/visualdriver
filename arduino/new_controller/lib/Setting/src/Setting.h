@@ -16,28 +16,37 @@ class Channel;
 class Setting {
   private:
     byte _type=0;
-    Channel* _inputA=nullptr;
-    Channel* _inputB=nullptr;
+    Channel* _channelA=nullptr;
+    Channel* _channelB=nullptr;
+    Channel* _channelC=nullptr;
+    Channel* _channelD=nullptr;
 
     byte _state=0;
     byte _state1=0;
     byte _state2=0;
-    byte _steptime=0;
+    unsigned int _steptime=0;
+    unsigned int _steps=0;
+    unsigned long _laststep = 0;
     byte _setA=0;
     byte _setB=0;
     byte _setC=0;
     byte _setD=0;
 
-
-    unsigned int _steps=0;
-    unsigned long _laststep = 0;
-
     // General
     int _newstate=0;
+    void _set_state_from_newstate();
+    // _intervalsteps is used by SINGULARBEZIER, SIN,
+    // One interval is one change from _state1 to _state.
+    // For example for SIN this is equal to PI
+    unsigned int _intervalsteps=0;
+    unsigned int _intervalstep=0;
+
+
+    // Update Functions
+    void _update_sin_inputs(unsigned long now);
+    void _update_sin();
 
     // Bezier
-    unsigned int _bezierstep=0;
-    unsigned int _beziersteps=0;
     float lerp(float n1, float n2, float perc);
     float bezier(unsigned int step);
 
@@ -59,8 +68,9 @@ class Setting {
   public:
     Setting();
     Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
-    // get state at current timestamp
-    byte get_state(unsigned long now, byte lightid);
+    Setting(byte type, Channel* channel1, Channel* channel2, Channel* channel3, Channel* channel4);
+    byte get_state();
+    byte get_state(unsigned long now);
     byte get_type();
     bool rising();
     bool changing();

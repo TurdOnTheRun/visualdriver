@@ -38,7 +38,7 @@ void Light::pin_write()
 
 void Light::update(unsigned long now)
 {
-  _newstate = _channel->get_state(now, _id);
+  _newstate = _channel->get_state(now);
   set_pinstate();
 }
 

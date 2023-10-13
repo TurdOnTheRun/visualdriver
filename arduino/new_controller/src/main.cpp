@@ -13,7 +13,8 @@ const bool IS_BOTTOM = true;
 const byte rtcPin = 21;
 volatile byte fract = 0;
 volatile unsigned long NOW = 0;
-unsigned long now = 0;
+unsigned long now = 1;
+unsigned long lastNow = 0;
 
 bool syncing = false;
 const byte syncPinTop = 13;
@@ -122,12 +123,12 @@ Effect effects[numberOfEffects];
 
 Channel channels[numberOfChannels] = {
   Channel(0),
+  Channel(5),
+  Channel(20),
   Channel(40),
+  Channel(50),
+  Channel(80),
   Channel(100),
-  Channel(),
-  Channel(),
-  Channel(),
-  Channel(),
   Channel(),
   Channel(),
   Channel(),
@@ -349,6 +350,17 @@ void parse_data() {
       set6 = interpreter.inputBuffer[7];
     } break;
 
+    case SETTING_SINWAVE: {
+      //set1: from/crest state channel
+      //set2: to/trough state channel
+      //set3: steptime channel
+      //set4: decisteps for intervalsteps channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+    } break;
+
     case EFFECT_UPVIBRATO: 
     case EFFECT_DOWNVIBRATO:
     case EFFECT_UPDOWNVIBRATO: {
@@ -496,8 +508,11 @@ void parse_data() {
   }
 
   // Settings
-  if(type < 60){
+  if(type < SETTING_SINGULAR_DIVIDER){
     setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6));
+  }
+  else if(type < SETTING_EFFECT_DIVIDER){
+    setting_add(target, Setting(type, &channels[set1], &channels[set2],&channels[set3], &channels[set4]));
   } 
   else if(type < 150){
     if(set1 < numberOfChannels && set2 < numberOfChannels){
@@ -582,7 +597,7 @@ void setup() {
 
 void loop() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-     now = NOW;
+    now = NOW;
   }
 
   read_serial();
@@ -597,7 +612,8 @@ void loop() {
       rtc_sync_top();
     }
   } 
-  else {
+  else if(now != lastNow){
+    lastNow = now;
     update_lights();
     if(IS_BOTTOM){
       motor.update(now);

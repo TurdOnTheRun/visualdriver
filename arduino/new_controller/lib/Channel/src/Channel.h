@@ -17,8 +17,8 @@ class Channel {
     Setting* _setting = nullptr;
     Channel* _channel = nullptr;
     Effect* _effects[EFFECTSPERCHANNEL] = {};
-    byte _isstatic = false;
-    byte _staticstate = 0;
+    byte _isstatic = true;
+    byte _state = 0;
   
   protected:
     byte _newstate;
@@ -28,7 +28,8 @@ class Channel {
     Channel(byte staticstate);
     Channel(Setting* setting, Channel* channel);
     void init();
-    byte get_state(unsigned long now, byte lightid);
+    byte get_state();
+    byte get_state(unsigned long now);
     void set_setting(Setting* setting);
     void set_channel(Channel* channel);
     void set_static(byte state);

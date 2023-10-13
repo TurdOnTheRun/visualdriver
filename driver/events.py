@@ -294,7 +294,7 @@ class SettingStaticLight(ArduinoEvent):
         self.check_is_light_controller(self.controller)
     
     def make_command(self):
-        command = [1, self.settingIndex, self.state]
+        command = [0, self.settingIndex, self.state]
         if not self.hasVariable:
             return self.clean_bytes(command)
         else:
@@ -414,6 +414,32 @@ class SettingBezierDimm(ArduinoEvent):
     
     def make_command(self):
         command = [20, self.settingIndex, self.fromState, self.toState, self.steptime, self.decisteps, self.y1, self.y2]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+class SettingSinWave(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, fromChannel, toChannel, steptimeChannel, decistepsChannel, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.fromChannel = fromChannel
+        self.toChannel = toChannel
+        self.steptimeChannel = steptimeChannel
+        self.decistepsChannel = decistepsChannel
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingSinWave({}, {}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromChannel, self.toChannel, self.steptimeChannel, self.decistepsChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [30, self.settingIndex, self.fromChannel.id, self.toChannel.id, self.steptimeChannel.id, self.decistepsChannel.id]
         if not self.hasVariable:
             return self.clean_bytes(command)
         else:
