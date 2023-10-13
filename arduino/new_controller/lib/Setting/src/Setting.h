@@ -20,6 +20,9 @@ class Setting {
     Channel* _channelB=nullptr;
     Channel* _channelC=nullptr;
     Channel* _channelD=nullptr;
+    Channel* _channelE=nullptr;
+    Channel* _channelF=nullptr;
+    Channel* _channelG=nullptr;
 
     byte _state=0;
     byte _state1=0;
@@ -44,14 +47,22 @@ class Setting {
     bool _reset = false;
 
 
-    // Update Functions
+    // Init & Update Functions
     void _update_singularlinear();
+    void _update_singularbezier();
+
     void _update_sinwave_inputs(unsigned long now);
     void _update_sinwave();
+
     void _init_linear_inputs(Channel* channel1, Channel* channel2, Channel* channel3);
     void _update_linear_inputs(unsigned long now);
     void _update_linearwave();
     void _update_linearsaw();
+
+    void _init_bezier_inputs(Channel* channel1, Channel* channel2, Channel* channel3, Channel* channel4, Channel* channel5, Channel* channel6);
+    void _update_bezier_inputs(unsigned long now);
+    void _update_bezierwave();
+    void _update_beziersaw();
 
 
     // Bezier
@@ -76,7 +87,7 @@ class Setting {
   public:
     Setting();
     Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
-    Setting(byte type, Channel* channel1, Channel* channel2, Channel* channel3, Channel* channel4);
+    Setting(byte type, Channel* channel1, Channel* channel2, Channel* channel3, Channel* channel4, Channel* channel5, Channel* channel6);
     byte get_state();
     byte get_state(unsigned long now);
     byte get_type();

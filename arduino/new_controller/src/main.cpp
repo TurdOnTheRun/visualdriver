@@ -361,7 +361,7 @@ void parse_data() {
       set4 = interpreter.inputBuffer[5];
     } break;
 
-    case SETTING_LINEARTRIANGLEWAVE: {
+    case SETTING_LINEARWAVE: {
       //set1: from state channel
       //set2: to state channel
       //set3: steptime channel
@@ -377,6 +377,36 @@ void parse_data() {
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
+    } break;
+
+    case SETTING_BEZIERWAVE: {
+      //set1: from/crest state channel
+      //set2: to/trough state channel
+      //set3: steptime channel
+      //set4: decisteps for intervalsteps channel
+      //set5: y1 channel
+      //set6: y2 channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
+    } break;
+
+    case SETTING_BEZIERSAW: {
+      //set1: from/crest state channel
+      //set2: to/trough state channel
+      //set3: steptime channel
+      //set4: decisteps for intervalsteps channel
+      //set5: y1 channel
+      //set6: y2 channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
     } break;
 
     case EFFECT_UPVIBRATO: 
@@ -530,7 +560,7 @@ void parse_data() {
     setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6));
   }
   else if(type < SETTING_EFFECT_DIVIDER){
-    setting_add(target, Setting(type, &channels[set1], &channels[set2],&channels[set3], &channels[set4]));
+    setting_add(target, Setting(type, &channels[set1], &channels[set2], &channels[set3], &channels[set4], &channels[set5], &channels[set6]));
   } 
   else if(type < 150){
     if(set1 < numberOfChannels && set2 < numberOfChannels){

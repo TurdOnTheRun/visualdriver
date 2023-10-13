@@ -98,7 +98,7 @@ Setting::Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set
   }
 }
 
-Setting::Setting(byte type, Channel* channel1, Channel* channel2, Channel* channel3, Channel* channel4)
+Setting::Setting(byte type, Channel* channel1, Channel* channel2, Channel* channel3, Channel* channel4, Channel* channel5, Channel* channel6)
 {
   _type = type;
 
@@ -125,7 +125,7 @@ Setting::Setting(byte type, Channel* channel1, Channel* channel2, Channel* chann
       }
     } break;
 
-    case SETTING_LINEARTRIANGLEWAVE: {
+    case SETTING_LINEARWAVE: {
       //channel1 --> _channelA: from state
       //channel2 --> _channelB: to state
       //channel3 --> _channelC: steptime
@@ -137,6 +137,26 @@ Setting::Setting(byte type, Channel* channel1, Channel* channel2, Channel* chann
       //channel2 --> _channelB: to state
       //channel3 --> _channelC: steptime
       _init_linear_inputs(channel1, channel2, channel3);
+    } break;
+
+    case SETTING_BEZIERWAVE: {
+      //channel1 --> _channelA: from state
+      //channel2 --> _channelB: to state
+      //channel3 --> _channelC: steptime
+      //channel4 --> _channelD: decisteps
+      //channel5 --> _channelE: y1
+      //channel6 --> _channelF: y2
+      _init_bezier_inputs(channel1, channel2, channel3, channel4, channel5, channel6);
+    } break;
+
+    case SETTING_BEZIERSAW: {
+      //channel1 --> _channelA: from state
+      //channel2 --> _channelB: to state
+      //channel3 --> _channelC: steptime
+      //channel4 --> _channelD: decisteps
+      //channel5 --> _channelE: y1
+      //channel6 --> _channelF: y2
+      _init_bezier_inputs(channel1, channel2, channel3, channel4, channel5, channel6);
     } break;
   }
 }
@@ -168,8 +188,17 @@ byte Setting::get_state(unsigned long now)
         case SETTING_SINWAVE: {
           _update_sinwave_inputs(now);
         } break;
-        case SETTING_LINEARTRIANGLEWAVE: {
+        case SETTING_LINEARWAVE: {
           _update_linear_inputs(now);
+        } break;
+        case SETTING_LINEARSAW: {
+          _update_linear_inputs(now);
+        } break;
+        case SETTING_BEZIERWAVE: {
+          _update_bezier_inputs(now);
+        } break;
+        case SETTING_BEZIERSAW: {
+          _update_bezier_inputs(now);
         } break;
       }
     }
@@ -215,40 +244,8 @@ byte Setting::get_state(unsigned long now)
 
         // case BEZIERAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
         case SETTING_SINGULARBEZIER: {
-          //  Bezier Dimming & Direct to Bezier
-      
-          _intervalstep = _intervalstep + _steps;
-          
-          if(rising()){
-            
-            if(_intervalstep >= _intervalsteps){
-              _state = _state2;
-              if(_type == SETTING_SINGULARBEZIER){
-                _type = SETTING_STATIC;
-              }
-              // elif BEZIERAPPEARFLASH{}
-              // if(_set5 > 0){
-              //   _steptime = _set5;
-              //   _tostate = 0;
-              //   _type = 4;
-              // }
-            } else {
-              _bz = bezier(_intervalstep);
-              _newstate = (int) round(_state1 + _bz * (_state2 - _state1));
-              _state = lowByte(_newstate);
-            }
-            
-          } else {
-            
-            if (_intervalstep >= _intervalsteps){
-              _state = _state2;
-              _type = SETTING_STATIC;
-            } else {
-              _bz = bezier(_intervalstep);
-              _newstate = (int) round(_state1 - _bz * (_state1 - _state2));
-              _state = lowByte(_newstate);
-            }
-          }
+          _update_singularbezier();
+          _set_state_from_newstate();
         } break;
 
         case SETTING_SINWAVE: {
@@ -256,13 +253,23 @@ byte Setting::get_state(unsigned long now)
           _set_state_from_newstate();
         } break;
 
-        case SETTING_LINEARTRIANGLEWAVE: {
+        case SETTING_LINEARWAVE: {
           _update_linearwave();
           _set_state_from_newstate();
         } break;
 
         case SETTING_LINEARSAW: {
           _update_linearsaw();
+          _set_state_from_newstate();
+        } break;
+
+        case SETTING_BEZIERWAVE: {
+          _update_bezierwave();
+          _set_state_from_newstate();
+        } break;
+
+        case SETTING_BEZIERSAW: {
+          _update_beziersaw();
           _set_state_from_newstate();
         } break;
       }
@@ -290,6 +297,40 @@ void Setting::_update_singularlinear()
     if (_newstate <= _state2 || _newstate < 0){
       _newstate = _state2;
       _type = SETTING_STATIC;
+    }
+  }
+}
+
+void Setting::_update_singularbezier()
+{
+  //  Bezier Dimming & Direct to Bezier
+  _intervalstep = _intervalstep + _steps;
+          
+  if(rising()){
+            
+    if(_intervalstep >= _intervalsteps){
+      _newstate = _state2;
+      if(_type == SETTING_SINGULARBEZIER){
+        _type = SETTING_STATIC;
+      }
+      // elif BEZIERAPPEARFLASH{}
+      // if(_set5 > 0){
+      //   _steptime = _set5;
+      //   _tostate = 0;
+      //   _type = 4;
+      // }
+    } else {
+      _bz = bezier(_intervalstep);
+      _newstate = (int) _state1 + _bz * (_state2 - _state1);
+    }  
+  } else {
+            
+    if (_intervalstep >= _intervalsteps){
+      _newstate = _state2;
+      _type = SETTING_STATIC;
+    } else {
+      _bz = bezier(_intervalstep);
+      _newstate = (int) _state1 - _bz * (_state1 - _state2);
     }
   }
 }
@@ -331,6 +372,9 @@ void Setting::_update_sinwave_inputs(unsigned long now)
   if(_steptime == 0){
     _steptime = 1;
   }
+  if(_intervalsteps == 0){
+    _intervalsteps = 1;
+  }
 }
 
 void Setting::_update_sinwave()
@@ -362,9 +406,9 @@ void Setting::_update_linear_inputs(unsigned long now)
   //_channelA: from state
   //_channelB: to state
   //_channelC: steptime
-  _state1 = _channelA->get_state();
-  _state2 = _channelB->get_state();
-  _steptime = _channelC->get_state();
+  _state1 = _channelA->get_state(now);
+  _state2 = _channelB->get_state(now);
+  _steptime = _channelC->get_state(now);
   if(_steptime == 0){
     _steptime = 1;
   }
@@ -423,10 +467,136 @@ void Setting::_update_linearsaw()
   }
 }
 
+void Setting::_init_bezier_inputs(Channel* channel1, Channel* channel2, Channel* channel3, Channel* channel4, Channel* channel5, Channel* channel6)
+{
+  //channel1 --> _channelA: from state
+  //channel2 --> _channelB: to state
+  //channel3 --> _channelC: steptime
+  //channel4 --> _channelD: decisteps
+  //channel5 --> _channelE: y1
+  //channel6 --> _channelF: y2
+  _channelA = channel1;
+  _channelB = channel2;
+  _channelC = channel3;
+  _channelD = channel4;
+  _channelE = channel5;
+  _channelF = channel6;
+  _state = _channelA->get_state();
+  _state1 = _state;
+  _state2 = _channelB->get_state();
+  _steptime = _channelC->get_state();
+  _intervalsteps = (unsigned int) _channelD->get_state() * 10; // decisteps per interval. decisteps per change from _state1 to _state2. decisteps per PI.
+  _setA = _channelE->get_state();
+  _setB = _channelF->get_state();
+  if(_steptime == 0){
+    _steptime = 1;
+  }
+  if(_intervalsteps == 0){
+    _intervalsteps = 1;
+  }
+}
+
+void Setting::_update_bezier_inputs(unsigned long now)
+{
+  //_channelA: from state
+  //_channelB: to state
+  //_channelC: steptime
+  //_channelD: decisteps
+  //_channelE: y1
+  //_channelF: y2
+  _state1 = _channelA->get_state(now);
+  _state2 = _channelB->get_state(now);
+  _steptime = _channelC->get_state(now);
+  _intervalsteps = (unsigned int) _channelD->get_state(now) * 10; // decisteps per interval. decisteps per change from _state1 to _state2.
+  _setA = _channelE->get_state(now);
+  _setB = _channelF->get_state(now);
+  if(_steptime == 0){
+    _steptime = 1;
+  }
+  if(_intervalsteps == 0){
+    _intervalsteps = 1;
+  }
+}
+
+void Setting::_update_bezierwave()
+{
+
+  _intervalstep = _intervalstep + _steps;
+
+  if(rising()){
+              
+    if(_intervalstep >= _intervalsteps){
+      _newstate = _state2;
+      _intervalstep = 0;
+      // High is reached. Flip state inputs.
+      _channelG = _channelA;
+      _channelA = _channelB;
+      _channelB = _channelG;
+      // Also flip y1 & y2
+      _channelG = _channelE;
+      _channelE = _channelF;
+      _channelF = _channelG;
+    } else {
+      _bz = bezier(_intervalstep);
+      _newstate = (int) _state1 + _bz * (_state2 - _state1);
+    } 
+  } else {
+              
+    if (_intervalstep >= _intervalsteps){
+      _newstate = _state2;
+      _intervalstep = 0;
+      // Low is reached. Flip state inputs.
+      _channelG = _channelA;
+      _channelA = _channelB;
+      _channelB = _channelG;
+      // Also flip y1 & y2
+      _channelG = _channelE;
+      _channelE = _channelF;
+      _channelF = _channelG;
+    } else {
+      _bz = bezier(_intervalstep);
+      _newstate = (int) _state1 - _bz * (_state1 - _state2);
+    }
+  }
+}
+
+void Setting::_update_beziersaw()
+{
+
+  if(_reset){
+    _newstate = _state1;
+    _intervalstep = 0;
+    _reset = false;
+  } else {
+
+    _intervalstep = _intervalstep + _steps;
+
+    if(rising()){
+              
+      if(_intervalstep >= _intervalsteps){
+        _newstate = _state2;
+        _reset = true;
+      } else {
+        _bz = bezier(_intervalstep);
+        _newstate = (int) _state1 + _bz * (_state2 - _state1);
+      }  
+    } else {
+              
+      if (_intervalstep >= _intervalsteps){
+        _newstate = _state2;
+        _reset = true;
+      } else {
+        _bz = bezier(_intervalstep);
+        _newstate = (int) _state1 - _bz * (_state1 - _state2);
+      }
+    }
+  }
+}
+
 void Setting::_set_state_from_newstate()
 {
   if(_newstate < 0){
-    _state=0;
+    _state = 0;
   }
   else if(_newstate > 100){
     _state = 100;

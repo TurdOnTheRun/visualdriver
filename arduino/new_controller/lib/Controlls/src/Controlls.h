@@ -17,8 +17,10 @@ static const byte SETTING_SINGULARBEZIER = 20;
 static const byte SETTING_SINGULAR_DIVIDER = 30;
 // 30-99 are continuous settings
 static const byte SETTING_SINWAVE = 30;
-static const byte SETTING_LINEARTRIANGLEWAVE = 40;
+static const byte SETTING_LINEARWAVE = 40;
 static const byte SETTING_LINEARSAW = 41;
+static const byte SETTING_BEZIERWAVE = 50;
+static const byte SETTING_BEZIERSAW = 51;
 
 
 static const byte SETTING_EFFECT_DIVIDER = 100;
