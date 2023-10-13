@@ -5,6 +5,7 @@
 
 #include "Arduino.h"
 #include "Light.h"
+#include "Channel.h"
 #include <math.h>
 
 Light::Light(byte id, byte pin, Channel* channel)

@@ -6,6 +6,7 @@
 #include "Arduino.h"
 #include "Channel.h"
 #include "Setting.h"
+#include "Effect.h"
 #include <math.h>
 
 Channel::Channel()

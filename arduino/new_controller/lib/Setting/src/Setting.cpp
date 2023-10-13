@@ -8,87 +8,107 @@
   20-29 - Bezier Types
 */
 
-// #include "Arduino.h"
+#include "Arduino.h"
 #include "Setting.h"
 #include "Controlls.h"
+#include "Channel.h"
 #include <math.h>
 
 Setting::Setting()
 {
-  _type = SETTING_STATICLIGHT;
+  _type = SETTING_STATIC;
   _state = 0;
 }
-Setting::Setting(byte type, byte state1, byte state2, byte steptime, byte set1, byte set2, byte set3, byte set4, byte set5)
+Setting::Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
 {
   _type = type;
-  _state1 = state1;
-  _state2 = state2;
-  _steptime = steptime;
-  _set1 = set1;
-  _set2 = set2;
-  _set3 = set3;
-  _set4 = set4;
-  _set5 = set5;
-}
 
-void Setting::init(unsigned long now)
-{
+  //_state must be set for all types
   switch(_type) {
-    case SETTING_STATICLIGHT: {
-      _state = _state1;
+    
+    case SETTING_STATIC: {
+      _state = set1;
     } break;
 
-    case SETTING_STATICFLASH: {
-      // Goes from state1 to state2 after steptime
+    case SETTING_SINGULARFLASH: {
+      //set1: start state
+      //set2: to state
+      //set3: flash time
+      _state = set1;
+      _state2 = set2;
+      _steptime = set3;
       if(_steptime == 0){
         _state = _state2;
-        _type = SETTING_STATICLIGHT;
-      } else {
-        _state = _state1;
+        _type = SETTING_STATIC;
       }
     } break;
 
-    case SETTING_STATICMACHINE: {
-      //Goes from state1 to state2 after steptime, stays at state2 for set1, then returns to state1. Repeats set2 times
-      _state = _state1;
+    case SETTING_SINGULARBURST: {
+      //set1: on state
+      //set2: off state
+      //set3: on time (first steptime)
+      //set4: off time
+      //set5: amount of times
+      _state = set1;
+      _state1 = set1;
+      _state2 = set2;
+      _steptime = set3;
+      //Steptime when off
+      _setA = set4;
+      //Amount of Ons
+      _setB = set5;
     } break;
 
-    case SETTING_LINEARDIMM: {
-      // Goes from state1 to state2 taking steptime for each increment
+    case SETTING_SINGULARLINEAR: {
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      _state = set1;
+      _state1 = set1;
+      _state2 = set2;
+      _steptime = set3;
       if(_steptime == 0){
         _state = _state2;
-        _type = SETTING_STATICLIGHT;
-      } else {
-        _state = _state1;
+        _type = SETTING_STATIC;
       }
-      // _set1 = 0;
     } break;
 
-    case SETTING_BEZIERDIMM: {
-      // Bezier Dimm from state1 to state2
+    case SETTING_SINGULARBEZIER: {
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      //set4: decisteps
+      //set5: y1 of bezier input
+      //set6: y2 of bezier input
+      _state = set1;
+      _state1 = set1;
+      _state2 = set2;
+      _steptime = set3;
+      //Decisteps
+      _beziersteps = (unsigned int) set4/0.1;
+      //Y1
+      _setA = set5;
+      //Y2
+      _setB = set6;
       if(_steptime == 0){
         _state = _state2;
-        _type = SETTING_STATICLIGHT;
-      } else {
-        _bezierstep = 0;
-        _beziersteps = (unsigned int) _set1/0.1;
-        _state = _state1;
+        _type = SETTING_STATIC;
       }
     } break;
   }
-  _laststep = now;
 }
+
 
 byte Setting::get_state(unsigned long now, byte lightid)
 {
   if(_laststep == 0){
-    init(now);
+    _laststep = now;
     return _state;
   }
   if(_laststep == now){
     return _state;
   }
-  if(_type == SETTING_STATICLIGHT){
+  if(_type == SETTING_STATIC){
     return _state;
   }
   else{
@@ -97,29 +117,32 @@ byte Setting::get_state(unsigned long now, byte lightid)
 
     if (_steps > 0){
 
+      //calculated at the start because some effects change _steptime and none need _laststep  
+      _laststep = _laststep + (_steps * _steptime);
+
       switch(_type) {
-        case SETTING_STATICFLASH: {
+        case SETTING_SINGULARFLASH: {
           _state = _state2;
-          _type = SETTING_STATICLIGHT;
+          _type = SETTING_STATIC;
         } break;
 
-        case SETTING_STATICMACHINE: {
-          if(_set2 == 0){
-            _type = SETTING_STATICLIGHT;
+        case SETTING_SINGULARBURST: {
+          if(_setB == 0){
+            _type = SETTING_STATIC;
             break;
           }
           if(_state == _state1){
             _state = _state2;
-            _set2 -= 1;
+            _setB -= 1;
           } else {
             _state = _state1;
           }
-          _set3 = _steptime;
-          _steptime = _set1;
-          _set1 = _set3;
+          _setC = _steptime;
+          _steptime = _setA;
+          _setA = _setC;
         } break;
         // case LINEARAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
-        case SETTING_LINEARDIMM: {
+        case SETTING_SINGULARLINEAR: {
                 
           // If it is getting brighter
           if(rising()){
@@ -128,8 +151,8 @@ byte Setting::get_state(unsigned long now, byte lightid)
             
             if(_newstate >= _state2 || _newstate > 100){
               _state = _state2;
-              if(_type == SETTING_LINEARDIMM){
-                _type = SETTING_STATICLIGHT;
+              if(_type == SETTING_SINGULARLINEAR){
+                _type = SETTING_STATIC;
               }
               // // else For Lightning Appear (6)
               // // Set how long light should stay at _tostate
@@ -148,7 +171,7 @@ byte Setting::get_state(unsigned long now, byte lightid)
             
             if (_newstate <= _state2 || _newstate < 0){
               _state = _state2;
-              _type = SETTING_STATICLIGHT;
+              _type = SETTING_STATIC;
             } else {
               _state = lowByte(_newstate);
             }
@@ -157,7 +180,7 @@ byte Setting::get_state(unsigned long now, byte lightid)
         } break;
 
         // case BEZIERAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
-        case SETTING_BEZIERDIMM: {
+        case SETTING_SINGULARBEZIER: {
           //  Bezier Dimming & Direct to Bezier
       
           _bezierstep = _bezierstep + _steps;
@@ -166,8 +189,8 @@ byte Setting::get_state(unsigned long now, byte lightid)
             
             if(_bezierstep >= _beziersteps){
               _state = _state2;
-              if(_type == SETTING_BEZIERDIMM){
-                _type = SETTING_STATICLIGHT;
+              if(_type == SETTING_SINGULARBEZIER){
+                _type = SETTING_STATIC;
               }
               // elif BEZIERAPPEARFLASH{}
               // if(_set5 > 0){
@@ -185,7 +208,7 @@ byte Setting::get_state(unsigned long now, byte lightid)
             
             if (_bezierstep >= _beziersteps){
               _state = _state2;
-              _type = SETTING_STATICLIGHT;
+              _type = SETTING_STATIC;
             } else {
               _bz = bezier(_bezierstep);
               _newstate = (int) round(_state1 - _bz * (_state1 - _state2));
@@ -194,22 +217,12 @@ byte Setting::get_state(unsigned long now, byte lightid)
           }
         } break;
       }
-      _laststep = _laststep + (_steps * _steptime);
       return _state;
     } else {
       // If _steps == 0,  state remains the same
       return _state;
     }
   }
-}
-
-void Setting::set_state(unsigned long now, byte newstate)
-{
-  if(newstate > 100){
-    newstate = 100;
-  }
-  _state = newstate;
-  _laststep = now;
 }
 
 float Setting::lerp(float n1, float n2, float perc)
@@ -224,9 +237,9 @@ float Setting::bezier(unsigned int step)
   _i = (1.0/_beziersteps) * step;
 
   // The Green Lines
-  _ya = lerp( 0 , _set2 , _i );
-  _yb = lerp( _set2 , _set3 , _i );
-  _yc = lerp( _set3 , 100 , _i );
+  _ya = lerp( 0 , _setA , _i );
+  _yb = lerp( _setA , _setB , _i );
+  _yc = lerp( _setB , 100 , _i );
 
   // The Blue Line
   _ym = lerp( _ya , _yb , _i );
@@ -250,17 +263,4 @@ bool Setting::rising()
 byte Setting::get_type()
 {
   return _type;
-}
-
-void Setting::usercount_up()
-{
-  _usercount += 1;
-}
-
-void Setting::usercount_down(){
-  _usercount -= 1;
-}
-
-boolean Setting::is_unused(){
-  return _usercount < 1;
 }

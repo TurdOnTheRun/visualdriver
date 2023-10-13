@@ -6,9 +6,9 @@
 #define Channel_h
 
 #include "Arduino.h"
-#include "Effect.h"
 
 class Setting;
+class Effect;
 
 static const byte EFFECTSPERCHANNEL = 3;
 

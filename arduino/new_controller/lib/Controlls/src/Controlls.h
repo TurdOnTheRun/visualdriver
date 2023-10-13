@@ -7,13 +7,17 @@
 
 #include "Arduino.h"
 
-// 1-59 are settings
-static const byte SETTING_STATICLIGHT = 1;
-static const byte SETTING_STATICFLASH = 2;
-static const byte SETTING_STATICMACHINE = 3;
-static const byte SETTING_LINEARDIMM = 10;
-static const byte SETTING_BEZIERDIMM = 20;
+static const byte SETTING_STATIC = 0;
+// 1-29 are singular settings
+static const byte SETTING_SINGULARFLASH = 2;
+static const byte SETTING_SINGULARBURST = 3;
+static const byte SETTING_SINGULARLINEAR = 10;
+static const byte SETTING_SINGULARBEZIER = 20;
 
+// 30-99 are continuous settings
+
+
+// 100-149 are Effects
 static const byte EFFECT_UPVIBRATO = 60;
 static const byte EFFECT_DOWNVIBRATO = 61;
 static const byte EFFECT_UPDOWNVIBRATO = 62;

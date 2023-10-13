@@ -3,7 +3,7 @@
   Created by Maximilian Weber, April 2, 2023.
 */
 
-// #include "Arduino.h"
+#include "Arduino.h"
 #include "Effect.h"
 #include "Controlls.h"
 #include "Channel.h"
@@ -195,17 +195,4 @@ int Effect::_get_direction(byte lightid){
 byte Effect::get_type()
 {
   return _type;
-}
-
-void Effect::usercount_up()
-{
-  _usercount += 1;
-}
-
-void Effect::usercount_down(){
-  _usercount -= 1;
-}
-
-boolean Effect::is_unused(){
-  return _usercount < 1;
 }

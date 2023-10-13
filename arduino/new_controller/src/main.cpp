@@ -298,12 +298,12 @@ void parse_data() {
   target = interpreter.inputBuffer[1];
 
   switch(type){
-    case SETTING_STATICLIGHT: {
+    case SETTING_STATIC: {
       //set1: state 
       set1 = interpreter.inputBuffer[2];
     } break;
 
-    case SETTING_STATICFLASH: {
+    case SETTING_SINGULARFLASH: {
       //set1: start state
       //set2: to state
       //set3: flash time
@@ -312,7 +312,7 @@ void parse_data() {
       set3 = interpreter.inputBuffer[4];
     } break;
 
-    case SETTING_STATICMACHINE: {
+    case SETTING_SINGULARBURST: {
       //set1: on state
       //set2: off state
       //set3: on time
@@ -325,7 +325,7 @@ void parse_data() {
       set5 = interpreter.inputBuffer[6];
     } break;
 
-    case SETTING_LINEARDIMM: {
+    case SETTING_SINGULARLINEAR: {
       //set1: start state
       //set2: to state
       //set3: steptime
@@ -334,7 +334,7 @@ void parse_data() {
       set3 = interpreter.inputBuffer[4];
     } break;
 
-    case SETTING_BEZIERDIMM: {
+    case SETTING_SINGULARBEZIER: {
       //set1: start state
       //set2: to state
       //set3: steptime
@@ -497,7 +497,7 @@ void parse_data() {
 
   // Settings
   if(type < 60){
-    setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6, set7, set8));
+    setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6));
   } 
   else if(type < 150){
     if(set1 < numberOfChannels && set2 < numberOfChannels){

@@ -6,7 +6,6 @@
 #define Effect_h
 
 #include "Arduino.h"
-#include "Controlls.h"
 
 class Channel;
 
@@ -56,10 +55,6 @@ class Effect {
     // Always works with _delta. Either multiplied or added
     byte get_state(unsigned long now, byte lightid, byte state);
     byte get_type();
-    // user management
-    void usercount_up();
-    void usercount_down();
-    boolean is_unused();
 };
 
 #endif
