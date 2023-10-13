@@ -556,6 +556,35 @@ class SettingBezierSaw(ArduinoEvent):
             return command
 
 
+class SettingSquareWave(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, fromChannel, toChannel, fromSteptimeChannel, toSteptimeChannel, fromSteptimeFactorChannel, toSteptimeFactorChannel, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.fromChannel = fromChannel
+        self.toChannel = toChannel
+        self.fromSteptimeChannel = fromSteptimeChannel
+        self.toSteptimeChannel = toSteptimeChannel
+        self.fromSteptimeFactorChannel = fromSteptimeFactorChannel
+        self.toSteptimeFactorChannel = toSteptimeFactorChannel
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingSquareWave({}, {}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromChannel, self.toChannel, self.fromSteptimeChannel, self.toSteptimeChannel, self.fromSteptimeFactorChannel, self.toSteptimeFactorChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [60, self.settingIndex, self.fromChannel.id, self.toChannel.id, self.fromSteptimeChannel.id, self.toSteptimeChannel.id, self.fromSteptimeFactorChannel.id, self.toSteptimeFactorChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
 class SettingsReset(ArduinoEvent):
 
     def __init__(self, condition, controller):
