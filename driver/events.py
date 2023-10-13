@@ -433,13 +433,65 @@ class SettingSinWave(ArduinoEvent):
         self.command = self.make_command()
 
     def __str__(self):
-        return 'SettingSinWave({}, {}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromChannel, self.toChannel, self.steptimeChannel, self.decistepsChannel, self.hasVariable)
+        return 'SettingSinWave({}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromChannel, self.toChannel, self.steptimeChannel, self.decistepsChannel, self.hasVariable)
     
     def check_init(self):
         self.check_is_light_controller(self.controller)
     
     def make_command(self):
         command = [30, self.settingIndex, self.fromChannel.id, self.toChannel.id, self.steptimeChannel.id, self.decistepsChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class SettingLinearWave(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, fromChannel, toChannel, steptimeChannel, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.fromChannel = fromChannel
+        self.toChannel = toChannel
+        self.steptimeChannel = steptimeChannel
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingLinearWave({}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromChannel, self.toChannel, self.steptimeChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [40, self.settingIndex, self.fromChannel.id, self.toChannel.id, self.steptimeChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class SettingLinearSaw(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, fromChannel, toChannel, steptimeChannel, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.fromChannel = fromChannel
+        self.toChannel = toChannel
+        self.steptimeChannel = steptimeChannel
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingLinearSaw({}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromChannel, self.toChannel, self.steptimeChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [41, self.settingIndex, self.fromChannel.id, self.toChannel.id, self.steptimeChannel.id]
         if not self.hasVariable:
             return self.clean_bytes(command)
         else:

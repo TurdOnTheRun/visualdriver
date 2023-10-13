@@ -124,6 +124,20 @@ Setting::Setting(byte type, Channel* channel1, Channel* channel2, Channel* chann
         _steptime = 1;
       }
     } break;
+
+    case SETTING_LINEARTRIANGLEWAVE: {
+      //channel1 --> _channelA: from state
+      //channel2 --> _channelB: to state
+      //channel3 --> _channelC: steptime
+      _init_linear_inputs(channel1, channel2, channel3);
+    } break;
+
+    case SETTING_LINEARSAW: {
+      //channel1 --> _channelA: from state
+      //channel2 --> _channelB: to state
+      //channel3 --> _channelC: steptime
+      _init_linear_inputs(channel1, channel2, channel3);
+    } break;
   }
 }
 
@@ -152,7 +166,10 @@ byte Setting::get_state(unsigned long now)
     if(_type >= SETTING_SINGULAR_DIVIDER){
       switch(_type){
         case SETTING_SINWAVE: {
-          _update_sin_inputs(now);
+          _update_sinwave_inputs(now);
+        } break;
+        case SETTING_LINEARTRIANGLEWAVE: {
+          _update_linear_inputs(now);
         } break;
       }
     }
@@ -192,30 +209,8 @@ byte Setting::get_state(unsigned long now)
         } break;
 
         case SETTING_SINGULARLINEAR: {
-                
-          // If it is getting brighter
-          if(rising()){
-            
-            _newstate = ((int)_state) + _steps;
-            
-            if(_newstate >= _state2 || _newstate > 100){
-              _state = _state2;
-              _type = SETTING_STATIC;
-            } else {
-              _state = lowByte(_newstate);
-            }
-          // If it is getting dimmer
-          } else {
-            
-            _newstate = ((int)_state) - _steps;
-            
-            if (_newstate <= _state2 || _newstate < 0){
-              _state = _state2;
-              _type = SETTING_STATIC;
-            } else {
-              _state = lowByte(_newstate);
-            }
-          }
+          _update_singularlinear();
+          _set_state_from_newstate();
         } break;
 
         // case BEZIERAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
@@ -257,12 +252,44 @@ byte Setting::get_state(unsigned long now)
         } break;
 
         case SETTING_SINWAVE: {
-          //  Sin Wave
-          _update_sin();
+          _update_sinwave();
+          _set_state_from_newstate();
+        } break;
+
+        case SETTING_LINEARTRIANGLEWAVE: {
+          _update_linearwave();
+          _set_state_from_newstate();
+        } break;
+
+        case SETTING_LINEARSAW: {
+          _update_linearsaw();
           _set_state_from_newstate();
         } break;
       }
       return _state;
+    }
+  }
+}
+
+void Setting::_update_singularlinear()
+{
+  // If it is getting brighter
+  if(rising()){
+            
+    _newstate = (int)_state + _steps;
+            
+    if(_newstate >= _state2 || _newstate > 100){
+      _newstate = _state2;
+      _type = SETTING_STATIC;
+    }
+  // If it is getting dimmer
+  } else {
+            
+    _newstate = (int)_state - _steps;
+            
+    if (_newstate <= _state2 || _newstate < 0){
+      _newstate = _state2;
+      _type = SETTING_STATIC;
     }
   }
 }
@@ -291,7 +318,7 @@ float Setting::bezier(unsigned int step)
   return _y;
 }
 
-void Setting::_update_sin_inputs(unsigned long now)
+void Setting::_update_sinwave_inputs(unsigned long now)
 {
   //_channelA: crest state
   //_channelB: trough state
@@ -306,11 +333,94 @@ void Setting::_update_sin_inputs(unsigned long now)
   }
 }
 
-void Setting::_update_sin()
+void Setting::_update_sinwave()
 {
   _i = _i + (float) (M_PI / _intervalsteps) * _steps;
   _y = _state1 + ((sin(_i) + 1)/2) * (_state2-_state1);
   _newstate = (int) _y;
+}
+
+void Setting::_init_linear_inputs(Channel* channel1, Channel* channel2, Channel* channel3)
+{
+  //channel1 --> _channelA: from state
+  //channel2 --> _channelB: to state
+  //channel3 --> _channelC: steptime
+  _channelA = channel1;
+  _channelB = channel2;
+  _channelC = channel3;
+  _state = _channelA->get_state();
+  _state1 = _state;
+  _state2 = _channelB->get_state();
+  _steptime = _channelC->get_state();
+  if(_steptime == 0){
+    _steptime = 1;
+  }
+}
+
+void Setting::_update_linear_inputs(unsigned long now)
+{
+  //_channelA: from state
+  //_channelB: to state
+  //_channelC: steptime
+  _state1 = _channelA->get_state();
+  _state2 = _channelB->get_state();
+  _steptime = _channelC->get_state();
+  if(_steptime == 0){
+    _steptime = 1;
+  }
+}
+
+void Setting::_update_linearwave()
+{
+  // If it is getting brighter
+  if(rising()){
+
+    _newstate = (int) _state + _steps;
+            
+    if(_newstate >= _state2 || _newstate > 100){
+      _newstate = _state2;
+      // Peak is reached. Flip state inputs.
+      _channelD = _channelA;
+      _channelA = _channelB;
+      _channelB = _channelD;
+    }
+  // If it is getting dimmer
+  } else {
+            
+    _newstate = (int) _state - _steps;
+            
+    if (_newstate <= _state2 || _newstate < 0){
+      _newstate = _state2;
+      // Low is reached. Flip state inputs.
+      _channelD = _channelA;
+      _channelA = _channelB;
+      _channelB = _channelD;
+    }
+  }
+}
+
+void Setting::_update_linearsaw()
+{
+  if(_reset){
+    _newstate = _state1;
+    _reset = false;
+  } else if(rising()){
+    // If it is getting brighter
+    _newstate = (int) _state + _steps;
+            
+    if(_newstate >= _state2 || _newstate > 100){
+      _newstate = _state2;
+      _reset = true;
+    }
+  } else {
+    // If it is getting dimmer
+    _newstate = (int) _state - _steps;
+            
+    if (_newstate <= _state2 || _newstate < 0){
+      _newstate = _state2;
+      _reset = true;
+    }
+  }
 }
 
 void Setting::_set_state_from_newstate()
@@ -324,11 +434,6 @@ void Setting::_set_state_from_newstate()
   else{
     _state = lowByte(_newstate);
   }
-}
-
-bool Setting::changing()
-{
-  return !(_state == _state2);
 }
     
 bool Setting::rising()

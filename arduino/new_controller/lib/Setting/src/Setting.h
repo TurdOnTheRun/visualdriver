@@ -40,11 +40,19 @@ class Setting {
     // For example for SIN this is equal to PI
     unsigned int _intervalsteps=0;
     unsigned int _intervalstep=0;
+    // _reset is used by saw waves
+    bool _reset = false;
 
 
     // Update Functions
-    void _update_sin_inputs(unsigned long now);
-    void _update_sin();
+    void _update_singularlinear();
+    void _update_sinwave_inputs(unsigned long now);
+    void _update_sinwave();
+    void _init_linear_inputs(Channel* channel1, Channel* channel2, Channel* channel3);
+    void _update_linear_inputs(unsigned long now);
+    void _update_linearwave();
+    void _update_linearsaw();
+
 
     // Bezier
     float lerp(float n1, float n2, float perc);
@@ -73,7 +81,6 @@ class Setting {
     byte get_state(unsigned long now);
     byte get_type();
     bool rising();
-    bool changing();
 };
 
 #endif

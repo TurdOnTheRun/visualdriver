@@ -361,6 +361,24 @@ void parse_data() {
       set4 = interpreter.inputBuffer[5];
     } break;
 
+    case SETTING_LINEARTRIANGLEWAVE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
+    case SETTING_LINEARSAW: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
     case EFFECT_UPVIBRATO: 
     case EFFECT_DOWNVIBRATO:
     case EFFECT_UPDOWNVIBRATO: {
