@@ -351,8 +351,8 @@ void parse_data() {
     } break;
 
     case SETTING_SINWAVE: {
-      //set1: from/crest state channel
-      //set2: to/trough state channel
+      //set1: from state channel
+      //set2: to state channel
       //set3: steptime channel
       //set4: decisteps for intervalsteps channel
       set1 = interpreter.inputBuffer[2];
@@ -380,8 +380,8 @@ void parse_data() {
     } break;
 
     case SETTING_BEZIERWAVE: {
-      //set1: from/crest state channel
-      //set2: to/trough state channel
+      //set1: from state channel
+      //set2: to state channel
       //set3: steptime channel
       //set4: decisteps for intervalsteps channel
       //set5: y1 channel
@@ -395,12 +395,27 @@ void parse_data() {
     } break;
 
     case SETTING_BEZIERSAW: {
-      //set1: from/crest state channel
-      //set2: to/trough state channel
+      //set1: from state channel
+      //set2: to state channel
       //set3: steptime channel
       //set4: decisteps for intervalsteps channel
       //set5: y1 channel
       //set6: y2 channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
+    } break;
+
+    case SETTING_SQUAREWAVE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: from steptime channel
+      //set4: to steptime channel
+      //set5: from steptime-factor channel
+      //set6: to steptime-factor channel
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];

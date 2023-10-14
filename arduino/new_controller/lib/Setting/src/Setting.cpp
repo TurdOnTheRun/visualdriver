@@ -158,6 +158,43 @@ Setting::Setting(byte type, Channel* channel1, Channel* channel2, Channel* chann
       //channel6 --> _channelF: y2
       _init_bezier_inputs(channel1, channel2, channel3, channel4, channel5, channel6);
     } break;
+
+    case SETTING_SQUAREWAVE: {
+      //channel1 --> _channelA: from state
+      //channel2 --> _channelB: to state
+      //channel3 --> _channelC: from steptime
+      //channel4 --> _channelD: to steptime
+      //channel5 --> _channelE: from steptime-factor
+      //channel6 --> _channelF: to steptime-factor
+
+      _channelA = channel1;
+      _channelB = channel2;
+      _channelC = channel3;
+      _channelD = channel4;
+      _channelE = channel5;
+      _channelF = channel6;
+
+      _state = _channelA->get_state();
+      _state1 = _state;
+      _state2 = _channelB->get_state();
+      _setA = _channelC->get_state(); //from steptime
+      _setB = _channelD->get_state(); //to steptime
+      _setC = _channelE->get_state(); //from steptime-factor
+      _setD = _channelF->get_state(); //to steptime-factor
+
+      // steptime-factors are set to 1 if 0
+      if(_setC == 0){
+        _setC = 1;
+      }
+      if(_setD == 0){
+        _setD = 1;
+      }
+
+      _steptime = (unsigned int) _setA * _setC;
+      if(_steptime == 0){
+        _steptime = 1;
+      }
+    } break;
   }
 }
 
@@ -200,6 +237,9 @@ byte Setting::get_state(unsigned long now)
         case SETTING_BEZIERSAW: {
           _update_bezier_inputs(now);
         } break;
+        case SETTING_SQUAREWAVE: {
+          _update_squarewave_inputs(now);
+        }
       }
     }
     
@@ -272,6 +312,11 @@ byte Setting::get_state(unsigned long now)
           _update_beziersaw();
           _set_state_from_newstate();
         } break;
+
+        case SETTING_SQUAREWAVE: {
+          _update_squarewave();
+          _set_state_from_newstate();
+        }
       }
       return _state;
     }
@@ -590,6 +635,53 @@ void Setting::_update_beziersaw()
         _newstate = (int) _state1 - _bz * (_state1 - _state2);
       }
     }
+  }
+}
+
+
+void Setting::_update_squarewave_inputs(unsigned long now)
+{
+  //_channelA: from state
+  //_channelB: to state
+  //_channelC: from steptime
+  //_channelD: to steptime
+  //_channelE: from steptime-factor
+  //_channelF: to steptime-factor
+  _state1 = _channelA->get_state(now);
+  _state2 = _channelB->get_state(now);
+  _setA = _channelC->get_state(now); //from steptime
+  _setB = _channelD->get_state(now); //to steptime
+  _setC = _channelE->get_state(now); //from steptime-factor
+  _setD = _channelF->get_state(now); //to steptime-factor
+
+  // steptime-factors are set to 1 if 0
+  if(_setC == 0){
+    _setC = 1;
+  }
+  if(_setD == 0){
+    _setD = 1;
+  }
+
+  // If reset is true we are currentlz at the to state
+  if(_reset){
+    _steptime = (unsigned int) _setB * _setD;
+  } else {
+    _steptime = (unsigned int) _setA * _setC;
+  }
+  if(_steptime == 0){
+    _steptime = 1;
+  }
+}
+
+
+void Setting::_update_squarewave()
+{
+  if(_reset){
+    _newstate = _state1;
+    _reset = false;
+  } else {
+    _newstate = _state2;
+    _reset = true;
   }
 }
 

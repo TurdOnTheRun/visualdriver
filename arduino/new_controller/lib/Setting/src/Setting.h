@@ -43,7 +43,8 @@ class Setting {
     // For example for SIN this is equal to PI
     unsigned int _intervalsteps=0;
     unsigned int _intervalstep=0;
-    // _reset is used by saw waves
+    // _reset is used by saw waves and square waves.
+    // Square waves use the boolean to keep track of to or from
     bool _reset = false;
 
 
@@ -63,6 +64,9 @@ class Setting {
     void _update_bezier_inputs(unsigned long now);
     void _update_bezierwave();
     void _update_beziersaw();
+
+    void _update_squarewave_inputs(unsigned long now);
+    void _update_squarewave();
 
 
     // Bezier

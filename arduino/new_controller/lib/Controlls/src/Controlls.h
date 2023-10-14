@@ -19,15 +19,17 @@ static const byte SETTING_SINGULAR_DIVIDER = 30;
 static const byte SETTING_SINWAVE = 30;
 static const byte SETTING_LINEARWAVE = 40;
 static const byte SETTING_LINEARSAW = 41;
+
 static const byte SETTING_BEZIERWAVE = 50;
 static const byte SETTING_BEZIERSAW = 51;
 
+static const byte SETTING_SQUAREWAVE = 60;
 
 static const byte SETTING_EFFECT_DIVIDER = 100;
 // 100-149 are Effects
-static const byte EFFECT_UPVIBRATO = 60;
-static const byte EFFECT_DOWNVIBRATO = 61;
-static const byte EFFECT_UPDOWNVIBRATO = 62;
+static const byte EFFECT_UPVIBRATO = 63;
+static const byte EFFECT_DOWNVIBRATO = 64;
+static const byte EFFECT_UPDOWNVIBRATO = 65;
 static const byte EFFECT_STROBE = 70;
 static const byte EFFECT_PERLIN = 80;
 static const byte EFFECT_UP = 90;
