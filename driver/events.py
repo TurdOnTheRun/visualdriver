@@ -585,6 +585,87 @@ class SettingSquareWave(ArduinoEvent):
             return command
 
 
+class SettingNoise(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, fromChannel, toChannel, steptimeChannel, steptimeFactorChannel, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.fromChannel = fromChannel
+        self.toChannel = toChannel
+        self.steptimeChannel = steptimeChannel
+        self.steptimeFactorChannel = steptimeFactorChannel
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingNoise({}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromChannel, self.toChannel, self.steptimeChannel, self.steptimeFactorChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [70, self.settingIndex, self.fromChannel.id, self.toChannel.id, self.steptimeChannel.id, self.steptimeFactorChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class SettingSeedNoise(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, fromChannel, toChannel, steptimeChannel, steptimeFactorChannel, seedChannel, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.fromChannel = fromChannel
+        self.toChannel = toChannel
+        self.steptimeChannel = steptimeChannel
+        self.steptimeFactorChannel = steptimeFactorChannel
+        self.seedChannel = seedChannel
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingSeedNoise({}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromChannel, self.toChannel, self.steptimeChannel, self.steptimeFactorChannel, self.seedChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [71, self.settingIndex, self.fromChannel.id, self.toChannel.id, self.steptimeChannel.id, self.steptimeFactorChannel.id, self.seedChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class SettingPerlinNoise(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, fromChannel, toChannel, steptimeChannel, steptimeFactorChannel, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.fromChannel = fromChannel
+        self.toChannel = toChannel
+        self.steptimeChannel = steptimeChannel
+        self.steptimeFactorChannel = steptimeFactorChannel
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingPerlinNoise({}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromChannel, self.toChannel, self.steptimeChannel, self.steptimeFactorChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [72, self.settingIndex, self.fromChannel.id, self.toChannel.id, self.steptimeChannel.id, self.steptimeFactorChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
 class SettingsReset(ArduinoEvent):
 
     def __init__(self, condition, controller):

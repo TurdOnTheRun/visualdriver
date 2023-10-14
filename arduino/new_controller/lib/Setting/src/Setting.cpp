@@ -195,6 +195,94 @@ Setting::Setting(byte type, Channel* channel1, Channel* channel2, Channel* chann
         _steptime = 1;
       }
     } break;
+
+    case SETTING_NOISE: {
+      //channel1 --> _channelA: from state
+      //channel2 --> _channelB: to state
+      //channel3 --> _channelC: steptime
+      //channel4 --> _channelD: steptime-factor
+
+      _channelA = channel1;
+      _channelB = channel2;
+      _channelC = channel3;
+      _channelD = channel4;
+
+      _state = _channelA->get_state();
+      _state1 = _state;
+      _state2 = _channelB->get_state();
+      _setA = _channelC->get_state(); //steptime
+      _setB = _channelD->get_state(); //steptime-factor
+
+      if(_setB == 0){
+        _setB = 1;
+      }
+
+      _steptime = (unsigned int) _setA * _setB;
+      if(_steptime == 0){
+        _steptime = 1;
+      }
+    } break;
+
+    case SETTING_SEEDNOISE: {
+      //channel1 --> _channelA: from state
+      //channel2 --> _channelB: to state
+      //channel3 --> _channelC: steptime
+      //channel4 --> _channelD: steptime-factor
+      //channel5 --> _channelE: seed
+
+      _channelA = channel1;
+      _channelB = channel2;
+      _channelC = channel3;
+      _channelD = channel4;
+      _channelE = channel5;
+
+      _state = _channelA->get_state();
+      _state1 = _state;
+      _state2 = _channelB->get_state();
+      _setA = _channelC->get_state(); //steptime
+      _setB = _channelD->get_state(); //steptime-factor
+      _setC = _channelE->get_state(); //seed
+
+      if(_setB == 0){
+        _setB = 1;
+      }
+      
+      _steptime = (unsigned int) _setA * _setB;
+      if(_steptime == 0){
+        _steptime = 1;
+      }
+    } break;
+
+    case SETTING_PERLINNOISE: {
+      //channel1 --> _channelA: from state
+      //channel2 --> _channelB: to state
+      //channel3 --> _channelC: steptime
+      //channel4 --> _channelD: steptime-factor
+
+      _channelA = channel1;
+      _channelB = channel2;
+      _channelC = channel3;
+      _channelD = channel4;
+
+      _state = _channelA->get_state();
+      _state1 = _state;
+      _state2 = _channelB->get_state();
+      _setA = _channelC->get_state(); //steptime
+      _setB = _channelD->get_state(); //steptime-factor
+
+      // The PERLIN_NOISE array has a nice centered value at index 19. Good place to start.
+      _intervalstep = 19;
+
+      if(_setB == 0){
+        _setB = 1;
+      }
+
+      _steptime = (unsigned int) _setA * _setB;
+      if(_steptime == 0){
+        _steptime = 1;
+      }
+    } break;
+
   }
 }
 
@@ -239,6 +327,15 @@ byte Setting::get_state(unsigned long now)
         } break;
         case SETTING_SQUAREWAVE: {
           _update_squarewave_inputs(now);
+        }
+        case SETTING_NOISE: {
+          _update_noise_inputs(now);
+        } break;
+        case SETTING_SEEDNOISE: {
+          _update_seednoise_inputs(now);
+        } break;
+        case SETTING_PERLINNOISE: {
+          _update_perlinnoise_inputs(now);
         }
       }
     }
@@ -315,6 +412,21 @@ byte Setting::get_state(unsigned long now)
 
         case SETTING_SQUAREWAVE: {
           _update_squarewave();
+          _set_state_from_newstate();
+        }
+
+        case SETTING_NOISE: {
+          _update_noise();
+          _set_state_from_newstate();
+        }
+
+        case SETTING_SEEDNOISE: {
+          _update_seednoise();
+          _set_state_from_newstate();
+        }
+
+        case SETTING_PERLINNOISE: {
+          _update_perlinnoise();
           _set_state_from_newstate();
         }
       }
@@ -684,6 +796,118 @@ void Setting::_update_squarewave()
     _reset = true;
   }
 }
+
+
+void Setting::_update_noise_inputs(unsigned long now)
+{
+  //_channelA: from state
+  //_channelB: to state
+  //_channelC: steptime
+  //_channelD: steptime-factor
+
+  _state1 = _channelA->get_state(now);
+  _state2 = _channelB->get_state(now);
+  _setA = _channelC->get_state(now); //steptime
+  _setB = _channelD->get_state(now); //steptime-factor
+
+  // The random function returns unexpected results if min > max.
+  if(_state1 > _state2){
+    _setD = _state1;
+    _state1 = _state2;
+    _state2 = _setD;
+  }
+
+  if(_setB == 0){
+    _setB = 1;
+  }
+
+  _steptime = (unsigned int) _setA * _setB;
+  if(_steptime == 0){
+    _steptime = 1;
+  }
+}
+
+
+void Setting::_update_noise()
+{
+  randomSeed(analogRead(0));
+  _newstate = (int) random(_state1, _state2+1);
+}
+
+
+void Setting::_update_seednoise_inputs(unsigned long now)
+{
+  //_channelA: from state
+  //_channelB: to state
+  //_channelC: steptime
+  //_channelD: steptime-factor
+  //_channelE: seed
+
+
+  _state1 = _channelA->get_state(now);
+  _state2 = _channelB->get_state(now);
+  _setA = _channelC->get_state(now); //steptime
+  _setB = _channelD->get_state(now); //steptime-factor
+  _setC = _channelE->get_state(now); //seed
+
+  // The random function returns unexpected results if min > max.
+  if(_state1 > _state2){
+    _setD = _state1;
+    _state1 = _state2;
+    _state2 = _setD;
+  }
+
+  // If steptime-factor is set to 0, it is set to 1
+  if(_setB == 0){
+    _setB = 1;
+  }
+
+  _steptime = (unsigned int) _setA * _setB;
+  if(_steptime == 0){
+    _steptime = 1;
+  }
+}
+
+
+void Setting::_update_seednoise()
+{
+  randomSeed(_setC);
+  _newstate = (int) random(_state1, _state2+1);
+}
+
+
+void Setting::_update_perlinnoise_inputs(unsigned long now)
+{
+  //_channelA: from state
+  //_channelB: to state
+  //_channelC: steptime
+  //_channelD: steptime-factor
+
+  _state1 = _channelA->get_state(now);
+  _state2 = _channelB->get_state(now);
+  _setA = _channelC->get_state(now); //steptime
+  _setB = _channelD->get_state(now); //steptime-factor
+
+  if(_setB == 0){
+    _setB = 1;
+  }
+
+  _steptime = (unsigned int) _setA * _setB;
+  if(_steptime == 0){
+    _steptime = 1;
+  }
+}
+
+
+void Setting::_update_perlinnoise()
+{
+  _newstate = (int) (_state1 + ((float) pgm_read_float(&PERLIN_NOISE[_intervalstep])) * (_state2 - _state1));
+  _intervalstep += 1;
+  if(_intervalstep >= PERLIN_SIZE){
+    _intervalstep = 0;
+  }
+}
+
 
 void Setting::_set_state_from_newstate()
 {

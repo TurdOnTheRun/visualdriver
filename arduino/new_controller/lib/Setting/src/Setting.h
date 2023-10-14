@@ -68,6 +68,14 @@ class Setting {
     void _update_squarewave_inputs(unsigned long now);
     void _update_squarewave();
 
+    void _update_noise_inputs(unsigned long now);
+    void _update_noise();
+
+    void _update_seednoise_inputs(unsigned long now);
+    void _update_seednoise();
+
+    void _update_perlinnoise_inputs(unsigned long now);
+    void _update_perlinnoise();
 
     // Bezier
     float lerp(float n1, float n2, float perc);

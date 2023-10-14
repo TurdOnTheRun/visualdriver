@@ -424,36 +424,71 @@ void parse_data() {
       set6 = interpreter.inputBuffer[7];
     } break;
 
-    case EFFECT_UPVIBRATO: 
-    case EFFECT_DOWNVIBRATO:
-    case EFFECT_UPDOWNVIBRATO: {
-      //set1: amplitude channel index
-      //set2: steptime channel index
-      set1 = interpreter.inputBuffer[2];
-      set2 = interpreter.inputBuffer[3];
-    } break;
-
-    case EFFECT_STROBE: {
-      //set1: amplitude channel index
-      //set2: steptime channel index
-      //set3: steptime factor
-      //set4: multisetting
+    case SETTING_NOISE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      //set4: steptime-factor channel
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
       set4 = interpreter.inputBuffer[5];
     } break;
 
-    case EFFECT_PERLIN: {
-      //set1: amplitude channel index
-      //set2: steptime channel index
-      //set3: steptime factor
-      //set4: multisetting
+    case SETTING_SEEDNOISE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      //set4: steptime-factor channel
+      //set5: seed channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+    } break;
+
+    case SETTING_PERLINNOISE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      //set4: steptime-factor channel
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
       set4 = interpreter.inputBuffer[5];
     } break;
+
+    // case EFFECT_UPVIBRATO: 
+    // case EFFECT_DOWNVIBRATO:
+    // case EFFECT_UPDOWNVIBRATO: {
+    //   //set1: amplitude channel index
+    //   //set2: steptime channel index
+    //   set1 = interpreter.inputBuffer[2];
+    //   set2 = interpreter.inputBuffer[3];
+    // } break;
+
+    // case EFFECT_STROBE: {
+    //   //set1: amplitude channel index
+    //   //set2: steptime channel index
+    //   //set3: steptime factor
+    //   //set4: multisetting
+    //   set1 = interpreter.inputBuffer[2];
+    //   set2 = interpreter.inputBuffer[3];
+    //   set3 = interpreter.inputBuffer[4];
+    //   set4 = interpreter.inputBuffer[5];
+    // } break;
+
+    // case EFFECT_PERLIN: {
+    //   //set1: amplitude channel index
+    //   //set2: steptime channel index
+    //   //set3: steptime factor
+    //   //set4: multisetting
+    //   set1 = interpreter.inputBuffer[2];
+    //   set2 = interpreter.inputBuffer[3];
+    //   set3 = interpreter.inputBuffer[4];
+    //   set4 = interpreter.inputBuffer[5];
+    // } break;
 
     case EFFECT_UP: 
     case EFFECT_DOWN:
