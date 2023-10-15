@@ -32,15 +32,13 @@ static const byte SETTING_PERLINNOISE = 72;
 
 static const byte SETTING_EFFECT_DIVIDER = 100;
 // 100-149 are Effects
-static const byte EFFECT_UPVIBRATO = 63;
-static const byte EFFECT_DOWNVIBRATO = 64;
-static const byte EFFECT_UPDOWNVIBRATO = 65;
-static const byte EFFECT_STROBE = 74;
-static const byte EFFECT_PERLIN = 80;
-static const byte EFFECT_UP = 90;
-static const byte EFFECT_DOWN = 91;
-static const byte EFFECT_UPDOWN = 92;
-static const byte EFFECT_NONE = 140;
+static const byte EFFECT_NONE = 100;
+static const byte EFFECT_INVERSE = 101;
+static const byte EFFECT_ADD = 110;
+static const byte EFFECT_SUBTRACT = 111;
+static const byte EFFECT_ADDPERCENTAGE = 112;
+static const byte EFFECT_SUBTRACTPERCENTAGE = 113;
+static const byte EFFECT_PERCENTAGE = 114;
 
 static const byte LIGHT_SET_CHANNEL = 150;
 

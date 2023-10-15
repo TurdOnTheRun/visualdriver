@@ -327,7 +327,7 @@ byte Setting::get_state(unsigned long now)
         } break;
         case SETTING_SQUAREWAVE: {
           _update_squarewave_inputs(now);
-        }
+        } break;
         case SETTING_NOISE: {
           _update_noise_inputs(now);
         } break;
@@ -336,7 +336,7 @@ byte Setting::get_state(unsigned long now)
         } break;
         case SETTING_PERLINNOISE: {
           _update_perlinnoise_inputs(now);
-        }
+        } break;
       }
     }
     
@@ -413,22 +413,22 @@ byte Setting::get_state(unsigned long now)
         case SETTING_SQUAREWAVE: {
           _update_squarewave();
           _set_state_from_newstate();
-        }
+        } break;
 
         case SETTING_NOISE: {
           _update_noise();
           _set_state_from_newstate();
-        }
+        } break;
 
         case SETTING_SEEDNOISE: {
           _update_seednoise();
           _set_state_from_newstate();
-        }
+        } break;
 
         case SETTING_PERLINNOISE: {
           _update_perlinnoise();
           _set_state_from_newstate();
-        }
+        } break;
       }
       return _state;
     }
@@ -830,7 +830,7 @@ void Setting::_update_noise_inputs(unsigned long now)
 
 void Setting::_update_noise()
 {
-  randomSeed(analogRead(0));
+  randomSeed(micros());
   _newstate = (int) random(_state1, _state2+1);
 }
 

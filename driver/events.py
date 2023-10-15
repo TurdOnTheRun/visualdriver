@@ -686,25 +686,166 @@ class SettingsReset(ArduinoEvent):
 
 # EFFECTS
 
-class EffectUpVibrato(ArduinoEvent):
+class EffectNone(ArduinoEvent):
 
-    def __init__(self, condition, controller, effectIndex, amplitudeChannel, steptimeChannel, hasVariable=False):
+    def __init__(self, condition, controller, effectIndex, hasVariable=False):
         super().__init__(condition, controller, hasVariable)
         self.effectIndex = effectIndex
-        self.amplitudeChannel = amplitudeChannel
-        self.steptimeChannel = steptimeChannel
         if not hasVariable:
             self.check_init()
         self.command = self.make_command()
 
     def __str__(self):
-        return 'EffectUpVibrato({}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.amplitudeChannel, self.steptimeChannel, self.hasVariable)
+        return 'EffectNone({}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.hasVariable)
     
     def check_init(self):
         self.check_is_light_controller(self.controller)
     
     def make_command(self):
-        command = [60, self.effectIndex, self.amplitudeChannel.id, self.steptimeChannel.id]
+        command = [100, self.effectIndex]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class EffectInverse(ArduinoEvent):
+
+    def __init__(self, condition, controller, effectIndex, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.effectIndex = effectIndex
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'EffectInverse({}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [101, self.effectIndex]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class EffectAdd(ArduinoEvent):
+
+    def __init__(self, condition, controller, effectIndex, inputChannel, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.effectIndex = effectIndex
+        self.inputChannel = inputChannel
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'EffectAdd({}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.inputChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [110, self.effectIndex, self.inputChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class EffectSubtract(ArduinoEvent):
+
+    def __init__(self, condition, controller, effectIndex, inputChannel, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.effectIndex = effectIndex
+        self.inputChannel = inputChannel
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'EffectSubtract({}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.inputChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [111, self.effectIndex, self.inputChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class EffectAddPercentage(ArduinoEvent):
+
+    def __init__(self, condition, controller, effectIndex, inputChannel, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.effectIndex = effectIndex
+        self.inputChannel = inputChannel
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'EffectAddPercentage({}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.inputChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [112, self.effectIndex, self.inputChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class EffectSubtractPercentage(ArduinoEvent):
+
+    def __init__(self, condition, controller, effectIndex, inputChannel, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.effectIndex = effectIndex
+        self.inputChannel = inputChannel
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'EffectSubtractPercentage({}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.inputChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [113, self.effectIndex, self.inputChannel.id]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class EffectPercentage(ArduinoEvent):
+
+    def __init__(self, condition, controller, effectIndex, inputChannel, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.effectIndex = effectIndex
+        self.inputChannel = inputChannel
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'EffectPercentage({}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.inputChannel, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [114, self.effectIndex, self.inputChannel.id]
         if not self.hasVariable:
             return self.clean_bytes(command)
         else:

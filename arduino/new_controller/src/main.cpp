@@ -459,46 +459,37 @@ void parse_data() {
       set4 = interpreter.inputBuffer[5];
     } break;
 
-    // case EFFECT_UPVIBRATO: 
-    // case EFFECT_DOWNVIBRATO:
-    // case EFFECT_UPDOWNVIBRATO: {
-    //   //set1: amplitude channel index
-    //   //set2: steptime channel index
-    //   set1 = interpreter.inputBuffer[2];
-    //   set2 = interpreter.inputBuffer[3];
-    // } break;
+    case EFFECT_NONE: {
+      // Does not need any input
+    } break;
 
-    // case EFFECT_STROBE: {
-    //   //set1: amplitude channel index
-    //   //set2: steptime channel index
-    //   //set3: steptime factor
-    //   //set4: multisetting
-    //   set1 = interpreter.inputBuffer[2];
-    //   set2 = interpreter.inputBuffer[3];
-    //   set3 = interpreter.inputBuffer[4];
-    //   set4 = interpreter.inputBuffer[5];
-    // } break;
+    case EFFECT_INVERSE: {
+      // Does not need any input
+    } break;
 
-    // case EFFECT_PERLIN: {
-    //   //set1: amplitude channel index
-    //   //set2: steptime channel index
-    //   //set3: steptime factor
-    //   //set4: multisetting
-    //   set1 = interpreter.inputBuffer[2];
-    //   set2 = interpreter.inputBuffer[3];
-    //   set3 = interpreter.inputBuffer[4];
-    //   set4 = interpreter.inputBuffer[5];
-    // } break;
-
-    case EFFECT_UP: 
-    case EFFECT_DOWN:
-    case EFFECT_UPDOWN: {
-      //set1: amplitude channel index
-      //set2: steptime channel index
-      //set3: factor (5-5%, 100=100%, 200=200%)
+    case EFFECT_ADD: {
+      //set1: y in state = state + y
       set1 = interpreter.inputBuffer[2];
-      set2 = interpreter.inputBuffer[3];
-      set3 = interpreter.inputBuffer[4];
+    } break;
+
+    case EFFECT_SUBTRACT: {
+      //set1: y in state = state - y
+      set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case EFFECT_ADDPERCENTAGE: {
+      //set1: y in state = state + (state * y/100)
+      set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case EFFECT_SUBTRACTPERCENTAGE: {
+      //set1: y in state = state - (state * y/100)
+      set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case EFFECT_PERCENTAGE: {
+      //set1:  y in state = state * y/100
+      set1 = interpreter.inputBuffer[2];
     } break;
 
     case LIGHT_SET_CHANNEL: {
@@ -614,7 +605,7 @@ void parse_data() {
   } 
   else if(type < 150){
     if(set1 < numberOfChannels && set2 < numberOfChannels){
-      effect_add(target, Effect(type, &channels[set1], &channels[set2], set3, set4, set5, set6, set7, set8));
+      effect_add(target, Effect(type, &channels[set1]));
     }
   }
 }
