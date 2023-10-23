@@ -292,9 +292,6 @@ void parse_data() {
   set7 = 0;
   set8 = 0;
 
-  Setting setting;
-  Setting effect;
-
   type = interpreter.inputBuffer[0];
   target = interpreter.inputBuffer[1];
 
@@ -604,9 +601,7 @@ void parse_data() {
     setting_add(target, Setting(type, &channels[set1], &channels[set2], &channels[set3], &channels[set4], &channels[set5], &channels[set6]));
   } 
   else if(type < 150){
-    if(set1 < numberOfChannels && set2 < numberOfChannels){
-      effect_add(target, Effect(type, &channels[set1]));
-    }
+    effect_add(target, Effect(type, &channels[set1]));
   }
 }
 
