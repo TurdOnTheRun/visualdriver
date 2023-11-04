@@ -10,34 +10,54 @@ eventDict = {
     'time': []
 }
 
-controllers = [BottomController, TopController]
+controll = BottomController
+timePerTest = 5
 
-for controller in controllers:
-    eventDict['time'].append(EffectUpDownVibrato(At(0), controller, 0, StaticChannel5, StaticChannel10))
-    # eventDict['time'].append(EffectStrobe(At(0), controller, 1, StaticChannel10, StaticChannel5, 2, [Light1, Light3]))
+t=0
 
-    # Strobe Effect
-    eventDict['time'].append(ChannelSetChannel(At(0), controller, Channel2, StaticChannel5))
-    eventDict['time'].append(ChannelAddEffect(At(0), controller, Channel2, 0, 0))
-    eventDict['time'].append(EffectStrobe(At(0), controller, 1, StaticChannel10, Channel2, 1, [Light1, Light3]))
+eventDict['time'].append(SettingStaticLight(At(t), controll, 0, 80))
+eventDict['time'].append(ChannelSetSetting(At(t), controll, Channel10, 0))
+eventDict['time'].append(LightSetChannel(At(t), controll, [Light1,], Channel10))
 
-    eventDict['time'].append(ChannelSetChannel(At(0), controller, Channel1, StaticChannel10))
-    eventDict['time'].append(ChannelAddEffect(At(0), controller, Channel1, 1, 0))
-    eventDict['time'].append(LightSetChannel(At(0), controller, [Light1, Light2, Light3, Light4], Channel1))
+# t += timePerTest
+# eventDict['time'].append(SettingStaticFlash(At(t), controll, 0, 100, 30, 255))
+# t += timePerTest
+# eventDict['time'].append(SettingStaticMachine(At(t), controll, 0, 100, 0, 80, 255, 5))
+# t += timePerTest
+# eventDict['time'].append(SettingLinearDimm(At(t), controll, 0, 0, 100, 20))
+# t += timePerTest
+# eventDict['time'].append(SettingBezierDimm(At(t), controll, 0, 100, 0, 20, 10, 1, 100))
+# t += timePerTest
+# eventDict['time'].append(SettingStaticLight(At(t), controll, 0, 10))
+# t += timePerTest
+# eventDict['time'].append(SettingSinWave(At(t), controll, 0, StaticChannel5, StaticChannel80, StaticChannel5, StaticChannel40))
+# t += timePerTest
+# eventDict['time'].append(SettingLinearWave(At(t), controll, 0, StaticChannel5, StaticChannel80, StaticChannel5, StaticChannel20))
+# t += timePerTest
+# eventDict['time'].append(SettingLinearSaw(At(t), controll, 0, StaticChannel5, StaticChannel80, StaticChannel5, StaticChannel20))
+# t += timePerTest
+# eventDict['time'].append(SettingBezierWave(At(t), controll, 0, StaticChannel0, StaticChannel80, StaticChannel5, StaticChannel20, StaticChannel100, StaticChannel0))
+# t += timePerTest
+# eventDict['time'].append(SettingBezierSaw(At(t), controll, 0, StaticChannel80, StaticChannel0, StaticChannel5, StaticChannel20, StaticChannel100, StaticChannel0))
 
-    # eventDict['time'].append(ChannelAddEffect(At(2), controller, Channel1, 0, 0))
-    # eventDict['time'].append(ChannelAddEffect(At(5), controller, Channel1, 1, 0))
+# t += timePerTest
+# eventDict['time'].append(SettingSquareWave(At(t), controll, 0, StaticChannel0, StaticChannel80, StaticChannel100, StaticChannel100, StaticChannel5, StaticChannel5))
+# t += timePerTest
+# eventDict['time'].append(SettingSquareWave(At(t), controll, 0, StaticChannel80, StaticChannel0, StaticChannel100, StaticChannel20, StaticChannel0, StaticChannel40))
+# t += timePerTest
+# eventDict['time'].append(SettingSquareWave(At(t), controll, 0, StaticChannel80, StaticChannel0, StaticChannel40, StaticChannel40, StaticChannel0, StaticChannel0))
+# t += timePerTest
+
+# t += timePerTest
+# eventDict['time'].append(SettingNoise(At(t), controll, 0, StaticChannel0, StaticChannel100, StaticChannel40, StaticChannel0))
+# t += timePerTest
+# eventDict['time'].append(SettingSeedNoise(At(t), controll, 0, StaticChannel0, StaticChannel100, StaticChannel20, StaticChannel20, StaticChannel40))
+# t += timePerTest
+# eventDict['time'].append(SettingPerlinNoise(At(t), controll, 0, StaticChannel100, StaticChannel0, StaticChannel20, StaticChannel0))
+# t += timePerTest
 
 
-    # eventDict['time'].append(EffectStrobe(At(10), controller, 1, StaticChannel10, StaticChannel5, 2, [Light1, Light3]))
-    # eventDict['time'].append(ChannelRemoveEffect(At(10), controller, Channel1, 0))
-
-    # eventDict['time'].append(ChannelAddEffect(At(12), controller, Channel1, 1, 0))
-
-
-    eventDict['time'].append(LightSetChannel(At(15), controller, [Light1, Light2, Light3, Light4], StaticChannel0))
-
-eventDict['time'] = sorted(eventDict['time'], key=lambda event: event.condition.value)
+eventDict['time'].append(ChannelSetStatic(At(t), controll, StaticChannel0, 0))
 
 
 vd = VisualDriver(eventDict, startTime=0)

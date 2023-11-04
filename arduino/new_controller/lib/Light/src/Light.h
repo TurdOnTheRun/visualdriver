@@ -6,9 +6,8 @@
 #define Light_h
 
 #include "Arduino.h"
-#include "Channel.h"
-#include "Effect.h"
 
+class Channel;
 
 class Light {
   private:

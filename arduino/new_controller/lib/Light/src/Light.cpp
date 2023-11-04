@@ -5,6 +5,7 @@
 
 #include "Arduino.h"
 #include "Light.h"
+#include "Channel.h"
 #include <math.h>
 
 Light::Light(byte id, byte pin, Channel* channel)
@@ -37,7 +38,7 @@ void Light::pin_write()
 
 void Light::update(unsigned long now)
 {
-  _newstate = _channel->get_state(now, _id);
+  _newstate = _channel->get_state(now);
   set_pinstate();
 }
 

@@ -7,24 +7,45 @@
 
 #include "Arduino.h"
 
-// 1-59 are settings
-static const byte SETTING_STATICLIGHT = 1;
-static const byte SETTING_STATICFLASH = 2;
-static const byte SETTING_STATICMACHINE = 3;
-static const byte SETTING_LINEARDIMM = 10;
-static const byte SETTING_BEZIERDIMM = 20;
+static const byte SETTING_STATIC = 0;
+// 1-29 are singular settings
+static const byte SETTING_SINGULARFLASH = 2;
+static const byte SETTING_SINGULARBURST = 3;
+static const byte SETTING_SINGULARLINEAR = 10;
+static const byte SETTING_SINGULARBEZIER = 20;
 
-static const byte EFFECT_UPVIBRATO = 60;
-static const byte EFFECT_DOWNVIBRATO = 61;
-static const byte EFFECT_UPDOWNVIBRATO = 62;
-static const byte EFFECT_STROBE = 70;
-static const byte EFFECT_PERLIN = 80;
-static const byte EFFECT_NONE = 140;
+static const byte SETTING_SINGULAR_DIVIDER = 30;
+// 30-99 are continuous settings
+static const byte SETTING_SINWAVE = 30;
+static const byte SETTING_LINEARWAVE = 40;
+static const byte SETTING_LINEARSAW = 41;
+
+static const byte SETTING_BEZIERWAVE = 50;
+static const byte SETTING_BEZIERSAW = 51;
+
+static const byte SETTING_SQUAREWAVE = 60;
+
+static const byte SETTING_NOISE = 70;
+static const byte SETTING_SEEDNOISE = 71;
+static const byte SETTING_PERLINNOISE = 72;
+
+
+static const byte SETTING_EFFECT_DIVIDER = 100;
+// 100-149 are Effects
+static const byte EFFECT_NONE = 100;
+static const byte EFFECT_INVERSE = 101;
+static const byte EFFECT_ADD = 110;
+static const byte EFFECT_SUBTRACT = 111;
+static const byte EFFECT_ADDPERCENTAGE = 112;
+static const byte EFFECT_SUBTRACTPERCENTAGE = 113;
+static const byte EFFECT_PERCENTAGE = 114;
 
 static const byte LIGHT_SET_CHANNEL = 150;
 
 static const byte CHANNEL_SET_SETTING = 160;
 static const byte CHANNEL_SET_CHANNEL = 161;
+static const byte CHANNEL_SET_STATIC = 162;
+
 static const byte CHANNEL_ADD_EFFECT = 170;
 static const byte CHANNEL_REMOVE_EFFECT = 171;
 static const byte CHANNEL_REMOVE_EFFECTS = 172;

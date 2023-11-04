@@ -13,7 +13,8 @@ const bool IS_BOTTOM = true;
 const byte rtcPin = 21;
 volatile byte fract = 0;
 volatile unsigned long NOW = 0;
-unsigned long now = 0;
+unsigned long now = 1;
+unsigned long lastNow = 0;
 
 bool syncing = false;
 const byte syncPinTop = 13;
@@ -122,16 +123,16 @@ Effect effects[numberOfEffects];
 
 Channel channels[numberOfChannels] = {
   Channel(0),
-  Channel(10),
+  Channel(5),
   Channel(20),
-  Channel(30),
   Channel(40),
   Channel(50),
-  Channel(60),
-  Channel(70),
   Channel(80),
-  Channel(90),
   Channel(100),
+  Channel(),
+  Channel(),
+  Channel(),
+  Channel(),
   Channel(),
   Channel(),
   Channel(),
@@ -196,14 +197,18 @@ void light_set_channel(byte index, byte targetlights){
 void channel_set_setting(byte channelindex, byte settingindex){
   if(channelindex < numberOfChannels && settingindex < numberOfSettings){
     channels[channelindex].set_setting(&settings[settingindex]);
-    channels[channelindex].set_channel(nullptr);
   }
 }
 
 void channel_set_channel(byte channelindex, byte inputchannelindex){
   if(channelindex < numberOfChannels && inputchannelindex < numberOfChannels){
     channels[channelindex].set_channel(&channels[inputchannelindex]);
-    channels[channelindex].set_setting(nullptr);
+  }
+}
+
+void channel_set_static(byte channelindex, byte state){
+  if(channelindex < numberOfChannels){
+    channels[channelindex].set_static(state);
   }
 } 
 
@@ -287,19 +292,16 @@ void parse_data() {
   set7 = 0;
   set8 = 0;
 
-  Setting setting;
-  Setting effect;
-
   type = interpreter.inputBuffer[0];
   target = interpreter.inputBuffer[1];
 
   switch(type){
-    case SETTING_STATICLIGHT: {
+    case SETTING_STATIC: {
       //set1: state 
       set1 = interpreter.inputBuffer[2];
     } break;
 
-    case SETTING_STATICFLASH: {
+    case SETTING_SINGULARFLASH: {
       //set1: start state
       //set2: to state
       //set3: flash time
@@ -308,7 +310,7 @@ void parse_data() {
       set3 = interpreter.inputBuffer[4];
     } break;
 
-    case SETTING_STATICMACHINE: {
+    case SETTING_SINGULARBURST: {
       //set1: on state
       //set2: off state
       //set3: on time
@@ -321,7 +323,7 @@ void parse_data() {
       set5 = interpreter.inputBuffer[6];
     } break;
 
-    case SETTING_LINEARDIMM: {
+    case SETTING_SINGULARLINEAR: {
       //set1: start state
       //set2: to state
       //set3: steptime
@@ -330,7 +332,7 @@ void parse_data() {
       set3 = interpreter.inputBuffer[4];
     } break;
 
-    case SETTING_BEZIERDIMM: {
+    case SETTING_SINGULARBEZIER: {
       //set1: start state
       //set2: to state
       //set3: steptime
@@ -345,35 +347,146 @@ void parse_data() {
       set6 = interpreter.inputBuffer[7];
     } break;
 
-    case EFFECT_UPVIBRATO: 
-    case EFFECT_DOWNVIBRATO:
-    case EFFECT_UPDOWNVIBRATO: {
-      //set1: amplitude channel index
-      //set2: steptime channel index
-      set1 = interpreter.inputBuffer[2];
-      set2 = interpreter.inputBuffer[3];
-    } break;
-
-    case EFFECT_STROBE: {
-      //set1: amplitude channel index
-      //set2: steptime channel index
-      //set3: steptime factor
-      //set4: multisetting
+    case SETTING_SINWAVE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      //set4: decisteps for intervalsteps channel
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
       set4 = interpreter.inputBuffer[5];
     } break;
 
-    case EFFECT_PERLIN: {
-      //set1: amplitude channel index
-      //set2: steptime channel index
-      //set3: steptime factor
-      //set4: multisetting
+    case SETTING_LINEARWAVE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
+    case SETTING_LINEARSAW: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+    } break;
+
+    case SETTING_BEZIERWAVE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      //set4: decisteps for intervalsteps channel
+      //set5: y1 channel
+      //set6: y2 channel
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
       set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
+    } break;
+
+    case SETTING_BEZIERSAW: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      //set4: decisteps for intervalsteps channel
+      //set5: y1 channel
+      //set6: y2 channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
+    } break;
+
+    case SETTING_SQUAREWAVE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: from steptime channel
+      //set4: to steptime channel
+      //set5: from steptime-factor channel
+      //set6: to steptime-factor channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
+    } break;
+
+    case SETTING_NOISE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      //set4: steptime-factor channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+    } break;
+
+    case SETTING_SEEDNOISE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      //set4: steptime-factor channel
+      //set5: seed channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+    } break;
+
+    case SETTING_PERLINNOISE: {
+      //set1: from state channel
+      //set2: to state channel
+      //set3: steptime channel
+      //set4: steptime-factor channel
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+    } break;
+
+    case EFFECT_NONE: {
+      // Does not need any input
+    } break;
+
+    case EFFECT_INVERSE: {
+      // Does not need any input
+    } break;
+
+    case EFFECT_ADD: {
+      //set1: y in state = state + y
+      set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case EFFECT_SUBTRACT: {
+      //set1: y in state = state - y
+      set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case EFFECT_ADDPERCENTAGE: {
+      //set1: y in state = state + (state * y/100)
+      set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case EFFECT_SUBTRACTPERCENTAGE: {
+      //set1: y in state = state - (state * y/100)
+      set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case EFFECT_PERCENTAGE: {
+      //set1:  y in state = state * y/100
+      set1 = interpreter.inputBuffer[2];
     } break;
 
     case LIGHT_SET_CHANNEL: {
@@ -394,6 +507,13 @@ void parse_data() {
       //set1: channelindex
       set1 = interpreter.inputBuffer[2];
       channel_set_channel(target, set1);
+      return;
+    } break;
+
+    case CHANNEL_SET_STATIC: {
+      //set1: staticState
+      set1 = interpreter.inputBuffer[2];
+      channel_set_static(target, set1);
       return;
     } break;
 
@@ -474,13 +594,14 @@ void parse_data() {
   }
 
   // Settings
-  if(type < 60){
-    setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6, set7, set8));
+  if(type < SETTING_SINGULAR_DIVIDER){
+    setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6));
+  }
+  else if(type < SETTING_EFFECT_DIVIDER){
+    setting_add(target, Setting(type, &channels[set1], &channels[set2], &channels[set3], &channels[set4], &channels[set5], &channels[set6]));
   } 
   else if(type < 150){
-    if(set1 < numberOfChannels && set2 < numberOfChannels){
-      effect_add(target, Effect(type, &channels[set1], &channels[set2], set3, set4, set5, set6, set7, set8));
-    }
+    effect_add(target, Effect(type, &channels[set1]));
   }
 }
 
@@ -560,7 +681,7 @@ void setup() {
 
 void loop() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-     now = NOW;
+    now = NOW;
   }
 
   read_serial();
@@ -575,7 +696,8 @@ void loop() {
       rtc_sync_top();
     }
   } 
-  else {
+  else if(now != lastNow){
+    lastNow = now;
     update_lights();
     if(IS_BOTTOM){
       motor.update(now);
