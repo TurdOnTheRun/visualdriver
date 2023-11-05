@@ -85,9 +85,8 @@ void pwm_setup(){
   }
 }
 
-// ARDUINO SPECIFIC
 Motor motor = Motor(11, 12);
-const byte numberOfLights = 2;
+const byte numberOfLights = 4;
 
 //Available Pins:
 //2,3,5,6,7,8,9,10,11,12
@@ -149,8 +148,8 @@ Channel channels[numberOfChannels] = {
 Light lights[numberOfLights] = {
   Light(0, light1, &channels[0]),
   Light(1, light2, &channels[0]),
-  // Light(2, light3, &channels[3]),
-  // Light(3, light4, &channels[3]),
+  Light(2, light3, &channels[0]),
+  Light(3, light4, &channels[0]),
 //  Light(5, light5),
 //  Light(6, light6),
 //  Light(7, light7),
@@ -638,6 +637,12 @@ void lights_setup() {
   for(byte i = 0; i < numberOfLights; i++) {
     lights[i].init();
   };
+  if(!IS_BOTTOM){
+    lights[0].set_channel(&channels[2]);
+    lights[1].set_channel(&channels[2]);
+    lights[2].set_channel(&channels[2]);
+    lights[3].set_channel(&channels[2]);
+  }
 }
 
 void rtc_sync_bottom(){
@@ -648,16 +653,16 @@ void rtc_sync_bottom(){
   syncNow = false;
   if(syncDelta == 0){
     lights[0].set_channel(&channels[0]);
-    lights[1].set_channel(&channels[0]);
+    lights[2].set_channel(&channels[0]);
   } else if(syncDelta < 1 || syncDelta == SYNC_MILLIS - 1){
     lights[0].set_channel(&channels[1]);
-    lights[1].set_channel(&channels[0]);
+    lights[2].set_channel(&channels[0]);
   } else if(syncDelta < 2 || syncDelta == SYNC_MILLIS - 2){
     lights[0].set_channel(&channels[0]);
-    lights[1].set_channel(&channels[1]);
+    lights[2].set_channel(&channels[1]);
   } else {
     lights[0].set_channel(&channels[1]);
-    lights[1].set_channel(&channels[1]);
+    lights[2].set_channel(&channels[1]);
   }
   update_lights();
 }
@@ -674,7 +679,7 @@ void setup() {
     // Serial.begin(9600);
     Serial1.begin(115200);
   }
-  delay(2000);
+  delay(1000);
   lights_setup();
   update_lights();
 }
