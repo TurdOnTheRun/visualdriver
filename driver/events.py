@@ -419,6 +419,75 @@ class SettingBezierDimm(ArduinoEvent):
         else:
             return command
 
+
+class SettingBezierBeforeFlash(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, fromState, toState, steptime, decisteps, y1, y2, flashtime, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.fromState = fromState
+        self.toState = toState
+        self.steptime = steptime
+        self.decisteps = decisteps
+        self.y1 = y1
+        self.y2 = y2
+        self.flashtime = flashtime
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingBezierBeforeFlash({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromState, self.toState, self.steptime, self.decisteps, self.y1, self.y2, self.flashtime, self.hasVariable)
+    
+    def check_init(self):
+        self.check_state(self.fromState)
+        self.check_state(self.toState)
+        self.check_state(self.y1)
+        self.check_state(self.y2)
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [21, self.settingIndex, self.fromState, self.toState, self.steptime, self.decisteps, self.y1, self.y2, self.flashtime]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
+class SettingBezierAfterFlash(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, fromState, toState, steptime, decisteps, y1, y2, flashtime, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.fromState = fromState
+        self.toState = toState
+        self.steptime = steptime
+        self.decisteps = decisteps
+        self.y1 = y1
+        self.y2 = y2
+        self.flashtime = flashtime
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingBezierAfterFlash({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.fromState, self.toState, self.steptime, self.decisteps, self.y1, self.y2, self.flashtime, self.hasVariable)
+    
+    def check_init(self):
+        self.check_state(self.fromState)
+        self.check_state(self.toState)
+        self.check_state(self.y1)
+        self.check_state(self.y2)
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [22, self.settingIndex, self.fromState, self.toState, self.steptime, self.decisteps, self.y1, self.y2, self.flashtime]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+        
+
 class SettingSinWave(ArduinoEvent):
 
     def __init__(self, condition, controller, settingIndex, fromChannel, toChannel, steptimeChannel, decistepsChannel, hasVariable=False):

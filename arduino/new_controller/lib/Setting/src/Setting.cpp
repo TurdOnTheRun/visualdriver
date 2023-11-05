@@ -19,7 +19,7 @@ Setting::Setting()
   _type = SETTING_STATIC;
   _state = 0;
 }
-Setting::Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6)
+Setting::Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6, byte set7)
 {
   _type = type;
 
@@ -95,6 +95,60 @@ Setting::Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set
         _type = SETTING_STATIC;
       }
     } break;
+
+    case SETTING_SINGULARBEZIERBEFOREFLASH: {
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      //set4: decisteps
+      //set5: y1 of bezier input
+      //set6: y2 of bezier input
+      //set7: flashtime
+      _state = set1;
+      _state1 = set1;
+      _state2 = set2;
+      _steptime = set3;
+      //Decisteps
+      _intervalsteps = (unsigned int) set4*10;
+      //Y1
+      _setA = set5;
+      //Y2
+      _setB = set6;
+      //flashtime
+      _setC = set7;
+      if(_steptime == 0){
+        _state = _state2;
+        _type = SETTING_STATIC;
+      }
+    } break;
+
+    case SETTING_SINGULARBEZIERAFTERFLASH: {
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      //set4: decisteps
+      //set5: y1 of bezier input
+      //set6: y2 of bezier input
+      //set7: flashtime
+      _state = set1;
+      _state1 = set1;
+      _state2 = set2;
+      //Decisteps
+      _intervalsteps = (unsigned int) set4*10;
+      //_steptime is equal to flashtime because flash is first
+      _steptime = set7;
+      //Y1
+      _setA = set5;
+      //Y2
+      _setB = set6;
+      //steptime for bezier
+      _setC = set3;
+      if(_steptime == 0){
+        _state = _state2;
+        _type = SETTING_STATIC;
+      }
+    } break;
+
   }
 }
 
@@ -379,10 +433,19 @@ byte Setting::get_state(unsigned long now)
           _set_state_from_newstate();
         } break;
 
-        // case BEZIERAPPEARFLASH: --> use fall through mechanic: https://stackoverflow.com/questions/4704986/switch-statement-using-or
         case SETTING_SINGULARBEZIER: {
           _update_singularbezier();
           _set_state_from_newstate();
+        } break;
+
+        case SETTING_SINGULARBEZIERBEFOREFLASH: {
+          _update_singularbezier();
+          _set_state_from_newstate();
+        } break;
+
+        case SETTING_SINGULARBEZIERAFTERFLASH: {
+          _steptime = _setC;
+          _type = SETTING_SINGULARBEZIER;
         } break;
 
         case SETTING_SINWAVE: {
@@ -467,15 +530,13 @@ void Setting::_update_singularbezier()
             
     if(_intervalstep >= _intervalsteps){
       _newstate = _state2;
-      if(_type == SETTING_SINGULARBEZIER){
+      if(_type == SETTING_SINGULARBEZIERBEFOREFLASH){
+        _type = SETTING_SINGULARFLASH;
+        _steptime = _setC;
+        _state2 = 0;
+      } else {
         _type = SETTING_STATIC;
-      }
-      // elif BEZIERAPPEARFLASH{}
-      // if(_set5 > 0){
-      //   _steptime = _set5;
-      //   _tostate = 0;
-      //   _type = 4;
-      // }
+      } 
     } else {
       _bz = bezier(_intervalstep);
       _newstate = (int) _state1 + _bz * (_state2 - _state1);
@@ -484,7 +545,13 @@ void Setting::_update_singularbezier()
             
     if (_intervalstep >= _intervalsteps){
       _newstate = _state2;
-      _type = SETTING_STATIC;
+      if(_type == SETTING_SINGULARBEZIERBEFOREFLASH){
+        _type = SETTING_SINGULARFLASH;
+        _steptime = _setC;
+        _state2 = 0;
+      } else {
+        _type = SETTING_STATIC;
+      } 
     } else {
       _bz = bezier(_intervalstep);
       _newstate = (int) _state1 - _bz * (_state1 - _state2);

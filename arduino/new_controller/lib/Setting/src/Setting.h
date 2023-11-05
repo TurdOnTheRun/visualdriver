@@ -98,7 +98,7 @@ class Setting {
     
   public:
     Setting();
-    Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6);
+    Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6, byte set7);
     Setting(byte type, Channel* channel1, Channel* channel2, Channel* channel3, Channel* channel4, Channel* channel5, Channel* channel6);
     byte get_state();
     byte get_state(unsigned long now);

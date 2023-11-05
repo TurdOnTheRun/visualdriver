@@ -346,6 +346,40 @@ void parse_data() {
       set6 = interpreter.inputBuffer[7];
     } break;
 
+    case SETTING_SINGULARBEZIERBEFOREFLASH: {
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      //set4: decisteps
+      //set5: y1 of bezier input
+      //set6: y2 of bezier input
+      //set7: flashtime
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
+      set7 = interpreter.inputBuffer[8];
+    } break;
+
+    case SETTING_SINGULARBEZIERAFTERFLASH: {
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      //set4: decisteps
+      //set5: y1 of bezier input
+      //set6: y2 of bezier input
+      //set7: flashtime
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
+      set7 = interpreter.inputBuffer[8];
+    } break;
+
     case SETTING_SINWAVE: {
       //set1: from state channel
       //set2: to state channel
@@ -594,7 +628,7 @@ void parse_data() {
 
   // Settings
   if(type < SETTING_SINGULAR_DIVIDER){
-    setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6));
+    setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6, set7));
   }
   else if(type < SETTING_EFFECT_DIVIDER){
     setting_add(target, Setting(type, &channels[set1], &channels[set2], &channels[set3], &channels[set4], &channels[set5], &channels[set6]));

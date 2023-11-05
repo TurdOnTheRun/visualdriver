@@ -81,6 +81,9 @@ byte Effect::get_state(unsigned long now, byte state)
       _newstate = (int) (state * _varA/100.0f);
       return _get_state_from_newstate();
     } break;
+    default: {
+      return state;
+    } break;
   }
 }
 
