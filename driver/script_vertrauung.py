@@ -18,6 +18,9 @@ music = '/home/maximilian/music/vertrauung.mp3'
 bottomRightLightSetting = 0
 bottomRightLightChannel = Channel12
 
+bottomLeftLightSetting = 3
+bottomLeftLightChannel = Channel16
+
 bottomVibratoControlSetting = 1
 bottomVibratoControlChannel = Channel13
 
@@ -30,6 +33,10 @@ bottomVibratoEffect = 0
 eventDict['time'].append(SettingStatic(At(0), BottomController, bottomRightLightSetting, 0))
 eventDict['time'].append(ChannelSetSetting(At(0), BottomController, bottomRightLightChannel, bottomRightLightSetting))
 eventDict['time'].append(LightSetChannel(At(0), BottomController, [Light3, Light4], bottomRightLightChannel))
+# Bottom Right Light
+eventDict['time'].append(SettingStatic(At(0), BottomController, bottomLeftLightSetting, 0))
+eventDict['time'].append(ChannelSetSetting(At(0), BottomController, bottomLeftLightChannel, bottomLeftLightSetting))
+eventDict['time'].append(LightSetChannel(At(0), BottomController, [Light1, Light2], bottomLeftLightChannel))
 # Bottom Vibrato Control
 eventDict['time'].append(SettingStatic(At(0), BottomController, bottomVibratoControlSetting, 14))
 eventDict['time'].append(ChannelSetSetting(At(0), BottomController, bottomVibratoControlChannel, bottomVibratoControlSetting))
@@ -40,9 +47,10 @@ eventDict['time'].append(ChannelSetSetting(At(0), BottomController, bottomVibrat
 eventDict['time'].append(EffectSubtractPercentage(At(0), BottomController, bottomVibratoEffect, bottomVibratoChannel))
 # Bottom Vibrato Assign
 eventDict['time'].append(ChannelAddEffect(At(0), BottomController, bottomRightLightChannel, bottomVibratoEffect, 0))
+eventDict['time'].append(ChannelAddEffect(At(0), BottomController, bottomLeftLightChannel, bottomVibratoEffect, 0))
+
 
 # TOP
-
 topLightSetting = 0
 topLightChannel = Channel12
 
@@ -363,148 +371,175 @@ eventDict['time'].append(SettingBezierDimm(At(starttime), TopController, topVibr
 eventDict['time'].append(SettingBezierDimm(At(starttime), TopController, topSquareStrengthSetting, 0, 10, int(dimminduration*10), 10, 0, 40))
 
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), TopAll, strength, 5, int(dimmdownduration*10), 100, 100, 100, 100))
-eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), TopController, topLightSetting, strength, 0, int(dimmdownduration*5), 20, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), TopController, topLightSetting, strength, 3, int(dimmdownduration*5), 20, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), TopController, topVibratoControlSetting, 10, 0, int(dimmdownduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), TopController, topSquareStrengthSetting, 10, 0, int(dimmdownduration*10), 10, 0, 100))
 
-# DELETE
-eventDict['time'].append(EffectNone(At(starttime + totalduration+3), TopController, 1))
 
+# Strings start
+# 1
+# up 95 -  97 
+# down 98-98.6 
+# up 98.6-100
 
-# # Strings start
-# # 1
-# # up 95 -  97 
-# # down 98-98.6 
-# # up 98.6-100
+# eventDict['time'].append(MotorSpeed(At(93), 50))
 
-# # eventDict['time'].append(MotorSpeed(At(93), 50))
-# eventDict['time'].append(Vibrato(At(95), BottomAll, 3, 10, 3))
-
-# starttime = beginning + 95
-# totalduration = 3.6
-# dimminduration = 2
-# dimmdownduration = .6
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 90
+starttime = beginning + 95
+totalduration = 3.6
+dimminduration = 2
+dimmdownduration = .6
+on = totalduration - dimminduration - dimmdownduration
+strength = 80
 # eventDict['time'].append(InstantBezier(At(starttime), TopAll, 5, 0, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), TopController, topLightSetting, 3, 0, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 10, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 0, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom2, strength, 60, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomRightLightSetting, strength, 50, int(dimmdownduration*10), 10, 0, 100))
 
-# starttime = beginning + 98.6
-# dimminduration = 1.2
-# strength = 100
+
+starttime = beginning + 98.6
+dimminduration = 1.2
+strength = 85
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 50, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 60, strength, int(dimminduration*10), 100, 100, 100, 100))
 
-# # 2
-# # up 100-101.5 
-# # down 102.5 - 103
-# # up2 103-103.6
-# starttime = beginning + 100
-# totalduration = 3
-# dimminduration = 1.5
-# dimmdownduration = .5
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 100
+# 2
+# up 100-101.5 
+# down 102.5 - 103
+# up2 103-103.6
+starttime = beginning + 100
+totalduration = 3
+dimminduration = 1.5
+dimmdownduration = .5
+on = totalduration - dimminduration - dimmdownduration
+strength = 90
 # # dimmout right
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 90, 0, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 85, 0, int(dimminduration*10), 10, 0, 100))
+
 # # dimmwave left
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom1, 0, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomLeftLightSetting, 0, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom1, strength, 60, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomLeftLightSetting, strength, 60, int(dimmdownduration*10), 10, 0, 100))
 
-# starttime = beginning + 103
-# dimminduration = .6
-# strength = 100
+
+starttime = beginning + 103
+dimminduration = .6
+strength = 90
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom1, 60, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomLeftLightSetting, 50, strength, int(dimminduration*10), 10, 0, 100))
 
-# # 3:
-# # up 105 - 106.4
-# # down 107 - 108.3
-# # up 108.3 - 109.3
-# starttime = beginning + 105
-# totalduration = 3.3
-# dimminduration = 1.4
-# dimmdownduration = 1.3
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 100
+
+# 3:
+# up 105 - 106.4
+# down 107 - 108.3
+# up 108.3 - 109.3
+starttime = beginning + 105
+totalduration = 3.3
+dimminduration = 1.4
+dimmdownduration = 1.3
+on = totalduration - dimminduration - dimmdownduration
+strength = 90
 # # dimmout left
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom1, strength, 0, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomLeftLightSetting, 90, 0, int(dimminduration*10), 10, 0, 100))
+
 # # dimmwave right
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 0, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 0, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom2, strength, 60, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomRightLightSetting, strength, 50, int(dimmdownduration*10), 10, 0, 100))
 
-# starttime = beginning + 108.3
-# dimminduration = 1
-# strength = 100
+
+starttime = beginning + 108.3
+dimminduration = 1
+strength = 90
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 60, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 50, strength, int(dimminduration*10), 10, 0, 100))
 
-# # 4
-# # up:  111 - 112 
-# # down: 112.3 - 113.4
-# # up 113.4 - 114
-# # down 115 - 116
-# starttime = beginning + 111
-# totalduration = 3
-# dimminduration = 1
-# dimmdownduration = 1.2
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 100
+
+# 4
+# up:  111 - 112 
+# down: 112.3 - 113.4
+# up 113.4 - 114
+# down 115 - 116
+starttime = beginning + 111
+totalduration = 3
+dimminduration = 1
+dimmdownduration = 1.2
+on = totalduration - dimminduration - dimmdownduration
+strength = 90
 # # dimmout right
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, strength, 0, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 90, 0, int(dimminduration*10), 10, 0, 100))
+
 # # dimmwave left
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom1, 0, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomLeftLightSetting, 0, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom1, strength, 60, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomLeftLightSetting, strength, 50, int(dimmdownduration*10), 10, 0, 100))
 
-# starttime = beginning + 113.4
-# totalduration = 2.6
-# dimminduration = .6
-# dimmdownduration = 1
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 100
+
+starttime = beginning + 113.4
+totalduration = 2.6
+dimminduration = .6
+dimmdownduration = 1
+on = totalduration - dimminduration - dimmdownduration
+strength = 90
 # # dimmwave left
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom1, 60, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomLeftLightSetting, 50, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom1, strength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomLeftLightSetting, strength, 0, int(dimmdownduration*5), 20, 0, 100))
 
-# # 5
-# # up: 116 - 117.6
-# # down 119 - 120
-# # strong vibrato at 120
-# # up 120 - 120,4
-# # down: 120.6 - 121.3
-# starttime = beginning + 116
-# totalduration = 4
-# dimminduration = 1.6
-# dimmdownduration = 1
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 100
+# 5
+# up: 116 - 117.6
+# down 119 - 120
+# strong vibrato at 120
+# up 120 - 120,4
+# down: 120.6 - 121.3
+starttime = beginning + 116
+totalduration = 4
+dimminduration = 1.6
+dimmdownduration = 1
+on = totalduration - dimminduration - dimmdownduration
+strength = 90
 
 # # dimmwave right
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 0, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 0, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom2, strength, 60, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomRightLightSetting, strength, 40, int(dimmdownduration*10), 10, 0, 100))
 
-# starttime = beginning + 120
-# totalduration = 1.3
-# dimminduration = .4
-# dimmdownduration = .7
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 80
+
+starttime = beginning + 120
+totalduration = 1.3
+dimminduration = .4
+dimmdownduration = .7
+on = totalduration - dimminduration - dimmdownduration
+strength = 80
 # # dimmwave right
 # eventDict['time'].append(Vibrato(At(starttime), Bottom2, 3, 40, 3))
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 60, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 40, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom2, strength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomRightLightSetting, strength, 0, int(dimmdownduration*10), 10, 0, 100))
 # eventDict['time'].append(Vibrato(At(121.3), Bottom2, 3, 10, 3))
 
-# # 6
-# # top with vibrato 
-# # up: 121.5 - 123
-# # down: 124 - 125
-# # up 125 - 126
-# # down 126 - 126.8
-# starttime = beginning + 121.5
-# totalduration = 3.5
-# dimminduration = 1.5
-# dimmdownduration = 1
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 80
+# 6
+# top with vibrato 
+# up: 121.5 - 123
+# down: 124 - 125
+# up 125 - 126
+# down 126 - 126.8
+starttime = beginning + 121.5
+totalduration = 3.5
+dimminduration = 1.5
+dimmdownduration = 1
+on = totalduration - dimminduration - dimmdownduration
+strength = 70
 # topstrength = 40
 # #dimmewave top
 # eventDict['time'].append(Vibrato(At(starttime), TopAll, 3, 80, 4))
@@ -512,94 +547,111 @@ eventDict['time'].append(EffectNone(At(starttime + totalduration+3), TopControll
 # # dimmwave left
 # eventDict['time'].append(Vibrato(At(starttime), Bottom1, 3, 40, 3))
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom1, 0, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomLeftLightSetting, 0, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom1, strength, 40, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomLeftLightSetting, strength, 30, int(dimmdownduration*5), 20, 0, 100))
 
-# starttime = beginning + 125
-# totalduration = 1.8
-# dimminduration = 1
-# dimmdownduration = .8
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 60
+
+starttime = beginning + 125
+totalduration = 1.8
+dimminduration = 1
+dimmdownduration = .8
+on = totalduration - dimminduration - dimmdownduration
+strength = 50
 # #dimmewave top
 # eventDict['time'].append(InstantBezier(At(starttime), TopAll, topstrength, 0, int(totalduration*10), 100, 100, 100, 100))
 # # dimmwave left
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom1, 40, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomLeftLightSetting, 30, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom1, strength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomLeftLightSetting, strength, 0, int(dimmdownduration*10), 10, 0, 100))
 # eventDict['time'].append(Vibrato(At(126.8), TopAll, 0, 0, 0))
 # eventDict['time'].append(Vibrato(At(126.8), Bottom1, 3, 10, 3))
 
 
-# # 7
-# # up: 126.8 - 129
-# # down: 129.4 - 130
-# # up 130.2 - 131.2
-# # down 132-132.6
-# starttime = beginning + 126.8
-# totalduration = 3.2
-# dimminduration = 2.2
-# dimmdownduration = .6
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 100
-# topstrength = 20
+# 7
+# up: 126.8 - 129
+# down: 129.4 - 130
+# up 130.2 - 131.2
+# down 132-132.6
+starttime = beginning + 126.8
+totalduration = 3.2
+dimminduration = 2.2
+dimmdownduration = .6
+on = totalduration - dimminduration - dimmdownduration
+strength = 85
+topstrength = 20
 
 # eventDict['time'].append(Vibrato(At(starttime), TopAll, 3, 10, 4))
 # eventDict['time'].append(InstantBezier(At(starttime), TopAll, 0, topstrength, int(dimminduration*10), 100, 100, 100, 100))
 # # dimmwave right
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 0, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 0, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom2, strength, 60, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomRightLightSetting, strength, 50, int(dimmdownduration*10), 10, 0, 100))
 
-# starttime = beginning + 130.2
-# totalduration = 2.4
-# dimminduration = 1
-# dimmdownduration = .6
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 80
+
+starttime = beginning + 130.2
+totalduration = 2.4
+dimminduration = 1
+dimmdownduration = .6
+on = totalduration - dimminduration - dimmdownduration
+strength = 80
 # # dimmwave right
 # eventDict['time'].append(InstantBezier(At(starttime), TopAll, topstrength, 0, int(totalduration*10), 100, 100, 100, 100))
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 60, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 50, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom2, strength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomRightLightSetting, strength, 0, int(dimmdownduration*10), 10, 0, 100))
 
-# # 8
-# # strong vibrato 133 - 137
-# # up: 132 - 134.8
-# # down: 136 - 138
-# starttime = beginning + 132
-# totalduration = 6
-# dimminduration = 2.8
-# dimmdownduration = 2
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 100
-# topstrength = 30
+
+# 8
+# strong vibrato 133 - 137
+# up: 132 - 134.8
+# down: 136 - 138
+starttime = beginning + 132
+totalduration = 6
+dimminduration = 2.8
+dimmdownduration = 2
+on = totalduration - dimminduration - dimmdownduration
+strength = 90
+topstrength = 30
 
 # eventDict['time'].append(Vibrato(At(starttime), TopAll, 3, 5, 4))
 # eventDict['time'].append(InstantBezier(At(starttime), TopAll, 0, topstrength, int(dimminduration*10), 100, 100, 100, 100))
 
-# # dimmwave right
+# # dimmwave left
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom1, 0, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomLeftLightSetting, 0, strength, int(dimminduration*10), 10, 0, 100))
+
 # eventDict['time'].append(Vibrato(At(starttime), TopAll, 3, 80, 4))
 # eventDict['time'].append(Vibrato(At(133.5), Bottom1, 3, 40, 4))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), TopAll, topstrength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom1, strength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomLeftLightSetting, strength, 0, int(dimmdownduration*10), 10, 0, 100))
 # eventDict['time'].append(Vibrato(At(137), Bottom2, 3, 10, 3))
 # eventDict['time'].append(Vibrato(At(137), TopAll, 0, 0, 0))
 
 
-# # 9
-# # up: 138 - 139.5
-# # down: 143 - 146
-# starttime = beginning + 138
-# totalduration = 8
-# dimminduration = 1.5
-# dimmdownduration = 2
-# on = totalduration - dimminduration - dimmdownduration
-# strength = 80
-# # dimmwave right
+# 9
+# up: 138 - 139.5
+# down: 143 - 146
+starttime = beginning + 138
+totalduration = 8
+dimminduration = 1.5
+dimmdownduration = 2
+on = totalduration - dimminduration - dimmdownduration
+strength = 80
+# dimmwave right
 # eventDict['time'].append(InstantBezier(At(starttime), Bottom2, 0, strength, int(dimminduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime), BottomController, bottomRightLightSetting, 0, strength, int(dimminduration*10), 10, 0, 100))
 # eventDict['time'].append(InstantBezier(At(starttime + dimminduration + on), Bottom2, strength, 0, int(dimmdownduration*10), 100, 100, 100, 100))
+eventDict['time'].append(SettingBezierDimm(At(starttime + dimminduration + on), BottomController, bottomRightLightSetting, strength, 0, int(dimmdownduration*10), 10, 0, 100))
 
+eventDict['time'].append(ChannelRemoveEffects(At(150), BottomController, Channel20))
 
 # eventDict['time'].append(InstantBezier(At(150), TopAll, 100, 0, int(duration*10), 100, 100, 100, 100))
 
 
-vd = VisualDriver(eventDict, music=music, startTime=39)
+vd = VisualDriver(eventDict, music=music, startTime=90)
 vd.start()
