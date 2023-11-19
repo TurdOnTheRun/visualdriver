@@ -597,7 +597,7 @@ void Setting::_update_sinwave_inputs(unsigned long now)
     _steptime = 1;
   }
   if(_intervalsteps == 0){
-    _intervalsteps = 1;
+    _intervalsteps = 10;
   }
 }
 
@@ -716,7 +716,7 @@ void Setting::_init_bezier_inputs(Channel* channel1, Channel* channel2, Channel*
     _steptime = 1;
   }
   if(_intervalsteps == 0){
-    _intervalsteps = 1;
+    _intervalsteps = 10;
   }
 }
 
@@ -738,7 +738,7 @@ void Setting::_update_bezier_inputs(unsigned long now)
     _steptime = 1;
   }
   if(_intervalsteps == 0){
-    _intervalsteps = 1;
+    _intervalsteps = 10;
   }
 }
 

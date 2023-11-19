@@ -28,8 +28,8 @@ music = '/home/maximilian/music/guardians.mp3'
 # BOTTOM LIGHTS
 eventDict['time'].append(LightSetChannel(At(0), BottomController, [Light1], Channel1))
 eventDict['time'].append(LightSetChannel(At(0), BottomController, [Light2], Channel2))
-eventDict['time'].append(SettingStaticLight(At(0), BottomController, 0, 0))
-eventDict['time'].append(SettingStaticLight(At(0), BottomController, 1, 0))
+eventDict['time'].append(SettingStatic(At(0), BottomController, 0, 0))
+eventDict['time'].append(SettingStatic(At(0), BottomController, 1, 0))
 eventDict['time'].append(ChannelSetSetting(At(0), BottomController, Channel1, 0))
 eventDict['time'].append(ChannelSetSetting(At(0), BottomController, Channel2, 1))
 
@@ -70,9 +70,9 @@ eventDict['time'].append(ChannelAddEffect(At(0), TopController, Channel3, 0, 0))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel1, 0))
 
 # Vibrato Setup
-eventDict['time'].append(SettingStaticLight(At(0), TopController, 1, 0))
+eventDict['time'].append(SettingStatic(At(0), TopController, 1, 0))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel2, 1))
-eventDict['time'].append(SettingStaticLight(At(0), TopController, 2, 1))
+eventDict['time'].append(SettingStatic(At(0), TopController, 2, 1))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel3, 2))
 eventDict['time'].append(EffectDownVibrato(At(0), TopController, 1, Channel2, Channel3))
 eventDict['time'].append(ChannelAddEffect(At(0), TopController, Channel1, 1, 1))
@@ -80,10 +80,10 @@ eventDict['time'].append(ChannelAddEffect(At(0), TopController, Channel1, 1, 1))
 
 # Strobe Setup
 #amplitude
-eventDict['time'].append(SettingStaticLight(At(0), TopController, 3, 20))
+eventDict['time'].append(SettingStatic(At(0), TopController, 3, 20))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel4, 3))
 #steptime
-eventDict['time'].append(SettingStaticLight(At(0), TopController, 4, 20))
+eventDict['time'].append(SettingStatic(At(0), TopController, 4, 20))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel5, 4))
 eventDict['time'].append(EffectStrobe(At(0), TopController, 2, Channel4, Channel5, 1, [Light1,]))
 
@@ -105,7 +105,7 @@ duration = 0.75
 decisteps = 15
 eventDict['time'].append(SettingBezierDimm(At(beginning+1), BottomController, 2, 0, 30, int(duration*100/decisteps), decisteps, 0, 50))
 eventDict['time'].append(ChannelSetSetting(At(beginning+1), BottomController, Channel3, 2))
-eventDict['time'].append(SettingStaticLight(At(beginning+1), BottomController, 3, 10))
+eventDict['time'].append(SettingStatic(At(beginning+1), BottomController, 3, 10))
 eventDict['time'].append(ChannelSetSetting(At(beginning+1), BottomController, Channel4, 3))
 
 
@@ -179,7 +179,7 @@ eventDict['time'].append(SettingBezierDimm(At(beginning+7.75), TopController, 1,
 # 8.5
 
 #Vibrato back up
-eventDict['time'].append(SettingStaticLight(At(beginning+8.5), TopController, 1, 20))
+eventDict['time'].append(SettingStatic(At(beginning+8.5), TopController, 1, 20))
 
 # Top Strobe
 eventDict['time'].append(ChannelAddEffect(At(beginning+8.5), TopController, Channel1, 2, 2))
@@ -254,7 +254,7 @@ eventDict['time'].append(SettingBezierDimm(At(beginning+15), TopController, 1, 1
 
 # 62 Vibrato Off
 # 15.5
-eventDict['time'].append(SettingStaticLight(At(beginning+15.5), TopController, 1, 0))
+eventDict['time'].append(SettingStatic(At(beginning+15.5), TopController, 1, 0))
 
 # 62-65
 # 15.5-16.25

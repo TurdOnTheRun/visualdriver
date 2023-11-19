@@ -19,16 +19,16 @@ t=0
 
 
 lightChannel = Channel10
-# eventDict['time'].append(SettingStaticLight(At(t), controll, 0, 0))
-eventDict['time'].append(SettingStaticLight(At(t), BottomController, 0, 0))
+# eventDict['time'].append(SettingStatic(At(t), controll, 0, 0))
+eventDict['time'].append(SettingStatic(At(t), BottomController, 0, 0))
 
 # eventDict['time'].append(ChannelSetSetting(At(t), controll, lightChannel, 0))
 eventDict['time'].append(ChannelSetSetting(At(t), BottomController, lightChannel, 0))
 
 # eventDict['time'].append(LightSetChannel(At(t), controll, lights, lightChannel))
 eventDict['time'].append(LightSetChannel(At(t), BottomController, [Light2,Light1], lightChannel))
-# eventDict['time'].append(SettingStaticLight(At(t), controll, 0, 80))
-eventDict['time'].append(SettingStaticLight(At(t), BottomController, 0, 70))
+# eventDict['time'].append(SettingStatic(At(t), controll, 0, 80))
+eventDict['time'].append(SettingStatic(At(t), BottomController, 0, 70))
 eventDict['time'].append(TriggerAngle(At(t), TRIGGER_SONY_DOWN))
 t=0.5
 eventDict['time'].append(TriggerAngle(At(t), TRIGGER_SONY_UP))

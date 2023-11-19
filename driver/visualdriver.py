@@ -88,11 +88,17 @@ class VisualDriver:
             self.trigger.start()
 
         print('Setting Up...')
-        time.sleep(3)
+        time.sleep(1)
         self.bottomQueue.put((220,0,50))
         self.topQueue.put((150,255,0))
         self.bottomQueue.put((150,255,0))
-        time.sleep(4)
+        self.topQueue.put((180,)) #reset settings
+        self.topQueue.put((181,)) #reset effects
+        self.topQueue.put((182,)) #reset channels
+        self.bottomQueue.put((180,)) #reset settings
+        self.bottomQueue.put((181,)) #reset effects
+        self.bottomQueue.put((182,)) #reset channels
+        time.sleep(1)
         print('Setup Complete!')
 
         if self.usesKinect:
@@ -104,23 +110,25 @@ class VisualDriver:
         if self.usesMotor:
             self.sc.start()
 
-        if self.startTime != 0:
-            for i in range(len(self.timeEvents)):
-                if not self.timeEvents[i].condition.met(self.startTime):
-                    self.timeEvents = self.timeEvents[i:]
-                    break
+        skippedToStartTime = False
 
         timeEventsIndex = 0
         timeEventsBlocked = False
         positionEventsIndex = 0
         positionEventsBlocked = False
         last = time.time() - self.startTime
-        if self.music:
+        if self.music and self.startTime == 0:
             mixer.music.play(start=self.startTime)
-
+        
         try:
 
             while True:
+
+                if self.startTime != 0 and not skippedToStartTime:
+                    time.sleep(1)
+                    last += 1
+                    mixer.music.play(start=self.startTime)
+                    skippedToStartTime = True
 
                 events = []
                 now = time.time() - last
