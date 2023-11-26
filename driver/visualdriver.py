@@ -16,13 +16,14 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 
 class VisualDriver:
 
-    def __init__(self, eventDict, usesMotor=False, usesKinect=False, usesTrigger=False, music=None, startTime=0):
+    def __init__(self, eventDict, usesMotor=False, usesKinect=False, usesTrigger=False, music=None, isTake=True, startTime=0):
         self.timeEvents = eventDict.get('time', [])
         self.positionEvents = eventDict.get('position', [])
         self.usesMotor = usesMotor
         self.usesKinect = usesKinect
         self.usesTrigger = usesTrigger
         self.music = music
+        self.isTake = isTake
         self.startTime = startTime
 
         discharging = open('/sys/class/power_supply/BAT0/status','r').readline().strip().lower()
@@ -64,6 +65,21 @@ class VisualDriver:
             self.kinectLock = Lock()
             self.kinectQueue = Queue()
             self.kr = KinectReader(self.kinectLock, self.kinectQueue, self.shutdownQueue)
+
+        if self.isTake:
+            inp = input('Focus Check:')
+            if inp.lower() != "focus":
+                exit()
+
+            inp = input('Plugs Check:')
+            if inp.lower() != "plugs":
+                exit()
+
+            inp = input('Encoder Check:')
+            if inp.lower() != "encoder":
+                exit()
+            
+            inp = input('Go:')
     
     def shutdown(self):
         self.bottomQueue.put((220,0,50)) #stop motor
