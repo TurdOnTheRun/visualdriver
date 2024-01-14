@@ -16,13 +16,14 @@ from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_EN
 
 class VisualDriver:
 
-    def __init__(self, eventDict, usesMotor=False, usesKinect=False, usesTrigger=False, music=None, startTime=0):
+    def __init__(self, eventDict, usesMotor=False, usesKinect=False, usesTrigger=False, music=None, isTake=True, startTime=0):
         self.timeEvents = eventDict.get('time', [])
         self.positionEvents = eventDict.get('position', [])
         self.usesMotor = usesMotor
         self.usesKinect = usesKinect
         self.usesTrigger = usesTrigger
         self.music = music
+        self.isTake = isTake
         self.startTime = startTime
 
         discharging = open('/sys/class/power_supply/BAT0/status','r').readline().strip().lower()
@@ -64,6 +65,21 @@ class VisualDriver:
             self.kinectLock = Lock()
             self.kinectQueue = Queue()
             self.kr = KinectReader(self.kinectLock, self.kinectQueue, self.shutdownQueue)
+
+        if self.isTake:
+            inp = input('Focus Check:')
+            if inp.lower() != "focus":
+                exit()
+
+            inp = input('Plugs Check:')
+            if inp.lower() != "plugs":
+                exit()
+
+            inp = input('Encoder Check:')
+            if inp.lower() != "encoder":
+                exit()
+            
+            inp = input('Go:')
     
     def shutdown(self):
         self.bottomQueue.put((220,0,50)) #stop motor
@@ -88,11 +104,20 @@ class VisualDriver:
             self.trigger.start()
 
         print('Setting Up...')
-        time.sleep(3)
+        time.sleep(1)
         self.bottomQueue.put((220,0,50))
         self.topQueue.put((150,255,0))
         self.bottomQueue.put((150,255,0))
-        time.sleep(4)
+        self.topQueue.put((180,)) #reset settings
+        self.topQueue.put((181,)) #reset effects
+        self.topQueue.put((182,)) #reset channels
+        self.bottomQueue.put((180,)) #reset settings
+        self.bottomQueue.put((181,)) #reset effects
+        self.bottomQueue.put((182,)) #reset channels
+        if(self.isTake):
+            time.sleep(4)
+        else:
+            time.sleep(0.5)
         print('Setup Complete!')
 
         if self.usesKinect:
@@ -104,23 +129,25 @@ class VisualDriver:
         if self.usesMotor:
             self.sc.start()
 
-        if self.startTime != 0:
-            for i in range(len(self.timeEvents)):
-                if not self.timeEvents[i].condition.met(self.startTime):
-                    self.timeEvents = self.timeEvents[i:]
-                    break
+        skippedToStartTime = False
 
         timeEventsIndex = 0
         timeEventsBlocked = False
         positionEventsIndex = 0
         positionEventsBlocked = False
         last = time.time() - self.startTime
-        if self.music:
+        if self.music and self.startTime == 0:
             mixer.music.play(start=self.startTime)
-
+        
         try:
 
             while True:
+
+                if self.startTime != 0 and not skippedToStartTime:
+                    time.sleep(1)
+                    last += 1
+                    mixer.music.play(start=self.startTime)
+                    skippedToStartTime = True
 
                 events = []
                 now = time.time() - last

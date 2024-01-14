@@ -68,18 +68,18 @@ eventDict['time'].append(ChannelAddEffect(At(0), TopController, Channel4, 0, 0))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel1, 0))
 
 # Vibrato Setup
-eventDict['time'].append(SettingStaticLight(At(0), TopController, 1, 0))
+eventDict['time'].append(SettingStatic(At(0), TopController, 1, 0))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel2, 1))
-eventDict['time'].append(SettingStaticLight(At(0), TopController, 2, 4))
+eventDict['time'].append(SettingStatic(At(0), TopController, 2, 4))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel3, 2))
 eventDict['time'].append(EffectDownVibrato(At(0), TopController, 1, Channel2, Channel3))
 eventDict['time'].append(ChannelAddEffect(At(0), TopController, Channel1, 1, 1))
 
 
 # Strobe Setup
-eventDict['time'].append(SettingStaticLight(At(0), TopController, 3, 80))
+eventDict['time'].append(SettingStatic(At(0), TopController, 3, 80))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel4, 3))
-eventDict['time'].append(SettingStaticLight(At(0), TopController, 4, 26))
+eventDict['time'].append(SettingStatic(At(0), TopController, 4, 26))
 eventDict['time'].append(ChannelSetSetting(At(0), TopController, Channel5, 4))
 eventDict['time'].append(EffectStrobe(At(0), TopController, 2, Channel4, Channel5, 1, []))
 
@@ -216,7 +216,7 @@ eventDict['time'].append(SettingBezierDimm(At(beginning+60), TopController, 1, 1
 # 62 Vibrato Off
 duration = 1
 decisteps = 10
-eventDict['time'].append(SettingStaticLight(At(beginning+62), TopController, 1, 0))
+eventDict['time'].append(SettingStatic(At(beginning+62), TopController, 1, 0))
 
 # 62-65
 # Bottom Fade In
