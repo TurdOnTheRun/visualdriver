@@ -114,7 +114,10 @@ class VisualDriver:
         self.bottomQueue.put((180,)) #reset settings
         self.bottomQueue.put((181,)) #reset effects
         self.bottomQueue.put((182,)) #reset channels
-        time.sleep(1)
+        if(self.isTake):
+            time.sleep(4)
+        else:
+            time.sleep(0.5)
         print('Setup Complete!')
 
         if self.usesKinect:
