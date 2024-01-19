@@ -35,6 +35,8 @@ class Setting {
     byte _setC=0;
     byte _setD=0;
 
+    unsigned int _fract=0;
+
     // General
     int _newstate=0;
     void _set_state_from_newstate();
@@ -76,6 +78,9 @@ class Setting {
 
     void _update_perlinnoise_inputs(unsigned long now);
     void _update_perlinnoise();
+
+    // Frame Rate Control
+    byte _get_steptime_adjustment();
 
     // Bezier
     float lerp(float n1, float n2, float perc);

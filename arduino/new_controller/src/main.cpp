@@ -23,6 +23,9 @@ unsigned long lastSync = 0;
 int syncDelta = 9999;
 volatile bool syncNow = false;
 
+// The RTC oscillates at 1024hz. That is 24hz too many.
+// Therefore NOW += 1 needs to be suspended at a rate of 24/1024 = 3/128.
+// 24/1000 is incorrect because the RTC does not oscillate at 1000hz.
 void rtc_millis_routine() {
   fract += 3;
   if(fract >= 128){
@@ -123,10 +126,10 @@ Effect effects[numberOfEffects];
 Channel channels[numberOfChannels] = {
   Channel(0),
   Channel(5),
-  Channel(20),
-  Channel(40),
-  Channel(50),
-  Channel(80),
+  Channel(17),
+  Channel(34),
+  Channel(51),
+  Channel(67),
   Channel(100),
   Channel(),
   Channel(),

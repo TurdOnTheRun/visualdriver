@@ -83,4 +83,15 @@ static const byte MAXIMUM_SPEED = 130;
 // sync controlls
 static const unsigned int SYNC_MILLIS = 5009;
 
+// frame rate controls
+static const unsigned int NTSC_DENOMINATOR = 2997;
+static const unsigned int NTSC_9_NUMERATOR = 1973;
+static const unsigned int NTSC_17_NUMERATOR = 949;
+static const unsigned int NTSC_26_NUMERATOR = 2922;
+static const unsigned int NTSC_34_NUMERATOR = 1898;
+static const unsigned int NTSC_42_NUMERATOR = 874;
+static const unsigned int NTSC_51_NUMERATOR = 2847;
+static const unsigned int NTSC_59_NUMERATOR = 1823;
+static const unsigned int NTSC_67_NUMERATOR = 799;
+
 #endif
