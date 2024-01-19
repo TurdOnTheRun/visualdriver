@@ -147,19 +147,7 @@ Channel channels[numberOfChannels] = {
   Channel(),
 };
 
-// ARDUINO SPECIFIC
-Light lights[numberOfLights] = {
-  Light(0, light1, &channels[0]),
-  Light(1, light2, &channels[0]),
-  Light(2, light3, &channels[0]),
-  Light(3, light4, &channels[0]),
-//  Light(5, light5),
-//  Light(6, light6),
-//  Light(7, light7),
-//  Light(8, light8),
-//  Light(9, light9),
-//  Light(10, light10),
-};
+Light lights[numberOfLights];
 
 SerialInterpreter interpreter = SerialInterpreter();
 
@@ -520,6 +508,21 @@ void parse_data() {
       set1 = interpreter.inputBuffer[2];
     } break;
 
+    case EFFECT_SEQUENCEDLIGHTSTROBE: {
+      //set1: steptime
+      //set2: byte 1 of unsigned long
+      //set3: byte 2 of unsinged long
+      //set4: byte 3 of unsinged long
+      //set5: byte 4 of unsinged long
+      //set6: darkstep boolean
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
+    } break;
+
     case EFFECT_PERCENTAGE: {
       //set1:  y in state = state * y/100
       set1 = interpreter.inputBuffer[2];
@@ -636,8 +639,21 @@ void parse_data() {
   else if(type < SETTING_EFFECT_DIVIDER){
     setting_add(target, Setting(type, &channels[set1], &channels[set2], &channels[set3], &channels[set4], &channels[set5], &channels[set6]));
   } 
-  else if(type < 150){
+  else if(type < EFFECT_STEPTIME_DIVIDER){
     effect_add(target, Effect(type, &channels[set1]));
+  }
+  else if(type < 150){
+    unsigned long seq = (static_cast<unsigned long>(set2) << 24) |
+                        (static_cast<unsigned long>(set3) << 16) |
+                        (static_cast<unsigned long>(set4) << 8) |
+                        static_cast<unsigned long>(set5);
+    byte sequence[SEQUENCE_SIZE] = {0,0,0,0,0,0,0,0,0};
+    byte index = 0;
+    do {
+        sequence[index++] = static_cast<byte>(seq % 10);
+        seq /= 10;
+    } while (seq > 0);
+    effect_add(target, Effect(type, &channels[set1], sequence));
   }
 }
 
@@ -671,15 +687,21 @@ void read_serial() {
 }
 
 void lights_setup() {
+  if(IS_BOTTOM){
+    lights[0] = Light(1, light1, &channels[0]);
+    lights[1] = Light(2, light2, &channels[0]);
+    lights[2] = Light(3, light3, &channels[0]);
+    lights[3] = Light(4, light4, &channels[0]);
+  } else {
+    lights[0] = Light(5, light1, &channels[2]);
+    lights[1] = Light(6, light2, &channels[2]);
+    lights[2] = Light(7, light3, &channels[2]);
+    lights[3] = Light(8, light4, &channels[2]);
+  }
+
   for(byte i = 0; i < numberOfLights; i++) {
     lights[i].init();
   };
-  if(!IS_BOTTOM){
-    lights[0].set_channel(&channels[2]);
-    lights[1].set_channel(&channels[2]);
-    lights[2].set_channel(&channels[2]);
-    lights[3].set_channel(&channels[2]);
-  }
 }
 
 void rtc_sync_bottom(){

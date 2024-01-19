@@ -921,6 +921,41 @@ class EffectPercentage(ArduinoEvent):
             return command
 
 
+class EffectSequencedLightStrobe(ArduinoEvent):
+
+    def __init__(self, condition, controller, effectIndex, steptimeChannel, sequence, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.effectIndex = effectIndex
+        self.steptimeChannel = steptimeChannel
+        reversed = str(sequence)[::-1]
+        sequence = int(reversed)
+        if sequence < 0 or sequence > 999999999:
+            self.abort("The sequence is not valid: %s", str(sequence))
+        sequenceBytes = sequence.to_bytes(4, byteorder="big")
+        self.byte1 = sequenceBytes[0]
+        self.byte2 = sequenceBytes[1]
+        self.byte3 = sequenceBytes[2]
+        self.byte4 = sequenceBytes[3]
+
+        print(self.byte1, self.byte2, self.byte3, self.byte4)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'EffectSequencedLightStrobe({}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.steptimeChannel, self.byte1, self.byte2, self.byte3, self.byte4, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [120, self.effectIndex, self.steptimeChannel.id, self.byte1, self.byte2, self.byte3, self.byte4]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
+
 class EffectsReset(ArduinoEvent):
 
     def __init__(self, condition, controller):

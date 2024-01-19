@@ -8,6 +8,8 @@
 #include "Channel.h"
 #include <math.h>
 
+Light::Light(){}
+
 Light::Light(byte id, byte pin, Channel* channel)
 {
   _id = id;
@@ -38,7 +40,7 @@ void Light::pin_write()
 
 void Light::update(unsigned long now)
 {
-  _newstate = _channel->get_state(now);
+  _newstate = _channel->get_state(now, _id);
   set_pinstate();
 }
 

@@ -30,6 +30,7 @@ class Channel {
     void init();
     byte get_state();
     byte get_state(unsigned long now);
+    byte get_state(unsigned long now, byte lightid);
     void set_setting(Setting* setting);
     void set_channel(Channel* channel);
     void set_static(byte state);
