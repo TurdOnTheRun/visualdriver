@@ -136,8 +136,6 @@ class VisualDriver:
         positionEventsIndex = 0
         positionEventsBlocked = False
         last = time.time() - self.startTime
-        if self.music and self.startTime == 0:
-            mixer.music.play(start=self.startTime)
         
         try:
 
@@ -221,6 +219,12 @@ class VisualDriver:
                         elif event.type == MOTOR_DIRECTION_TYPE and self.usesMotor:
                             with self.targetDirection.get_lock():
                                 self.targetDirection.value = event.direction
+                        elif event.type == MUSIC_START_TYPE and self.music:
+                            if self.startTime:
+                                st = self.startTime - event.condition.value + event.startTime
+                            else:
+                                st = event.startTime
+                            mixer.music.play(start=st)
                     
                 if timeEventsIndex >= len(self.timeEvents) and positionEventsIndex >= len(self.positionEvents):
                     self.shutdown()

@@ -350,7 +350,11 @@ byte Setting::get_state()
 byte Setting::get_state(unsigned long now)
 {
   if(_laststep == 0){
-    _laststep = now;
+    if(_steptime == 0){
+      _laststep = now;
+    } else {
+      _laststep = now - (now % _steptime);
+    }
     return _state;
   }
   if(_laststep == now){

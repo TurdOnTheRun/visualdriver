@@ -37,6 +37,7 @@ static const byte SETTING_EFFECT_DIVIDER = 100;
 // 100-149 are Effects
 static const byte EFFECT_NONE = 100;
 static const byte EFFECT_INVERSE = 101;
+static const byte EFFECT_LASTORZERO = 102;
 static const byte EFFECT_ADD = 110;
 static const byte EFFECT_SUBTRACT = 111;
 static const byte EFFECT_ADDPERCENTAGE = 112;

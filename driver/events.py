@@ -20,6 +20,7 @@ TRIGGER_SET_ANGLE_TYPE = 10
 TRIGGER_DETACH_TYPE = 11
 MOTOR_SPEED_TYPE = 12
 MOTOR_DIRECTION_TYPE = 13
+MUSIC_START_TYPE = 14
 
 
 class Event:
@@ -801,6 +802,28 @@ class EffectInverse(ArduinoEvent):
             return command
 
 
+class EffectLastOrZero(ArduinoEvent):
+
+    def __init__(self, condition, controller, effectIndex, hasVariable=False):
+        super().__init__(condition, controller, hasVariable)
+        self.effectIndex = effectIndex
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'EffectLastOrZero({}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.hasVariable)
+    
+    def check_init(self):
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [102, self.effectIndex]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
+
 class EffectAdd(ArduinoEvent):
 
     def __init__(self, condition, controller, effectIndex, inputChannel, hasVariable=False):
@@ -923,10 +946,11 @@ class EffectPercentage(ArduinoEvent):
 
 class EffectSequencedLightStrobe(ArduinoEvent):
 
-    def __init__(self, condition, controller, effectIndex, steptimeChannel, sequence, hasVariable=False):
+    def __init__(self, condition, controller, effectIndex, steptimeChannel, darkstepChannel, sequence, hasVariable=False):
         super().__init__(condition, controller, hasVariable)
         self.effectIndex = effectIndex
         self.steptimeChannel = steptimeChannel
+        self.darkstepChannel = darkstepChannel
         reversed = str(sequence)[::-1]
         sequence = int(reversed)
         if sequence < 0 or sequence > 999999999:
@@ -943,13 +967,13 @@ class EffectSequencedLightStrobe(ArduinoEvent):
         self.command = self.make_command()
 
     def __str__(self):
-        return 'EffectSequencedLightStrobe({}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.steptimeChannel, self.byte1, self.byte2, self.byte3, self.byte4, self.hasVariable)
+        return 'EffectSequencedLightStrobe({}, {}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.effectIndex, self.steptimeChannel, self.darkstepChannel, self.byte1, self.byte2, self.byte3, self.byte4, self.hasVariable)
     
     def check_init(self):
         self.check_is_light_controller(self.controller)
     
     def make_command(self):
-        command = [120, self.effectIndex, self.steptimeChannel.id, self.byte1, self.byte2, self.byte3, self.byte4]
+        command = [120, self.effectIndex, self.steptimeChannel.id, self.darkstepChannel.id, self.byte1, self.byte2, self.byte3, self.byte4]
         if not self.hasVariable:
             return self.clean_bytes(command)
         else:
@@ -1042,6 +1066,16 @@ class MotorDirection(Event):
             self.abort('Invalid direction: ' + str(direction))
         else:
             self.direction = direction
+
+
+class MusicStart(Event):
+
+    def __init__(self, condition, startTime):
+        super().__init__(condition, MainController)
+        self.type = MUSIC_START_TYPE
+        if type(startTime) != int or startTime < 0:
+            self.abort('Invalid startTime: ' + str(startTime))
+        self.startTime = startTime
 
 
 class TriggerAngle(Event):

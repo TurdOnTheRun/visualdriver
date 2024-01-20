@@ -488,6 +488,10 @@ void parse_data() {
       // Does not need any input
     } break;
 
+    case EFFECT_LASTORZERO: {
+      // Does not need any input
+    } break;
+
     case EFFECT_ADD: {
       //set1: y in state = state + y
       set1 = interpreter.inputBuffer[2];
@@ -509,12 +513,12 @@ void parse_data() {
     } break;
 
     case EFFECT_SEQUENCEDLIGHTSTROBE: {
-      //set1: steptime
-      //set2: byte 1 of unsigned long
-      //set3: byte 2 of unsinged long
-      //set4: byte 3 of unsinged long
-      //set5: byte 4 of unsinged long
-      //set6: darkstep boolean
+      //set1: steptime channel
+      //set2: darkstep channel
+      //set3: byte 1 of sequence unsigned long
+      //set4: byte 2 of sequence unsinged long
+      //set5: byte 3 of sequence unsinged long
+      //set6: byte 4 of sequence unsinged long
       set1 = interpreter.inputBuffer[2];
       set2 = interpreter.inputBuffer[3];
       set3 = interpreter.inputBuffer[4];
@@ -643,17 +647,7 @@ void parse_data() {
     effect_add(target, Effect(type, &channels[set1]));
   }
   else if(type < 150){
-    unsigned long seq = (static_cast<unsigned long>(set2) << 24) |
-                        (static_cast<unsigned long>(set3) << 16) |
-                        (static_cast<unsigned long>(set4) << 8) |
-                        static_cast<unsigned long>(set5);
-    byte sequence[SEQUENCE_SIZE] = {0,0,0,0,0,0,0,0,0};
-    byte index = 0;
-    do {
-        sequence[index++] = static_cast<byte>(seq % 10);
-        seq /= 10;
-    } while (seq > 0);
-    effect_add(target, Effect(type, &channels[set1], sequence));
+    effect_add(target, Effect(type, &channels[set1], &channels[set2], set3, set4, set5, set6));
   }
 }
 
