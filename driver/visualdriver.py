@@ -221,6 +221,7 @@ class VisualDriver:
                                 self.targetDirection.value = event.direction
                         elif event.type == MUSIC_START_TYPE and self.music:
                             if self.startTime:
+                                print(event.condition.value)
                                 st = self.startTime - event.condition.value + event.startTime
                             else:
                                 st = event.startTime

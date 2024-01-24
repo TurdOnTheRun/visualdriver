@@ -961,7 +961,6 @@ class EffectSequencedLightStrobe(ArduinoEvent):
         self.byte3 = sequenceBytes[2]
         self.byte4 = sequenceBytes[3]
 
-        print(self.byte1, self.byte2, self.byte3, self.byte4)
         if not hasVariable:
             self.check_init()
         self.command = self.make_command()
