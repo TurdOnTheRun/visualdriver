@@ -171,7 +171,7 @@ byte Effect::get_state(unsigned long now, byte state, byte lightid)
 
 byte Effect::_get_steptime_adjustment()
 {
-  switch(_varA) {
+  switch(_steptime) {
     case 9: {
       _fract+=NTSC_9_NUMERATOR;
     } break;
@@ -199,6 +199,13 @@ byte Effect::_get_steptime_adjustment()
     default: {
       return 0;
     }
+  }
+
+  if(_fract>=NTSC_DENOMINATOR){
+    _fract-=NTSC_DENOMINATOR;
+    return 1;
+  } else {
+    return 0;
   }
 }
 

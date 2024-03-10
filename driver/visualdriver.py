@@ -78,6 +78,10 @@ class VisualDriver:
             inp = input('Encoder Check:')
             if inp.lower() != "encoder":
                 exit()
+
+            inp = input('Sync Check:')
+            if inp.lower() != "sync":
+                exit()
             
             inp = input('Go:')
     
@@ -221,7 +225,6 @@ class VisualDriver:
                                 self.targetDirection.value = event.direction
                         elif event.type == MUSIC_START_TYPE and self.music:
                             if self.startTime:
-                                print(event.condition.value)
                                 st = self.startTime - event.condition.value + event.startTime
                             else:
                                 st = event.startTime
