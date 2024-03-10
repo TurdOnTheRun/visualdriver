@@ -350,7 +350,11 @@ byte Setting::get_state()
 byte Setting::get_state(unsigned long now)
 {
   if(_laststep == 0){
-    _laststep = now;
+    if(_steptime == 0){
+      _laststep = now;
+    } else {
+      _laststep = now - (now % _steptime);
+    }
     return _state;
   }
   if(_laststep == now){
@@ -401,8 +405,9 @@ byte Setting::get_state(unsigned long now)
       return _state;
     } 
     else {
-      //calculated at the start because some effects change _steptime and none need _laststep  
-      _laststep = _laststep + (_steps * _steptime);
+      //_laststep is calculated at the start because some effects change _steptime and none need _laststep
+      //_get_steptime_adjustment handles rounding shift away from framerate for 29.97fps and similar
+      _laststep = _laststep + (_steps * _steptime) - _get_steptime_adjustment();
 
       switch(_type) {
         case SETTING_SINGULARFLASH: {
@@ -988,11 +993,53 @@ void Setting::_set_state_from_newstate()
     _state = lowByte(_newstate);
   }
 }
-    
+
+byte Setting::_get_steptime_adjustment()
+{
+  switch(_steptime) {
+    case 9: {
+      _fract+=NTSC_9_NUMERATOR;
+    } break;
+    case 17: {
+      _fract+=NTSC_17_NUMERATOR;
+    } break;
+    case 26: {
+      _fract+=NTSC_26_NUMERATOR;
+    } break;
+    case 34: {
+      _fract+=NTSC_34_NUMERATOR;
+    } break;
+    case 42: {
+      _fract+=NTSC_42_NUMERATOR;
+    } break;
+    case 51: {
+      _fract+=NTSC_51_NUMERATOR;
+    } break;
+    case 59: {
+      _fract+=NTSC_59_NUMERATOR;
+    } break;
+    case 67: {
+      _fract+=NTSC_67_NUMERATOR;
+    } break;
+    default: {
+      return 0;
+    }
+  }
+
+  if(_fract>=NTSC_DENOMINATOR){
+    _fract-=NTSC_DENOMINATOR;
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+
 bool Setting::rising()
 {
   return (_state < _state2);
 }
+
 
 byte Setting::get_type()
 {

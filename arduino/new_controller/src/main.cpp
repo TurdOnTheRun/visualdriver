@@ -23,6 +23,9 @@ unsigned long lastSync = 0;
 int syncDelta = 9999;
 volatile bool syncNow = false;
 
+// The RTC oscillates at 1024hz. That is 24hz too many.
+// Therefore NOW += 1 needs to be suspended at a rate of 24/1024 = 3/128.
+// 24/1000 is incorrect because the RTC does not oscillate at 1000hz.
 void rtc_millis_routine() {
   fract += 3;
   if(fract >= 128){
@@ -123,10 +126,10 @@ Effect effects[numberOfEffects];
 Channel channels[numberOfChannels] = {
   Channel(0),
   Channel(5),
-  Channel(20),
-  Channel(40),
-  Channel(50),
-  Channel(80),
+  Channel(17),
+  Channel(34),
+  Channel(51),
+  Channel(67),
   Channel(100),
   Channel(),
   Channel(),
@@ -144,19 +147,7 @@ Channel channels[numberOfChannels] = {
   Channel(),
 };
 
-// ARDUINO SPECIFIC
-Light lights[numberOfLights] = {
-  Light(0, light1, &channels[0]),
-  Light(1, light2, &channels[0]),
-  Light(2, light3, &channels[0]),
-  Light(3, light4, &channels[0]),
-//  Light(5, light5),
-//  Light(6, light6),
-//  Light(7, light7),
-//  Light(8, light8),
-//  Light(9, light9),
-//  Light(10, light10),
-};
+Light lights[numberOfLights];
 
 SerialInterpreter interpreter = SerialInterpreter();
 
@@ -497,6 +488,10 @@ void parse_data() {
       // Does not need any input
     } break;
 
+    case EFFECT_LASTORZERO: {
+      // Does not need any input
+    } break;
+
     case EFFECT_ADD: {
       //set1: y in state = state + y
       set1 = interpreter.inputBuffer[2];
@@ -515,6 +510,21 @@ void parse_data() {
     case EFFECT_SUBTRACTPERCENTAGE: {
       //set1: y in state = state - (state * y/100)
       set1 = interpreter.inputBuffer[2];
+    } break;
+
+    case EFFECT_SEQUENCEDLIGHTSTROBE: {
+      //set1: steptime channel
+      //set2: darkstep channel
+      //set3: byte 1 of sequence unsigned long
+      //set4: byte 2 of sequence unsinged long
+      //set5: byte 3 of sequence unsinged long
+      //set6: byte 4 of sequence unsinged long
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
     } break;
 
     case EFFECT_PERCENTAGE: {
@@ -633,8 +643,11 @@ void parse_data() {
   else if(type < SETTING_EFFECT_DIVIDER){
     setting_add(target, Setting(type, &channels[set1], &channels[set2], &channels[set3], &channels[set4], &channels[set5], &channels[set6]));
   } 
-  else if(type < 150){
+  else if(type < EFFECT_STEPTIME_DIVIDER){
     effect_add(target, Effect(type, &channels[set1]));
+  }
+  else if(type < 150){
+    effect_add(target, Effect(type, &channels[set1], &channels[set2], set3, set4, set5, set6));
   }
 }
 
@@ -668,15 +681,21 @@ void read_serial() {
 }
 
 void lights_setup() {
+  if(IS_BOTTOM){
+    lights[0] = Light(1, light1, &channels[0]);
+    lights[1] = Light(2, light2, &channels[0]);
+    lights[2] = Light(3, light3, &channels[0]);
+    lights[3] = Light(4, light4, &channels[0]);
+  } else {
+    lights[0] = Light(5, light1, &channels[2]);
+    lights[1] = Light(6, light2, &channels[2]);
+    lights[2] = Light(7, light3, &channels[2]);
+    lights[3] = Light(8, light4, &channels[2]);
+  }
+
   for(byte i = 0; i < numberOfLights; i++) {
     lights[i].init();
   };
-  if(!IS_BOTTOM){
-    lights[0].set_channel(&channels[2]);
-    lights[1].set_channel(&channels[2]);
-    lights[2].set_channel(&channels[2]);
-    lights[3].set_channel(&channels[2]);
-  }
 }
 
 void rtc_sync_bottom(){

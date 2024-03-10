@@ -78,8 +78,13 @@ byte Channel::get_state()
   return _state;
 }
 
-// Returns the newly calculated state for now
+// Returns the newly calculated state for now and fills in 0 for lightid
 byte Channel::get_state(unsigned long now){
+  return get_state(now, 0);
+}
+
+// Returns the newly calculated state for now
+byte Channel::get_state(unsigned long now, byte lightid){
   if(_isstatic == true){
     _newstate = _state;
   }
@@ -87,14 +92,14 @@ byte Channel::get_state(unsigned long now){
     _newstate = _setting->get_state(now);
   }
   else if(_channel != nullptr){
-    _newstate = _channel->get_state(now);
+    _newstate = _channel->get_state(now, lightid);
   }
   else{
     _newstate = _state;
   }
   for(byte i=0; i<EFFECTSPERCHANNEL; i++){
     if(_effects[i] != nullptr){
-      _newstate = _effects[i]->get_state(now, _newstate);
+      _newstate = _effects[i]->get_state(now, _newstate, lightid);
     }
   }
   _state = _newstate;
