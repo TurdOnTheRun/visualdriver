@@ -19,7 +19,7 @@ class ArduinoPwmManager(Process):
     def connect(self):
         print('Connecting to Arduino...')
         try:
-            ser = serial.Serial( self.conn, baudrate=115200 )
+            ser = serial.Serial( self.conn, baudrate=9600 )
         except serial.SerialException as e:
             print('Failed to connect to arduino:', self.conn)
             raise e

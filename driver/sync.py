@@ -16,15 +16,11 @@ bottom.start()
 
 sleep(1)
 topPwmComm.put([192,])
-sleep(1)
 bottomPwmComm.put([192,])
 
-while True:
-    inp = input('Enter "e" when synced:')
-    if inp.lower() == "e":
-        bottomPwmComm.put([193,])
-        sleep(1)
-        topPwmComm.put([193,])
-        sleep(3)
-        exit()
+sleep(3.4)
+bottomPwmComm.put([193,])
+sleep(0.4)
+topPwmComm.put([193,])
+sleep(3)
     
