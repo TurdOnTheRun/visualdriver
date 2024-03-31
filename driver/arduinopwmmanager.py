@@ -1,5 +1,6 @@
 from multiprocessing import Process
 import serial
+import telnetlib
 import time
 
 startByte = bytes([251])
@@ -11,7 +12,7 @@ class ArduinoPwmManager(Process):
         super().__init__()
         self.daemon = True
         self.conn = conn
-        self.serial = self.connect()
+        self.connection = self.connect()
         self.commands = commands
         self.shutdownQueue = shutdownQueue
     
@@ -19,7 +20,7 @@ class ArduinoPwmManager(Process):
     def connect(self):
         print('Connecting to Arduino...')
         try:
-            ser = serial.Serial( self.conn, baudrate=9600 )
+            ser = serial.Serial( self.conn, baudrate=115200 )
         except serial.SerialException as e:
             print('Failed to connect to arduino:', self.conn)
             raise e
@@ -27,6 +28,10 @@ class ArduinoPwmManager(Process):
             print('Connected to Arduino!')
         return ser
     
+
+    def shutdown(self):
+        self.connection.close()
+
 
     def run(self):
         while True:
@@ -39,7 +44,22 @@ class ArduinoPwmManager(Process):
                 print(e)
                 continue
             commandstring += endByte
-            self.serial.write(commandstring)
+            self.connection.write(commandstring)
             time.sleep(0.004)
 #            else:
 #                print('ArduinoPwmManager received invalid command:', command)
+
+
+class ArduinoEspManager(ArduinoPwmManager):
+
+
+    def connect(self):
+        print('Connecting to Arduino...')
+        try:
+            tn = telnetlib.Telnet(self.conn, 2323)
+        except Exception as e:
+            print('Failed to connect to esp.')
+            raise e
+        else:
+            print('Connected to Esp!')
+        return tn
