@@ -13,10 +13,6 @@ const bool IS_BOTTOM = false;
 // unsigned long communication_testing_now = 0;
 // bool communication_testing = false;
 // byte communication_testing_channel = 15;
-
-// unsigned long second_testing_now = 0;
-// bool second_testing = false;
-// byte second_testing_channel = 16;
 // TESTING END
 
 //RTC Setup
@@ -700,6 +696,8 @@ void read_serial() {
   else {
     while(Serial1.available() > 0) {   
       byte x = Serial1.read();
+      // Serial.print(x, DEC);
+      // Serial.println();
       bool isEnd = interpreter.processByte(x);
       if(isEnd){
         parse_data();
@@ -730,18 +728,23 @@ void lights_setup() {
 void setup() {
   rtc_setup();
   pwm_setup();
-
+  delay(1000);
+  lights_setup();
+  update_lights();
   if(IS_BOTTOM){
-    Serial.begin(9600);
+    Serial.begin(115200);
     motor.init();
   }
   else{
     // Serial.begin(9600);
-    Serial1.begin(9600);
+    delay(2000);
+    Serial1.begin(115200);
+    delay(1000);
+    // clear Serial
+    while (Serial1.available() > 0) {
+      Serial1.read();
+    }
   }
-  delay(1000);
-  lights_setup();
-  update_lights();
 }
 
 void loop() {
@@ -763,18 +766,9 @@ void loop() {
       motor.update(now);
     }
     // TESTING
-    // if(now % 1000 == 0){
-    //   channel_set_static(second_testing_channel, 30);
-    //   second_testing = true;
-    //   second_testing_now = now;
-    // }
     // if(communication_testing && (now - communication_testing_now) > 8){
     //   channel_set_static(communication_testing_channel, 0);
     //   communication_testing = false;
-    // }
-    // if(second_testing && (now - second_testing_now) > 8){
-    //   channel_set_static(second_testing_channel, 0);
-    //   second_testing = false;
     // }
     // TESTING END
   }

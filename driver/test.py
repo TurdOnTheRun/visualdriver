@@ -1,4 +1,4 @@
-from arduinopwmmanager import ArduinoPwmManager
+from arduinopwmmanager import ArduinoPwmManager, ArduinoEspManager
 from encoderreader import EncoderReader
 from multiprocessing import Value, Queue, Lock
 from settings import ARDUINO_MEGA_CONN, ARDUINO_UNO_CONN
@@ -17,7 +17,7 @@ distance = Value('d', 0.0)
 er = EncoderReader(encoderLock, position, distance, shutdown)
 er.start()
 
-pwm = ArduinoPwmManager(ARDUINO_UNO_CONN, pwmComm, shutdown)
+pwm = ArduinoEspManager(ARDUINO_MEGA_CONN, pwmComm, shutdown)
 pwm.start()
 
 while True:
