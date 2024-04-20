@@ -1,5 +1,6 @@
 from multiprocessing import Process
 import serial
+import socket
 import time
 
 startByte = bytes([251])
@@ -11,7 +12,7 @@ class ArduinoPwmManager(Process):
         super().__init__()
         self.daemon = True
         self.conn = conn
-        self.serial = self.connect()
+        self.connection = self.connect()
         self.commands = commands
         self.shutdownQueue = shutdownQueue
     
@@ -28,6 +29,14 @@ class ArduinoPwmManager(Process):
         return ser
     
 
+    def send_commandstring(self, commandstring):
+        self.connection.write(commandstring)
+
+
+    def shutdown(self):
+        self.connection.close()
+
+
     def run(self):
         while True:
             command = self.commands.get()
@@ -39,7 +48,27 @@ class ArduinoPwmManager(Process):
                 print(e)
                 continue
             commandstring += endByte
-            self.serial.write(commandstring)
+            self.send_commandstring(commandstring)
             time.sleep(0.004)
 #            else:
 #                print('ArduinoPwmManager received invalid command:', command)
+
+
+class ArduinoEspManager(ArduinoPwmManager):
+
+
+    def connect(self):
+        print('Connecting to Esp...')
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((self.conn, 2323))
+        except Exception as e:
+            print('Failed to connect to Esp.')
+            raise e
+        else:
+            print('Connected to Esp!')
+        return sock
+
+
+    def send_commandstring(self, commandstring):
+        self.connection.send(commandstring)

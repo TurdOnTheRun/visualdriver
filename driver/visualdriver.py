@@ -7,7 +7,7 @@ from events import *
 from controllers import *
 from conditions import *
 
-from arduinopwmmanager import ArduinoPwmManager
+from arduinopwmmanager import ArduinoPwmManager, ArduinoEspManager
 from encoderreader import EncoderReader
 from speedcontroller import SpeedController
 from kinectreader import KinectReader
@@ -41,7 +41,7 @@ class VisualDriver:
         self.shutdownQueue = Queue()
 
         self.topQueue = Queue()
-        self.top = ArduinoPwmManager(ARDUINO_MEGA_CONN, self.topQueue, self.shutdownQueue)
+        self.top = ArduinoEspManager(ARDUINO_MEGA_CONN, self.topQueue, self.shutdownQueue)
 
         self.bottomQueue = Queue()
         self.bottom = ArduinoPwmManager(ARDUINO_UNO_CONN, self.bottomQueue, self.shutdownQueue)
@@ -90,7 +90,7 @@ class VisualDriver:
         self.topQueue.put((180,)) #reset settings
         self.topQueue.put((181,)) #reset effects
         self.topQueue.put((182,)) #reset channels
-        self.topQueue.put((150,255,0)) #set all lights to 30
+        self.topQueue.put((150,255,3)) #set all lights to 30
         self.bottomQueue.put((180,)) #reset settings
         self.bottomQueue.put((181,)) #reset effects
         self.bottomQueue.put((182,)) #reset channels

@@ -88,7 +88,7 @@ static const byte MAXIMAL_SPEED_DIFFERENCE = 5;
 static const byte MAXIMUM_SPEED = 130;
 
 // sync controlls
-static const unsigned int SYNC_MILLIS = 5009;
+static const unsigned int SYNC_MILLIS = 1000;
 
 // frame rate controls
 static const unsigned int NTSC_DENOMINATOR = 2997;

@@ -7,7 +7,13 @@
 #include <SerialInterpreter.h>
 #include <util/atomic.h>
 
-const bool IS_BOTTOM = true;
+const bool IS_BOTTOM = false;
+
+// TESTING
+// unsigned long communication_testing_now = 0;
+// bool communication_testing = false;
+// byte communication_testing_channel = 15;
+// TESTING END
 
 //RTC Setup
 const byte rtcPin = 21;
@@ -40,14 +46,24 @@ void rtc_setup(){
 }
 
 void rtc_sync_top() {
-  if(now % SYNC_MILLIS == 0 && now != lastSync){
+  if(now >= SYNC_MILLIS){
     digitalWrite(syncPinTop, !digitalRead(syncPinTop));
-    lastSync = now;
+    if(digitalRead(syncPinTop) == LOW){
+      ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        NOW = 0;
+        fract = 0;
+      }
+    }
   }
 }
 
 void rtc_sync_setup_top(){
   pinMode(syncPinTop, OUTPUT);
+  digitalWrite(syncPinTop, HIGH);
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    NOW = 0;
+    fract = 0;
+  }
 }
 
 void rtc_sync_teardown_top(){
@@ -55,12 +71,15 @@ void rtc_sync_teardown_top(){
 }
 
 void rtc_sync_routine_bottom(){
-  syncNow = true;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    NOW = 0;
+    fract = 0;
+  }
 };
 
 void rtc_sync_setup_bottom(){
   pinMode(syncPinBottom, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(syncPinBottom), rtc_sync_routine_bottom, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(syncPinBottom), rtc_sync_routine_bottom, FALLING);
 }
 
 void rtc_sync_teardown_bottom(){
@@ -269,6 +288,12 @@ void sync_off(){
 
 void parse_data() {
   // split the data into its parts
+
+  // TESTING
+  // channel_set_static(communication_testing_channel, 30);
+  // communication_testing = true;
+  // communication_testing_now = now;
+  // TESTING END
 
   type = 0; //id of setting or effect
   target = 0; //bit map for what lights the effect is for
@@ -671,6 +696,8 @@ void read_serial() {
   else {
     while(Serial1.available() > 0) {   
       byte x = Serial1.read();
+      // Serial.print(x, DEC);
+      // Serial.println();
       bool isEnd = interpreter.processByte(x);
       if(isEnd){
         parse_data();
@@ -698,43 +725,26 @@ void lights_setup() {
   };
 }
 
-void rtc_sync_bottom(){
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-    syncDelta = NOW % SYNC_MILLIS;
-    NOW -= syncDelta;
-  }
-  syncNow = false;
-  if(syncDelta == 0){
-    lights[0].set_channel(&channels[0]);
-    lights[2].set_channel(&channels[0]);
-  } else if(syncDelta < 1 || syncDelta == SYNC_MILLIS - 1){
-    lights[0].set_channel(&channels[1]);
-    lights[2].set_channel(&channels[0]);
-  } else if(syncDelta < 2 || syncDelta == SYNC_MILLIS - 2){
-    lights[0].set_channel(&channels[0]);
-    lights[2].set_channel(&channels[1]);
-  } else {
-    lights[0].set_channel(&channels[1]);
-    lights[2].set_channel(&channels[1]);
-  }
-  update_lights();
-}
-
 void setup() {
   rtc_setup();
   pwm_setup();
-
+  delay(1000);
+  lights_setup();
+  update_lights();
   if(IS_BOTTOM){
     Serial.begin(115200);
     motor.init();
   }
   else{
     // Serial.begin(9600);
+    delay(2000);
     Serial1.begin(115200);
+    delay(1000);
+    // clear Serial
+    while (Serial1.available() > 0) {
+      Serial1.read();
+    }
   }
-  delay(1000);
-  lights_setup();
-  update_lights();
 }
 
 void loop() {
@@ -745,12 +755,7 @@ void loop() {
   read_serial();
   
   if(syncing){
-    if(IS_BOTTOM){
-      if(syncNow){
-        rtc_sync_bottom();
-      }
-    }
-    else {
+    if(!IS_BOTTOM){
       rtc_sync_top();
     }
   } 
@@ -760,5 +765,11 @@ void loop() {
     if(IS_BOTTOM){
       motor.update(now);
     }
+    // TESTING
+    // if(communication_testing && (now - communication_testing_now) > 8){
+    //   channel_set_static(communication_testing_channel, 0);
+    //   communication_testing = false;
+    // }
+    // TESTING END
   }
 }
