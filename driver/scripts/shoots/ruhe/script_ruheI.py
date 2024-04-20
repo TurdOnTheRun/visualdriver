@@ -220,5 +220,5 @@ eventDict['time'].append(SettingBezierAfterFlash(At(t + startTime + hammerTime),
 eventDict['time'].append(ChannelSetStatic(At(t + endTime + 3), TopController, StaticChannel0, 0))
 
 
-vd = VisualDriver(eventDict, startTime=0, usesTrigger=True, music=music)
+vd = VisualDriver(eventDict, startTime=0, music=music, isTake=False)
 vd.start()
