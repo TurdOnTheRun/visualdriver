@@ -4,7 +4,7 @@
 #include <ArduinoWiFiServer.h>
 
 #ifndef APSSID
-#define APSSID "Old Weller"
+#define APSSID "Old_Weller"
 #define APPSK "wellalright!"
 #endif
 

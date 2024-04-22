@@ -2,6 +2,7 @@ from multiprocessing import Queue, Value, Lock
 from pygame import mixer
 import queue
 import time
+import subprocess
 
 from events import *
 from controllers import *
@@ -11,7 +12,7 @@ from arduinopwmmanager import ArduinoPwmManager, ArduinoEspManager
 from encoderreader import EncoderReader
 from speedcontroller import SpeedController
 from kinectreader import KinectReader
-from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_ENCODER_CONN
+from settings import ARDUINO_UNO_CONN, ARDUINO_MEGA_CONN, ARDUINO_UNO_TRIGGER_ENCODER_CONN, WIFI_SSID, WIFI_PWD, ESP_SSID, ESP_PWD
 
 
 class VisualDriver:
@@ -97,11 +98,29 @@ class VisualDriver:
         self.bottomQueue.put((150,255,0)) #set all lights to 0
         time.sleep(1)
         self.shutdownQueue.put('STOP')
-        time.sleep(3)
+        time.sleep(1)
+        process = subprocess.Popen(['nmcli', 'device', 'wifi', 'connect', WIFI_SSID, 'password', WIFI_PWD], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        # Check if there was an error
+        if process.returncode != 0:
+            print("Error:", stderr.decode("utf-8"))
+        else:
+            print("Successfully reconnected to _____________")
+
     
     def start(self):
+        process = subprocess.Popen(['nmcli', 'device', 'wifi', 'connect', ESP_SSID, 'password', ESP_PWD], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        # Check if there was an error
+        if process.returncode != 0:
+            print("Error:", stderr.decode("utf-8"))
+            exit(0)
+        else:
+            print("Successfully connected to Old Weller")
 
+        self.top.connect()
         self.top.start()
+        self.bottom.connect()
         self.bottom.start()
         self.er.start()
         if self.usesTrigger:

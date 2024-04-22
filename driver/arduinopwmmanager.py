@@ -12,7 +12,6 @@ class ArduinoPwmManager(Process):
         super().__init__()
         self.daemon = True
         self.conn = conn
-        self.connection = self.connect()
         self.commands = commands
         self.shutdownQueue = shutdownQueue
     
@@ -20,13 +19,12 @@ class ArduinoPwmManager(Process):
     def connect(self):
         print('Connecting to Arduino...')
         try:
-            ser = serial.Serial( self.conn, baudrate=115200 )
+            self.connection = serial.Serial( self.conn, baudrate=115200 )
         except serial.SerialException as e:
             print('Failed to connect to arduino:', self.conn)
             raise e
         else:
             print('Connected to Arduino!')
-        return ser
     
 
     def send_commandstring(self, commandstring):
@@ -60,14 +58,13 @@ class ArduinoEspManager(ArduinoPwmManager):
     def connect(self):
         print('Connecting to Esp...')
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((self.conn, 2323))
+            self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.connection.connect((self.conn, 2323))
         except Exception as e:
             print('Failed to connect to Esp.')
             raise e
         else:
             print('Connected to Esp!')
-        return sock
 
 
     def send_commandstring(self, commandstring):
