@@ -487,6 +487,41 @@ class SettingBezierAfterFlash(ArduinoEvent):
             return self.clean_bytes(command)
         else:
             return command
+
+
+class SettingImpulseToBezierFadeout(ArduinoEvent):
+
+    def __init__(self, condition, controller, settingIndex, attackState, attackSteptime, sustainState, sustainSteptime, fadeoutSteptime, fadeoutDecisteps, y1, y2, hasVariable=False):
+        self.settingIndex = settingIndex
+        self.attackState = attackState
+        self.attackSteptime = attackSteptime
+        self.sustainState = sustainState
+        self.sustainSteptime = sustainSteptime
+        self.fadeoutSteptime = fadeoutSteptime
+        self.fadeoutDecisteps = fadeoutDecisteps
+        self.y1 = y1
+        self.y2 = y2
+        super().__init__(condition, controller, hasVariable)
+        if not hasVariable:
+            self.check_init()
+        self.command = self.make_command()
+
+    def __str__(self):
+        return 'SettingImpulseToBezierFadeout({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})'.format(self.condition, self.controller, self.settingIndex, self.attackState, self.attackSteptime, self.sustainState, self.sustainSteptime, self.fadeoutSteptime, self.fadeoutDecisteps, self.y1, self.y2, self.hasVariable)
+    
+    def check_init(self):
+        self.check_state(self.attackState)
+        self.check_state(self.sustainState)
+        self.check_state(self.y1)
+        self.check_state(self.y2)
+        self.check_is_light_controller(self.controller)
+    
+    def make_command(self):
+        command = [23, self.settingIndex, self.attackState, self.attackSteptime, self.sustainState, self.sustainSteptime, self.fadeoutSteptime, self.fadeoutDecisteps, self.y1, self.y2]
+        if not self.hasVariable:
+            return self.clean_bytes(command)
+        else:
+            return command
         
 
 class SettingSinWave(ArduinoEvent):

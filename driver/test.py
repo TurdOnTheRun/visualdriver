@@ -17,8 +17,10 @@ distance = Value('d', 0.0)
 er = EncoderReader(encoderLock, position, distance, shutdown)
 er.start()
 
-pwm = ArduinoEspManager(ARDUINO_MEGA_CONN, pwmComm, shutdown)
+pwm = ArduinoPwmManager(ARDUINO_UNO_CONN, pwmComm, shutdown)
+pwm.connect()
 pwm.start()
+
 
 while True:
     with encoderLock:

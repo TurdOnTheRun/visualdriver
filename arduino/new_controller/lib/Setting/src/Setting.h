@@ -34,6 +34,10 @@ class Setting {
     byte _setB=0;
     byte _setC=0;
     byte _setD=0;
+    byte _setE=0;
+    byte _setF=0;
+    byte _setG=0;
+    byte _setH=0;
 
     unsigned int _fract=0;
 
@@ -45,9 +49,10 @@ class Setting {
     // For example for SIN this is equal to PI
     unsigned int _intervalsteps=0;
     unsigned int _intervalstep=0;
-    // _reset is used by saw waves and square waves.
-    // Square waves use the boolean to keep track of to or from
-    bool _reset = false;
+    // _reset is used by SAWWAVE, SQUAREWAVE, BEZIERSAW, and IMPULSETOBEZIERFADEOUT
+    // waves use the boolean to keep track of to or from
+    // IMPULSETOBEZIERFADEOUT uses it to switch from impulse to the bezier fadeout
+    byte _reset = 0;
 
 
     // Init & Update Functions
@@ -103,7 +108,7 @@ class Setting {
     
   public:
     Setting();
-    Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6, byte set7);
+    Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6, byte set7, byte set8);
     Setting(byte type, Channel* channel1, Channel* channel2, Channel* channel3, Channel* channel4, Channel* channel5, Channel* channel6);
     byte get_state();
     byte get_state(unsigned long now);

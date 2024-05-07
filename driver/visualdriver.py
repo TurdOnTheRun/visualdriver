@@ -109,14 +109,14 @@ class VisualDriver:
 
     
     def start(self):
-        process = subprocess.Popen(['nmcli', 'device', 'wifi', 'connect', ESP_SSID, 'password', ESP_PWD], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
-        # Check if there was an error
-        if process.returncode != 0:
-            print("Error:", stderr.decode("utf-8"))
-            exit(0)
-        else:
-            print("Successfully connected to Old Weller")
+        # process = subprocess.Popen(['nmcli', 'device', 'wifi', 'connect', ESP_SSID, 'password', ESP_PWD], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # stdout, stderr = process.communicate()
+        # # Check if there was an error
+        # if process.returncode != 0:
+        #     print("Error:", stderr.decode("utf-8"))
+        #     exit(0)
+        # else:
+        #     print("Successfully connected to Old Weller")
 
         self.top.connect()
         self.top.start()
@@ -127,7 +127,7 @@ class VisualDriver:
             self.trigger.start()
 
         print('Setting Up...')
-        time.sleep(1)
+        time.sleep(4)
         self.bottomQueue.put((220,0,50))
         self.topQueue.put((150,255,0))
         self.bottomQueue.put((150,255,0))

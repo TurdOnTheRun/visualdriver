@@ -12,9 +12,11 @@ static const byte SETTING_STATIC = 0;
 static const byte SETTING_SINGULARFLASH = 2;
 static const byte SETTING_SINGULARBURST = 3;
 static const byte SETTING_SINGULARLINEAR = 10;
+static const byte SETTING_SINGULARGRADUAL = 11;
 static const byte SETTING_SINGULARBEZIER = 20;
 static const byte SETTING_SINGULARBEZIERBEFOREFLASH = 21;
 static const byte SETTING_SINGULARBEZIERAFTERFLASH = 22;
+static const byte SETTING_SINGULARIMPULSETOBEZIERFADEOUT = 23;
 
 
 static const byte SETTING_SINGULAR_DIVIDER = 30;

@@ -241,7 +241,7 @@ void channel_remove_effects(byte index){
 
 void channels_reset(){
   //starts at 11 to preserve the static channels
-  for(byte i = 11; i < numberOfChannels; i++) {
+  for(byte i = 7; i < numberOfChannels; i++) {
     channels[i] = Channel();
   };
 }
@@ -394,6 +394,25 @@ void parse_data() {
       set5 = interpreter.inputBuffer[6];
       set6 = interpreter.inputBuffer[7];
       set7 = interpreter.inputBuffer[8];
+    } break;
+
+    case SETTING_SINGULARIMPULSETOBEZIERFADEOUT: {
+      //set1: attack state
+      //set2: attack steptime (for 100 steps)
+      //set3: sustain state
+      //set4: sustain steptime (for 100 steps)
+      //set5: release bezier steptime
+      //set6: release bezier decisteps
+      //set7: release y1 bezier input
+      //set8: release y2 bezier input
+      set1 = interpreter.inputBuffer[2];
+      set2 = interpreter.inputBuffer[3];
+      set3 = interpreter.inputBuffer[4];
+      set4 = interpreter.inputBuffer[5];
+      set5 = interpreter.inputBuffer[6];
+      set6 = interpreter.inputBuffer[7];
+      set7 = interpreter.inputBuffer[8];
+      set8 = interpreter.inputBuffer[9];
     } break;
 
     case SETTING_SINWAVE: {
@@ -663,7 +682,7 @@ void parse_data() {
 
   // Settings
   if(type < SETTING_SINGULAR_DIVIDER){
-    setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6, set7));
+    setting_add(target, Setting(type, set1, set2, set3, set4, set5, set6, set7, set8));
   }
   else if(type < SETTING_EFFECT_DIVIDER){
     setting_add(target, Setting(type, &channels[set1], &channels[set2], &channels[set3], &channels[set4], &channels[set5], &channels[set6]));
