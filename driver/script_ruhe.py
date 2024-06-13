@@ -107,7 +107,7 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopCon
 # A & D
 # 5.08
 startTime = 5.08
-endTime = startTime + 4.8
+endTime = startTime + 8.8
 # impulseSteptime 
 impulseSteptime = 5
 decisteps = 50
@@ -138,7 +138,7 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), Bottom
 # start: 12.47
 # end: 23.1
 startTime = 12.47
-endTime = startTime + 6
+endTime = startTime + 10
 # impulseSteptime 
 impulseSteptime = 5
 decisteps = 50
