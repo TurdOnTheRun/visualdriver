@@ -67,82 +67,110 @@ eventDict['time'].append(MusicStart(At(t), 0))
 # start: 0.17
 # end: 10
 startTime = 0.07
-endTime = 8
+endTime = 6.5
 # impulseSteptime 
-impulseSteptime = 3
+impulseSteptime = 5
 decisteps = 50
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, leftLightSetting, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, leftLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
 
 # F & A
 # 1.25
 startTime = 1.25
-endTime = 8
+endTime = startTime + 5
 # impulseSteptime 
-impulseSteptime = 3
+impulseSteptime = 5
 decisteps = 50
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, rightLightSetting, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, leftLightSetting, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, rightLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, leftLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
 
 # A# & D
 # 2.41
 startTime = 2.41
-endTime = 8
+endTime = startTime + 4.8
 # impulseSteptime 
-impulseSteptime = 3
+impulseSteptime = 5
 decisteps = 50
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, rightLightSetting, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting2, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, rightLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting2, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
 
 # C & D
 # 3.72
 startTime = 3.72
-endTime = 8
+endTime = startTime + 4.8
 # impulseSteptime 
-impulseSteptime = 3
+impulseSteptime = 5
 decisteps = 50
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting4, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting4, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
 
 # A & D
 # 5.08
 startTime = 5.08
-endTime = 8
+endTime = startTime + 4.8
 # impulseSteptime 
-impulseSteptime = 3
+impulseSteptime = 5
 decisteps = 50
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, rightLightSetting, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, rightLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
 
 # A & G
 # 9.87
 startTime = 9.97
-endTime = 15
+endTime = startTime + 4
 # impulseSteptime 
-impulseSteptime = 3
+impulseSteptime = 5
 decisteps = 50
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting3, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting3, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
 
 # D & A
 # 11.11
 startTime = 11.11
-endTime = 23
+endTime = startTime + 5
 # impulseSteptime 
-impulseSteptime = 3
+impulseSteptime = 5
 decisteps = 50
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, rightLightSetting, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, rightLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+
+# F & E
+# start: 12.47
+# end: 23.1
+startTime = 12.47
+endTime = startTime + 6
+# impulseSteptime 
+impulseSteptime = 5
+decisteps = 50
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, leftLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting3, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+
+# A & F
+# start: 13.74
+# end: 22.9
+startTime = 13.74
+endTime = startTime + 4
+# impulseSteptime 
+impulseSteptime = 5
+decisteps = 50
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, rightLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, leftLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
 
 
-# 12.39
-startTime = 13
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 90, 1, 20, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 0, 100))
+# F & D
+# start: 17.78
+# end: 25
+startTime = 17.78
+endTime = startTime + 13
+# impulseSteptime 
+impulseSteptime = 5
+decisteps = 50
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), BottomController, leftLightSetting, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(t + startTime), TopController, topLightSetting1, 95, 1, 40, impulseSteptime, int(1000*(endTime-startTime-(impulseSteptime/100))/(decisteps*10)), decisteps, 100, 100))
 
-# 13.74
 
-# 17.78
+eventDict['time'].append(SettingStatic(At(t + endTime), BottomController, rightLightSetting, 0))
 
 
-vd = VisualDriver(eventDict, music=music, usesMotor=True, startTime=0, isTake=False)
+vd = VisualDriver(eventDict, music=music, usesMotor=False, startTime=0, isTake=False)
 vd.start()
