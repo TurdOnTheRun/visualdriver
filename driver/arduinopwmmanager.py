@@ -1,4 +1,5 @@
 from multiprocessing import Process
+import queue
 import serial
 import socket
 import time
@@ -12,25 +13,26 @@ class ArduinoPwmManager(Process):
         super().__init__()
         self.daemon = True
         self.conn = conn
-        self.connection = self.connect()
         self.commands = commands
         self.shutdownQueue = shutdownQueue
+        self.commandstring = b''
     
 
     def connect(self):
         print('Connecting to Arduino...')
         try:
-            ser = serial.Serial( self.conn, baudrate=115200 )
+            self.connection = serial.Serial( self.conn, baudrate=115200 )
         except serial.SerialException as e:
             print('Failed to connect to arduino:', self.conn)
             raise e
         else:
             print('Connected to Arduino!')
-        return ser
     
 
-    def send_commandstring(self, commandstring):
-        self.connection.write(commandstring)
+    def send_commandstring(self):
+        self.connection.write(self.commandstring)
+        self.commandstring = b''
+        time.sleep(0.005)
 
 
     def shutdown(self):
@@ -38,20 +40,26 @@ class ArduinoPwmManager(Process):
 
 
     def run(self):
+
         while True:
-            command = self.commands.get()
-            commandstring = startByte
             try:
+                command = self.commands.get_nowait()
+            except queue.Empty:
+                if self.commandstring:
+                    self.send_commandstring()
+                command = self.commands.get()
+                
+            if len(self.commandstring) + len(command) + 2 > 64: #buffer size of Serial is 64
+                self.send_commandstring()
+                
+            try:
+                self.commandstring += startByte
                 for comm in command:
-                    commandstring += bytes([comm])
+                    self.commandstring += bytes([comm])
+                self.commandstring += endByte
             except ValueError as e:
                 print(e)
-                continue
-            commandstring += endByte
-            self.send_commandstring(commandstring)
-            time.sleep(0.004)
-#            else:
-#                print('ArduinoPwmManager received invalid command:', command)
+                self.commandstring = b''
 
 
 class ArduinoEspManager(ArduinoPwmManager):
@@ -60,15 +68,16 @@ class ArduinoEspManager(ArduinoPwmManager):
     def connect(self):
         print('Connecting to Esp...')
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((self.conn, 2323))
+            self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.connection.connect((self.conn, 2323))
         except Exception as e:
             print('Failed to connect to Esp.')
             raise e
         else:
             print('Connected to Esp!')
-        return sock
 
 
-    def send_commandstring(self, commandstring):
-        self.connection.send(commandstring)
+    def send_commandstring(self):
+        self.connection.send(self.commandstring)
+        self.commandstring = b''
+        time.sleep(0.005)

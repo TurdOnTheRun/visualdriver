@@ -19,7 +19,7 @@ Setting::Setting()
   _type = SETTING_STATIC;
   _state = 0;
 }
-Setting::Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6, byte set7)
+Setting::Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set5, byte set6, byte set7, byte set8)
 {
   _type = type;
 
@@ -67,6 +67,26 @@ Setting::Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set
       _state1 = set1;
       _state2 = set2;
       _steptime = set3;
+      if(_steptime == 0){
+        _state = _state2;
+        _type = SETTING_STATIC;
+      }
+    } break;
+
+    case SETTING_SINGULARGRADUAL: {
+      //set1: start state
+      //set2: to state
+      //set3: steptime
+      _state = set1;
+      _state1 = set1;
+      _state2 = set2;
+      _steptime = set3;
+      // Uses singularbezier variables but with fixed settings for decisteps, y1, and y2
+      _intervalsteps = (unsigned int) 100;
+      //Y1
+      _setA = 0;
+      //Y2
+      _setB = 30;
       if(_steptime == 0){
         _state = _state2;
         _type = SETTING_STATIC;
@@ -147,6 +167,50 @@ Setting::Setting(byte type, byte set1, byte set2, byte set3, byte set4, byte set
         _state = _state2;
         _type = SETTING_STATIC;
       }
+    } break;
+
+    case SETTING_SINGULARIMPULSETOBEZIERFADEOUT: {
+      //set1: attack state
+      //set2: attack steptime (for 100 steps)
+      //set3: sustain state
+      //set4: sustain steptime (for 100 steps)
+      //set5: release bezier steptime
+      //set6: release bezier decisteps
+      //set7: release y1 bezier input
+      //set8: release y2 bezier input
+      _state = 0;
+      _state1 = 0;
+      _state2 = set1;
+      //_steptime is equal to impulse time because impulse is first
+      _steptime = (unsigned int) set2;
+
+      //Gradual Linear Setup
+      //Decisteps
+      _intervalsteps = (unsigned int) 100;
+      //Y1
+      _setA = 0;
+      //Y2
+      _setB = 30;
+
+      //sustain state
+      _setC = set3;
+      //sustain steptime
+      _setD = set4;
+      //release bezier steptime
+      _setE = set5;
+      //release bezier decisteps
+      _setF = set6;
+      //release y1 bezier input
+      _setG = set7;
+      //release y2 bezier input
+      _setH = set8;
+
+      //check if any of the steptimes are 0
+      if(_steptime == 0 || _setD == 0 || _setE == 0){
+        _state = _state2;
+        _type = SETTING_STATIC;
+      }
+
     } break;
 
   }
@@ -436,21 +500,81 @@ byte Setting::get_state(unsigned long now)
         case SETTING_SINGULARLINEAR: {
           _update_singularlinear();
           _set_state_from_newstate();
+          // Set to static if update is finalized
+          if(_newstate == _state2){
+            _type = SETTING_STATIC;
+          }
+        } break;
+
+        case SETTING_SINGULARGRADUAL: {
+          // Uses singularbezier but with fixed settings for decisteps, y1, and y2
+          _update_singularbezier();
+          _set_state_from_newstate();
+          // Set to static if update is finalized
+          if(_newstate == _state2){
+            _type = SETTING_STATIC;
+          }
         } break;
 
         case SETTING_SINGULARBEZIER: {
           _update_singularbezier();
           _set_state_from_newstate();
+          if(_newstate == _state2){
+            _type = SETTING_STATIC;
+          }
         } break;
 
         case SETTING_SINGULARBEZIERBEFOREFLASH: {
           _update_singularbezier();
           _set_state_from_newstate();
+          if(_newstate == _state2){
+            _type = SETTING_SINGULARFLASH;
+            _steptime = _setC;
+            _state2 = 0;
+          }
         } break;
 
         case SETTING_SINGULARBEZIERAFTERFLASH: {
           _steptime = _setC;
           _type = SETTING_SINGULARBEZIER;
+        } break;
+
+        case SETTING_SINGULARIMPULSETOBEZIERFADEOUT: {
+          _update_singularbezier();
+          if(_reset == 0){
+            // initiate Settings for sustain
+            if(_newstate == _state2){
+              _state1 = _state2;
+              _state2 = _setC;
+              _steptime = _setD;
+              _intervalstep = 0;
+              _reset = 1;
+            }
+          }
+          else if(_reset == 1){
+            // initiate Setting for bezier fadeout
+            if(_newstate == _state2){
+              _state1 = _state2;
+              _state2 = 0;
+              _steptime = _setE;
+              //Decisteps
+              _intervalsteps = (unsigned int) _setF*10;
+              //Reset _intervalstep
+              _intervalstep = 0;
+              //Y1
+              _setA = _setG;
+              //Y2
+              _setB = _setH;
+              _reset = 2;
+            }
+          }
+          else{
+            // Finalize and set to static
+            if(_newstate == _state2){
+              _type = SETTING_STATIC;
+            }
+          }
+          _set_state_from_newstate();
         } break;
 
         case SETTING_SINWAVE: {
@@ -512,7 +636,6 @@ void Setting::_update_singularlinear()
             
     if(_newstate >= _state2 || _newstate > 100){
       _newstate = _state2;
-      _type = SETTING_STATIC;
     }
   // If it is getting dimmer
   } else {
@@ -521,7 +644,6 @@ void Setting::_update_singularlinear()
             
     if (_newstate <= _state2 || _newstate < 0){
       _newstate = _state2;
-      _type = SETTING_STATIC;
     }
   }
 }
@@ -535,13 +657,6 @@ void Setting::_update_singularbezier()
             
     if(_intervalstep >= _intervalsteps){
       _newstate = _state2;
-      if(_type == SETTING_SINGULARBEZIERBEFOREFLASH){
-        _type = SETTING_SINGULARFLASH;
-        _steptime = _setC;
-        _state2 = 0;
-      } else {
-        _type = SETTING_STATIC;
-      } 
     } else {
       _bz = bezier(_intervalstep);
       _newstate = (int) _state1 + _bz * (_state2 - _state1);
@@ -550,13 +665,6 @@ void Setting::_update_singularbezier()
             
     if (_intervalstep >= _intervalsteps){
       _newstate = _state2;
-      if(_type == SETTING_SINGULARBEZIERBEFOREFLASH){
-        _type = SETTING_SINGULARFLASH;
-        _steptime = _setC;
-        _state2 = 0;
-      } else {
-        _type = SETTING_STATIC;
-      } 
     } else {
       _bz = bezier(_intervalstep);
       _newstate = (int) _state1 - _bz * (_state1 - _state2);
@@ -676,14 +784,14 @@ void Setting::_update_linearsaw()
 {
   if(_reset){
     _newstate = _state1;
-    _reset = false;
+    _reset = 0;
   } else if(rising()){
     // If it is getting brighter
     _newstate = (int) _state + _steps;
             
     if(_newstate >= _state2 || _newstate > 100){
       _newstate = _state2;
-      _reset = true;
+      _reset = 1;
     }
   } else {
     // If it is getting dimmer
@@ -691,7 +799,7 @@ void Setting::_update_linearsaw()
             
     if (_newstate <= _state2 || _newstate < 0){
       _newstate = _state2;
-      _reset = true;
+      _reset = 1;
     }
   }
 }
@@ -795,7 +903,7 @@ void Setting::_update_beziersaw()
   if(_reset){
     _newstate = _state1;
     _intervalstep = 0;
-    _reset = false;
+    _reset = 0;
   } else {
 
     _intervalstep = _intervalstep + _steps;
@@ -804,7 +912,7 @@ void Setting::_update_beziersaw()
               
       if(_intervalstep >= _intervalsteps){
         _newstate = _state2;
-        _reset = true;
+        _reset = 1;
       } else {
         _bz = bezier(_intervalstep);
         _newstate = (int) _state1 + _bz * (_state2 - _state1);
@@ -813,7 +921,7 @@ void Setting::_update_beziersaw()
               
       if (_intervalstep >= _intervalsteps){
         _newstate = _state2;
-        _reset = true;
+        _reset = 1;
       } else {
         _bz = bezier(_intervalstep);
         _newstate = (int) _state1 - _bz * (_state1 - _state2);
@@ -862,10 +970,10 @@ void Setting::_update_squarewave()
 {
   if(_reset){
     _newstate = _state1;
-    _reset = false;
+    _reset = 0;
   } else {
     _newstate = _state2;
-    _reset = true;
+    _reset = 1;
   }
 }
 
