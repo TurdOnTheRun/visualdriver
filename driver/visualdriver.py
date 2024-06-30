@@ -99,13 +99,13 @@ class VisualDriver:
         time.sleep(1)
         self.shutdownQueue.put('STOP')
         time.sleep(1)
-        process = subprocess.Popen(['nmcli', 'device', 'wifi', 'connect', WIFI_SSID, 'password', WIFI_PWD], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
-        # Check if there was an error
-        if process.returncode != 0:
-            print("Error:", stderr.decode("utf-8"))
-        else:
-            print("Successfully reconnected to _____________")
+        # process = subprocess.Popen(['nmcli', 'device', 'wifi', 'connect', WIFI_SSID, 'password', WIFI_PWD], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # stdout, stderr = process.communicate()
+        # # Check if there was an error
+        # if process.returncode != 0:
+        #     print("Error:", stderr.decode("utf-8"))
+        # else:
+        #     print("Successfully reconnected to _____________")
 
     
     def start(self):
