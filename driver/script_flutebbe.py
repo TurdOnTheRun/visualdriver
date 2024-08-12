@@ -460,17 +460,21 @@ dimmduration = 0.2
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 80, 0, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting2, 80, 0, int(dimmduration*10), 10, 0, 100))
 
+# 42.8 - 44
+# Bassy Fade In
+
 
 # Part II
-# 44
-# explosion
+# 44 - 45
+# Buzzing Explosion (currently not visible)
 startTime = beginning + 44
 fadeOutLength = 0.2
 sustainSteptime = 5
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting1, 100, 1, 99, sustainSteptime, int(fadeOutLength*10), 10, 90, 100))
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting3, 100, 1, 99, sustainSteptime, int(fadeOutLength*10), 10, 90, 100))
 
-
+# Setup
+# Around 45
 # explosion end
 startTime = beginning + 44.1
 
@@ -481,19 +485,41 @@ eventDict['time'].append(ChannelSetStatic(At(startTime), BottomController, Chann
 eventDict['time'].append(EffectSequencedLightStrobe(At(startTime), TopController, EffectStrobe1, ChannelStrobe1Steptime, ChannelStrobe1Darkstep, 1537))
 eventDict['time'].append(EffectSequencedLightStrobe(At(startTime), BottomController, EffectStrobe1, ChannelStrobe1Steptime, ChannelStrobe1Darkstep, 1537))
 
-eventDict['time'].append(ChannelRemoveEffect(At(startTime), BottomController, Channel2, 0))
 eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel1, EffectStrobe1, 0))
 eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel3, EffectStrobe1, 0))
 eventDict['time'].append(ChannelAddEffect(At(startTime), TopController, Channel1, EffectStrobe1, 0))
 eventDict['time'].append(ChannelAddEffect(At(startTime), TopController, Channel3, EffectStrobe1, 0))
 
-#Setup of Flut and Ebbe from jeweilige Top position
+#Setup of Flut
+# TODO: Needs to become the fire vibrato pulsating strobe that then continues in V & VI
 eventDict['time'].append(ChannelRemoveEffect(At(startTime), TopController, Channel2, 0))
 eventDict['time'].append(ChannelRemoveEffect(At(startTime), TopController, Channel4, 0))
+# Steptime 34, Darkstep On
+eventDict['time'].append(ChannelSetStatic(At(startTime), TopController, ChannelStrobe2Darkstep, 1))
+# TODO: This Strobe needs a new delicate strobe like sternschnuppen
 eventDict['time'].append(EffectSequencedLightStrobe(At(startTime), TopController, EffectStrobe2, ChannelStrobe2Steptime, ChannelStrobe2Darkstep, 2626))
 eventDict['time'].append(ChannelAddEffect(At(startTime), TopController, Channel2, EffectStrobe2, 0))
 
+eventDict['time'].append(EffectSequencedLightStrobe(At(startTime), BottomController, EffectStrobe2, ChannelStrobe2Steptime, ChannelStrobe2Darkstep, 2626))
+eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel2, EffectStrobe2, 0))
 
+#Ebbe Setup not necessary
+
+
+# 45-46
+# Distant Tension Fade In, then Fadout until 49
+
+# 46-47.5
+# 3 Fire Vibrato Pulses
+
+# 48.5 - 50
+# Glitter Strobe Fade In
+
+# 54.5 - Chord
+# 60 - Strong Flut
+# 70 - One Ebbe Chord (also little pianos)
+# 75 - Strong Flut
+# 82 -
 
 # 44-48
 # Strobe Fade In
