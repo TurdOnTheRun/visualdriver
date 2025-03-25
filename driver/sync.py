@@ -9,9 +9,11 @@ bottomPwmComm = Queue()
 shutdown = Queue()
 
 top = ArduinoEspManager(ARDUINO_MEGA_CONN, topPwmComm, shutdown)
+top.connect()
 top.start()
 
 bottom = ArduinoPwmManager(ARDUINO_UNO_CONN, bottomPwmComm, shutdown)
+bottom.connect()
 bottom.start()
 
 sleep(1)
