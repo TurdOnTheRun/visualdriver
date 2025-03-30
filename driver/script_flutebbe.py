@@ -44,6 +44,7 @@ EffectStrobe2 = 1
 EffectSubtractPercentageVibrato = 2
 EffectSubtractPercentagePerlin = 3
 EffectSidechain = 4
+EffectOff = 5
 
 # Bottom Setup
 eventDict['time'].append(SettingStatic(At(0), BottomController, Setting1, 0))
@@ -77,6 +78,9 @@ eventDict['time'].append(EffectSubtractPercentage(At(0), BottomController, Effec
 eventDict['time'].append(EffectSubtractPercentage(At(0), BottomController, EffectSubtractPercentagePerlin, ChannelPerlin))
 
 eventDict['time'].append(EffectSubtract(At(0), BottomController, EffectSidechain, ChannelSidechain))
+
+eventDict['time'].append(EffectSubtractPercentage(At(0), BottomController, EffectOff, StaticChannel51))
+
 
 
 eventDict['time'].append(LightSetChannel(At(0), BottomController, [Light1,], Channel1))
@@ -117,6 +121,9 @@ eventDict['time'].append(EffectSubtractPercentage(At(0), TopController, EffectSu
 eventDict['time'].append(EffectSubtractPercentage(At(0), TopController, EffectSubtractPercentagePerlin, ChannelPerlin))
 
 eventDict['time'].append(EffectSubtract(At(0), TopController, EffectSidechain, ChannelSidechain))
+
+eventDict['time'].append(EffectSubtractPercentage(At(0), TopController, EffectOff, StaticChannel51))
+
 
 
 eventDict['time'].append(LightSetChannel(At(0), TopController, [Light1,], Channel1))
@@ -461,10 +468,12 @@ dimmduration = 4.5
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 90, 0, int(dimmduration*10), 10, 50, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 90, 0, int(dimmduration*10), 10, 50, 100))
 
-# 18
-# Darkstep On
-startTime = beginning + 18
-eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel1, EffectStrobe1, 0))
+# # 18
+# # Darkstep On
+# startTime = beginning + 18
+# eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel1, EffectStrobe1, 0))
+
+
 
 # STATE SUMMARY
 # 
@@ -481,6 +490,7 @@ eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Chann
 # 18.73 - 20.02
 # Strong Left Darkstep Wave
 startTime = beginning + 18.73
+eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel1, EffectStrobe1, 0))
 dimmduration = 1.15
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 0, 95, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting2, 0, 95, int(dimmduration*10), 10, 0, 100))
@@ -523,11 +533,12 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomCont
 # 22.9-24
 # Light Strobe Wave
 startTime = beginning + 22.9
+eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel1, EffectStrobe2, 0))
 dimmduration = 0.55
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 0, 65, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 65, int(dimmduration*10), 10, 0, 100))
 startTime = startTime + dimmduration
-dimmduration = 2
+dimmduration = 1
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 65, 0, int(dimmduration*10), 10, 50, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 65, 0, int(dimmduration*10), 10, 50, 100))
 
@@ -538,7 +549,7 @@ dimmduration = 0.5
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 0, 65, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 65, int(dimmduration*10), 10, 0, 100))
 startTime = startTime + dimmduration
-dimmduration = 1.5
+dimmduration = 0.5
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 65, 0, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 65, 0, int(dimmduration*10), 10, 0, 100))
 
@@ -585,6 +596,7 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomCont
 # 38 - 39.2
 # Strong Left Darkstep Wave
 startTime = beginning + 38
+eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel1, EffectStrobe1, 0))
 dimmduration = 0.5
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 0, 95, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting2, 0, 95, int(dimmduration*10), 10, 0, 100))
@@ -639,9 +651,9 @@ startTime = beginning + 41
 dimmduration = 3
 eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting3, 0, 95, int(dimmduration*10), 10, 0, 100))
 
-# eventDict['time'].append(MotorSpeed(At(startTime), 90))
+eventDict['time'].append(MotorSpeed(At(startTime), 90))
 # # Bremsfactor 0.0856
-# eventDict['position'].append(MotorSpeed(GE(3.25 - 0.0856), 0))
+eventDict['position'].append(MotorSpeed(GE(3.25 - 0.09), 0))
 
 # 42.12 - 42.8
 # Strong Left Darkstep Wave
@@ -698,6 +710,8 @@ eventDict['time'].append(LightSetChannel(At(startTime), BottomController, [Light
 eventDict['time'].append(ChannelAddEffect(At(startTime), TopController, Channel1, EffectSidechain, 1))
 eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel1, EffectSidechain, 1))
 
+eventDict['time'].append(ChannelAddEffect(At(startTime), TopController, ChannelSidechain, EffectOff, 0))
+eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, ChannelSidechain, EffectOff, 0))
 
 
 # STATE SUMMARY
@@ -731,7 +745,7 @@ eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Chann
 #
 # Light Channels                    | Light Channels
 # --------------------------------- | ---------------------------------
-#   Channel1: Setting1, [Strobe1, ] |   Channel1: Setting1, [Strobe1, ]
+#   Channel1: Setting1, [Strobe1, Sc] |   Channel1: Setting1, [Strobe1, SC]
 #   Channel2: Setting2, [Strobe2, ] |   Channel2: Setting2, [Strobe2, ]
 #   Channel3: Setting3, []          |   Channel3: Setting3, []
 #   Channel4: Setting4, []          |   Channel4: Setting4, []
@@ -767,7 +781,7 @@ eventDict['time'].append(LightSetChannel(At(startTime), TopController, [Light3,]
 #
 # Light Channels                    | Light Channels
 # --------------------------------- | ---------------------------------
-#   Channel1: Setting1, [Strobe1, ] |   Channel1: Setting1, [Strobe1, ]
+#   Channel1: Setting1, [Strobe1, SC] |   Channel1: Setting1, [Strobe1, SC]
 #   Channel2: Setting2, [Strobe2, ] |   Channel2: Setting2, [Strobe2, ]
 #   Channel3: Setting3, []          |   Channel3: Setting3, []
 #   Channel4: Setting4, []          |   Channel4: Setting4, []
@@ -1030,14 +1044,14 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopControl
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting4, 95, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 # 81.6 - Small Key
-startTime = beginning + 81.6
+startTime = beginning + 81.4
 fadeOutLength = 0.5
 sustainSteptime = 5
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting4, 75, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting4, 75, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 # 82.2 - Small Key
-startTime = beginning + 82.2
+startTime = beginning + 82
 fadeOutLength = 0.5
 sustainSteptime = 5
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting4, 75, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
@@ -1085,7 +1099,7 @@ eventDict['time'].append(LightSetChannel(At(startTime), TopController, [Light3],
 #
 # Light Channels                    | Light Channels
 # --------------------------------- | ---------------------------------
-#   Channel1: Setting1, [Strobe1, ] |   Channel1: Setting1, [Strobe1, ]
+#   Channel1: Setting1, [Strobe1, SC] |   Channel1: Setting1, [Strobe1, SC]
 #   Channel2: Setting2, [Strobe2, ] |   Channel2: Setting2, [Strobe2, ]
 #   Channel3: Setting3, []          |   Channel3: Setting3, []
 #   Channel4: Setting4, []          |   Channel4: Setting4, []
@@ -1098,6 +1112,10 @@ startTime = beginning + 82.5
 eventDict['time'].append(ChannelRemoveEffects(At(startTime), BottomController, Channel1))
 eventDict['time'].append(ChannelRemoveEffects(At(startTime), TopController, Channel1))
 eventDict['time'].append(ChannelRemoveEffect(At(startTime), TopController, Channel2, 0))
+
+startTime = beginning + 84
+eventDict['time'].append(ChannelRemoveEffect(At(startTime), TopController, ChannelSidechain, 0))
+eventDict['time'].append(ChannelRemoveEffect(At(startTime), BottomController, ChannelSidechain, 0))
 
 # STATE SUMMARY
 # 
@@ -1604,7 +1622,7 @@ startTime = beginning + 44.8
 dimmduration = 0.7
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 0, 100, int(dimmduration*20), 5, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 0, 100, int(dimmduration*20), 5, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 0, 100, int(dimmduration*20), 5, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 0, 90, int(dimmduration*20), 5, 0, 100))
 startTime = startTime + dimmduration
 dimmduration = 0.7
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 100, 0, int(dimmduration*20), 5, 0, 100))
@@ -1614,14 +1632,14 @@ eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Sett
 # 46
 # Start Turn
 startTime = beginning + 46
-# eventDict['time'].append(MotorDirection(At(startTime), MOTOR_COUNTERCLOCKWISE))
-# eventDict['time'].append(MotorSpeed(At(startTime), 80))
+eventDict['time'].append(MotorDirection(At(startTime), MOTOR_COUNTERCLOCKWISE))
+eventDict['time'].append(MotorSpeed(At(startTime), 80))
 # # Bremsfactor 0.074
-# eventDict['position'].append(MotorSpeed(LE(2.75 + 0.074), 0))
+eventDict['position'].append(MotorSpeed(LE(2.75 + 0.08), 0))
 
 startTime = beginning + 50
 dimmduration = 4.5
-eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 100, 0, int(dimmduration*20), 5, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 90, 0, int(dimmduration*20), 5, 0, 100))
 
 # Setup Ebbe
 ebbemove = 5.43
@@ -1684,7 +1702,7 @@ eventDict['time'].append(ChannelRemoveEffect(At(startTime), TopController, Chann
 #   Channel2: Setting2, [Perlin]    |   Channel2: Setting2, [Strobe2, ]
 #   Channel3: Setting3, []          |   Channel3: Setting3, []
 #   Channel4: Setting4, []          |   Channel4: Setting4, []
-fadeOutLength = 2.8
+fadeOutLength = 3.3
 # sustainSteptime 
 sustainSteptime = 4
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting4, 70, 1, 30, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
@@ -1720,7 +1738,7 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopControl
 # 53
 # Right
 startTime = beginning + 53 + ebbemove
-fadeOutLength = 3.5
+fadeOutLength = 3.8
 # sustainSteptime 
 sustainSteptime = 5
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting3, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
@@ -1861,10 +1879,10 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomCont
 # 80.13
 # Super Light Right
 startTime = beginning + 80.13 + ebbemove
-fadeOutLength = 3.5
+fadeOutLength = 4.5
 # sustainSteptime 0
-sustainSteptime = 3
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting3, 60, 1, 20, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+sustainSteptime = 4
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting3, 65, 1, 20, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 
 # 82.9-85.8
@@ -1986,7 +2004,7 @@ eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting
 
 # 96.25
 # Super Light Left
-startTime = beginning + 96 + ebbemove
+startTime = beginning + 96.15 + ebbemove
 fadeOutLength = 2.8
 # sustainSteptime 
 sustainSteptime = 5
@@ -1994,7 +2012,7 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomCont
 
 # 96.5
 # Super Ligth Right
-startTime = beginning + 96.2 + ebbemove
+startTime = beginning + 96.1 + ebbemove
 fadeOutLength = 2.8
 # sustainSteptime 
 sustainSteptime = 3
@@ -2018,7 +2036,7 @@ startTime = beginning + 196
 eventDict['time'].append(ChannelSetStatic(At(startTime), BottomController, ChannelStrobe1Darkstep, 0))
 eventDict['time'].append(EffectSequencedLightStrobe(At(startTime), BottomController, EffectStrobe1, ChannelStrobe1Steptime, ChannelStrobe1Darkstep, 2424))
 eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel2, EffectStrobe1, 0))
-eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel4, EffectStrobe1, 0))
+eventDict['time'].append(LightSetChannel(At(startTime), BottomController, [Light2, Light4], Channel2)) #stays like this until end
 
 eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel1, EffectSidechain, 1))
 eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel3, EffectSidechain, 1))
@@ -2030,13 +2048,16 @@ eventDict['time'].append(ChannelSetSetting(At(startTime), BottomController, Chan
 startTime = beginning + 212 #moved it to where top ist first used to prolong aura fade out from part III (time events are sorted at the end)
 eventDict['time'].append(LightSetChannel(At(startTime), TopController, [Light1,Light3], Channel1))
 eventDict['time'].append(LightSetChannel(At(startTime), TopController, [Light2,Light4], Channel2))
-eventDict['time'].append(ChannelSetStatic(At(startTime), TopController, ChannelStrobe1Steptime, 80))
-eventDict['time'].append(ChannelSetStatic(At(startTime), TopController, ChannelStrobe1Darkstep, 1))
-eventDict['time'].append(EffectSequencedLightStrobe(At(startTime), TopController, EffectStrobe1, ChannelStrobe1Steptime, ChannelStrobe1Darkstep, 6868))
-eventDict['time'].append(ChannelAddEffect(At(startTime), TopController, Channel2, EffectStrobe1, 0))
+eventDict['time'].append(ChannelRemoveEffects(At(startTime), TopController, Channel1))
+eventDict['time'].append(ChannelRemoveEffects(At(startTime), TopController, Channel2))
 
 eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel2, EffectSidechain, 1))
-eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel4, EffectSidechain, 1))
+
+eventDict['time'].append(ChannelSetStatic(At(startTime), TopController, ChannelStrobe1Steptime, 6))
+eventDict['time'].append(ChannelSetStatic(At(startTime), BottomController, ChannelStrobe2Steptime, 6))
+eventDict['time'].append(SettingBezierWave(At(startTime), TopController, Setting2, StaticChannel0, Channel4, ChannelStrobe1Steptime, StaticChannel0, StaticChannel100, StaticChannel100))
+
+
 
 
 # STATE SUMMARY
@@ -2055,9 +2076,9 @@ eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Chann
 #
 # Static Channels                   | Static Channels
 # --------------------------------- | ---------------------------------
-#   ChannelStrobe1Steptime: 100     |   ChannelStrobe1Steptime: 34
+#   ChannelStrobe1Steptime: 80      |   ChannelStrobe1Steptime: 34
 #   ChannelStrobe1Darkstep: 0       |   ChannelStrobe1Darkstep: 0
-#   ChannelStrobe2Steptime: 34      |   ChannelStrobe2Steptime: 34
+#   ChannelStrobe2Steptime: 34      |   ChannelStrobe2Steptime: 80
 #   ChannelStrobe2Darkstep: 1       |   ChannelStrobe2Darkstep: 1
 #
 #   ChannelVibratoSteptime: 9       |   ChannelVibratoSteptime: 17
@@ -2065,28 +2086,28 @@ eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Chann
 #
 # Effects                           | Effects
 # --------------------------------- | ---------------------------------
-#   EffectStrobe1:        6868      |   EffectStrobe1:        2424
+#   EffectStrobe1:        5757      |   EffectStrobe1:        2424
 #   EffectStrobe2:        2626      |   EffectStrobe2:        2626
 #
 # Light Channels                    | Light Channels
 # --------------------------------- | ---------------------------------
-#   Channel1: Setting1, []          |   Channel1: Setting1, []
-#   Channel2: Setting2, [Strobe1]   |   Channel2: Setting2, [Strobe1, ]
-#   Channel3: Setting3, []          |   Channel3: Setting3, []
-#   Channel4: Setting4, []          |   Channel4: Setting4, [Strobe1, ]
+#   Channel1: Setting1, []          |   Channel1: Setting1, [Sidechain, ]
+#   Channel2: Setting2, []          |   Channel2: Setting2, [Strobe1, Sidechain ]
+#   Channel3: Setting3, []          |   Channel3: Setting3, [Sidechain, ]
+#   Channel4: Setting4, []          |   Channel4: Setting4, []
 
 
 
-# eventDict['time'].append(MotorSpeed(At(startTime), 10))
+eventDict['time'].append(MotorSpeed(At(startTime), 10))
 
 startTime = beginning + 197
-# eventDict['time'].append(MotorSpeed(At(startTime), 20))
+eventDict['time'].append(MotorSpeed(At(startTime), 20))
 
 startTime = beginning + 198
-# eventDict['time'].append(MotorSpeed(At(startTime), 30))
+eventDict['time'].append(MotorSpeed(At(startTime), 30))
 
 startTime = beginning + 198
-# eventDict['time'].append(MotorSpeed(At(startTime), 45))
+eventDict['time'].append(MotorSpeed(At(startTime), 45))
 
 loopPianofadeOutLength = 0.3
 loopPianosustainSteptime = 3
@@ -2158,7 +2179,7 @@ for i in range(6):
 
 # 204.5
 # Continuous Pianos
-startTime = beginning + 204.5
+startTime = beginning + 204.6
 left = True
 for i in range(32):
     if left:
@@ -2171,22 +2192,21 @@ for i in range(32):
 
 # Wave
 # Strobe from left and right
-startTime = beginning + 206.5
+startTime = beginning + 200.5
 dimmduration = 6
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 70, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 70, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 15, int(dimmduration*10), 10, 0, 100))
 startTime = startTime + dimmduration
-dimmduration = 3
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 70, 10, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 70, 10, int(dimmduration*10), 10, 0, 100))
+dimmduration = 6
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 15, 60, int(dimmduration*10), 10, 0, 100))
+startTime = startTime + dimmduration
+dimmduration = 3.6
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 60, 10, int(dimmduration*10), 10, 0, 100))
 startTime = startTime + dimmduration
 dimmduration = 0.5
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 10, 50, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 10, 50, int(dimmduration*10), 10, 0, 100))
 startTime = startTime + dimmduration
 dimmduration = 0.5
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 50, 0, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 50, 0, int(dimmduration*10), 10, 0, 100))
 
 # 212.98
 # Chord
@@ -2194,9 +2214,9 @@ startTime = beginning + 212.98
 fadeOutLength = 1.8
 # sustainSteptime 
 sustainSteptime = 5
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-# eventDict['time'].append(MotorSpeed(At(startTime), 60))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 95, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 60, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(MotorSpeed(At(startTime), 60))
 
 
 
@@ -2217,26 +2237,44 @@ startTime = beginning + 216.96
 fadeOutLength = 1.8
 # sustainSteptime 
 sustainSteptime = 5
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 95, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 60, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 
-# 216.96
-# Pulsating Appears Lightly
-startTime = beginning + 216.96
+# Pulsating Appearances
+startTime = beginning + 212.1
 dimmduration = 1
-eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting2, 0, 60, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 0, 20, int(dimmduration*10), 10, 0, 100))
+
+startTime = beginning + 217
+dimmduration = 2
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 20, 40, int(dimmduration*10), 10, 0, 100))
+startTime = startTime + dimmduration
+dimmduration = 3
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 40, 10, int(dimmduration*10), 10, 0, 100))
+
+startTime = beginning + 226
+dimmduration = 2
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 10, 50, int(dimmduration*10), 10, 0, 100))
+startTime = startTime + dimmduration
+dimmduration = 2
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 50, 10, int(dimmduration*10), 10, 0, 100))
+
+startTime = beginning + 236.2
+dimmduration = 2
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 10, 50, int(dimmduration*10), 10, 0, 100))
+startTime = startTime + dimmduration
+dimmduration = 2
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 50, 10, int(dimmduration*10), 10, 0, 100))
 
 # Wave
 # Strobe from left and right
 startTime = beginning + 220
 dimmduration = 13
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 70, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 70, int(dimmduration*10), 10, 0, 100))
 startTime = startTime + dimmduration
 dimmduration = 7
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 70, 0, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 70, 0, int(dimmduration*10), 10, 0, 100))
 
 
 # 220.91
@@ -2245,9 +2283,9 @@ startTime = beginning + 220.91
 fadeOutLength = 1.8
 # sustainSteptime 
 sustainSteptime = 5
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-# eventDict['time'].append(MotorSpeed(At(startTime), 70))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 95, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 60, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(MotorSpeed(At(startTime), 70))
 
 
 # 224.91
@@ -2256,8 +2294,8 @@ startTime = beginning + 224.91
 fadeOutLength = 1.8
 # sustainSteptime 
 sustainSteptime = 5
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 95, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 60, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 
 
@@ -2268,7 +2306,7 @@ for i in range(182):
         sett = Setting1
     else:
         sett = Setting3
-    eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, sett, 70, 1, 30, loopPianosustainSteptime, int(loopPianofadeOutLength*20), 5, 80, 100))
+    eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, sett, 95, 1, 30, loopPianosustainSteptime, int(loopPianofadeOutLength*20), 5, 80, 100))
     startTime += 0.25
     left = not left
 
@@ -2278,8 +2316,8 @@ startTime = beginning + 228.95
 fadeOutLength = 1.8
 # sustainSteptime 
 sustainSteptime = 5
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 95, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 60, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 
 
@@ -2289,8 +2327,8 @@ startTime = beginning + 232.95
 fadeOutLength = 1.8
 # sustainSteptime 
 sustainSteptime = 3
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 100, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 95, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 60, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 
 
@@ -2301,7 +2339,7 @@ fadeOutLength = 1.8
 # sustainSteptime 
 sustainSteptime = 5
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 80, 1, 30, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 80, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 50, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 
 # 240.95
@@ -2311,8 +2349,8 @@ fadeOutLength = 1.8
 # sustainSteptime 
 sustainSteptime = 5
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 80, 1, 30, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 80, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-# eventDict['time'].append(MotorSpeed(At(startTime), 90))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 50, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(MotorSpeed(At(startTime), 90))
 
 
 # 244.89
@@ -2321,10 +2359,9 @@ startTime = beginning + 244.89
 fadeOutLength = 1.8
 # sustainSteptime 
 sustainSteptime = 5
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 90, 1, 30, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, SettingSidechain, 90, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting1, 70, 1, 30, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
-# eventDict['time'].append(MotorSpeed(At(startTime), 100))
+eventDict['time'].append(MotorSpeed(At(startTime), 100))
 
 
 # 244.89 - 247.91
@@ -2333,72 +2370,80 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomCont
 startTime = beginning + 244.89
 dimmduration = 1.5
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 70, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 70, int(dimmduration*10), 10, 0, 100))
 startTime = startTime + dimmduration
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 70, 0, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 70, 0, int(dimmduration*10), 10, 0, 100))
 
 # 246.6 - 250.65
 # Pulsating becomes full on intense
-startTime = beginning + 246.6
+startTime = beginning + 242
 dimmduration = 4
-eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting2, 60, 95, int(dimmduration*10), 10, 0, 100))
 
-eventDict['time'].append(ChannelSetStatic(At(startTime), BottomController, ChannelStrobe2Steptime, 80))
-eventDict['time'].append(ChannelSetStatic(At(startTime), BottomController, ChannelStrobe2Darkstep, 0))
-eventDict['time'].append(SettingSquareWave(At(startTime), BottomController, SettingSidechain, StaticChannel0, StaticChannel51, ChannelStrobe2Steptime, ChannelStrobe2Steptime, StaticChannel0, StaticChannel0))
+#Reset Waves so they are synchronous
+eventDict['time'].append(SettingBezierWave(At(startTime), TopController, Setting2, StaticChannel0, Channel4, ChannelStrobe1Steptime, StaticChannel0, StaticChannel100, StaticChannel100))
+eventDict['time'].append(SettingBezierWave(At(startTime), BottomController, SettingSidechain, StaticChannel0, Channel4, ChannelStrobe2Steptime, StaticChannel0, StaticChannel100, StaticChannel100))
+
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 10, 95, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 10, 50, int(dimmduration*10), 10, 0, 100))
+
+#Pulsating Gaps
+startTime = beginning + 247.8
+gapLenght = 0.47
+for i in range(13):
+    eventDict['time'].append(ChannelSetChannel(At(startTime), TopController, Channel2, StaticChannel67))
+    eventDict['time'].append(ChannelSetChannel(At(startTime), BottomController, ChannelSidechain, StaticChannel34))
+    onAgainTime = startTime + gapLenght
+    eventDict['time'].append(ChannelSetSetting(At(onAgainTime), TopController, Channel2, Setting2))
+    eventDict['time'].append(ChannelSetSetting(At(onAgainTime), BottomController, ChannelSidechain, SettingSidechain))
+    startTime += 2
+
 
 # 248
 startTime = beginning + 248
-# eventDict['time'].append(MotorSpeed(At(startTime), 110))
+eventDict['time'].append(MotorSpeed(At(startTime), 110))
 
 # 254.45 - 257.34
 # Fade In Strobe from left and right
 startTime = beginning + 246.6
 dimmduration = 3
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 80, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 80, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 70, int(dimmduration*10), 10, 0, 100))
 
 
 # 257.34 = 260.45
 # Fade Out Strobe from left and right
 startTime = beginning + 257.34
 dimmduration = 3
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 80, 0, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 80, 0, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 70, 0, int(dimmduration*10), 10, 0, 100))
 
 # 260.95 - 262.4
 # Wave Strobe from left and right
 startTime = beginning + 260.95
 dimmduration = 0.25
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 70, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 70, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 60, int(dimmduration*10), 10, 0, 100))
 startTime = startTime + dimmduration
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 70, 0, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 70, 0, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 60, 0, int(dimmduration*10), 10, 0, 100))
 
 # 262.44-263.4
 # Fade In Strobe from left and right
 startTime = beginning + 262.44
 dimmduration = 1
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 0, 50, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 50, int(dimmduration*10), 10, 0, 100))
 
 # 264.65 - 268.14
 # Fade Out Strobe from left and right
 startTime = beginning + 264.65
 dimmduration = 3.5
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting2, 50, 0, int(dimmduration*10), 10, 0, 100))
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 50, 0, int(dimmduration*10), 10, 0, 100))
-# eventDict['time'].append(MotorSpeed(At(startTime), 80))
+eventDict['time'].append(MotorSpeed(At(startTime), 80))
 
 
 # 268 - 279.54
 # Fade Out Everything
 startTime = beginning + 268
 dimmduration = 10
-eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting2, 95, 0, int(dimmduration*10), 10, 0, 100))
-# eventDict['time'].append(MotorSpeed(At(startTime), 60))
+eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting4, 95, 0, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 95, 0, int(dimmduration*10), 10, 0, 100))
+
+eventDict['time'].append(MotorSpeed(At(startTime), 60))
 
 eventDict['time'].append(LightSetChannel(At(startTime), TopController, [Light1,], Channel1))
 eventDict['time'].append(LightSetChannel(At(startTime), TopController, [Light3,], Channel3))
@@ -2423,7 +2468,7 @@ for i in range(6):
 
 # PART V
 # Breakfactor: 0.0625
-# eventDict['position'].append(MotorSpeed(LE(-1.5 + 0.0625), 0))
+eventDict['position'].append(MotorSpeed(LE(-1.5 + 0.0625), 0))
 
 # Faint Flut Bottom 3 & 4
 # Present Flut Top 2, Bottom 3
@@ -2436,6 +2481,8 @@ startTime = beginning + 278
 
 eventDict['time'].append(LightSetChannel(At(startTime), TopController, [Light2,], Channel2))
 eventDict['time'].append(LightSetChannel(At(startTime), TopController, [Light4,], Channel4))
+eventDict['time'].append(LightSetChannel(At(startTime), BottomController, [Light4,], Channel4))
+
 
 eventDict['time'].append(EffectSequencedLightStrobe(At(startTime), BottomController, EffectStrobe1, ChannelStrobe1Steptime, ChannelStrobe1Darkstep, 3434))
 eventDict['time'].append(EffectSequencedLightStrobe(At(startTime), BottomController, EffectStrobe2, ChannelStrobe2Steptime, ChannelStrobe2Darkstep, 6363))
@@ -2455,8 +2502,6 @@ eventDict['time'].append(ChannelRemoveEffects(At(startTime), BottomController, C
 
 eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel3, EffectStrobe1, 0))
 eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel4, EffectStrobe1, 0))
-eventDict['time'].append(ChannelRemoveEffect(At(startTime), BottomController, Channel1, 0))
-eventDict['time'].append(ChannelRemoveEffect(At(startTime), BottomController, Channel2, 0))
 
 eventDict['time'].append(ChannelAddEffect(At(startTime), TopController, Channel2, EffectStrobe2, 0))
 eventDict['time'].append(ChannelAddEffect(At(startTime), TopController, Channel1, EffectSubtractPercentagePerlin, 0))
@@ -2508,7 +2553,7 @@ eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting
 # 280.6 - 282 Light Faint Flut Fade In (no darkstep)
 startTime = beginning + 280.6
 dimmduration = 1.5
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 0, 50, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 50, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 0, 50, int(dimmduration*10), 10, 0, 100))
 
 # 280.8 Piano Key
@@ -2530,13 +2575,13 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopControl
 # 282.3 - 283 Faint Darkstep Flut Fade In
 startTime = beginning + 282.3
 dimmduration = 0.8
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 0, 80, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 80, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 0, 80, int(dimmduration*10), 10, 0, 100))
 
 # 283 - 285.5  Faint Darkstep Flut Fade Out
 startTime = beginning + 283
 dimmduration = 2.5
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 80, 0, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 80, 0, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 80, 0, int(dimmduration*10), 10, 0, 100))
 
 # 283.9 Light Piano Key
@@ -2558,11 +2603,11 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomCont
 # 286.4 - 288.5 Faint Flut Wave
 startTime = beginning + 286.4
 dimmduration = 1
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 0, 80, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 80, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 0, 80, int(dimmduration*10), 10, 0, 100))
 startTime = beginning + 287
 dimmduration = 1
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 80, 0, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 80, 0, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 80, 0, int(dimmduration*10), 10, 0, 100))
 
 # 287.8 Very Light Key
@@ -2576,11 +2621,11 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomCont
 # 288.5 - 291 Stronger Faint Flut Wave
 startTime = beginning + 288.5
 dimmduration = 1
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 0, 95, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 95, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 0, 95, int(dimmduration*10), 10, 0, 100))
 startTime = beginning + 290
 dimmduration = 1
-eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting1, 95, 0, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 95, 0, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 95, 0, int(dimmduration*10), 10, 0, 100))
 
 # 288.8 Light Key
@@ -2662,6 +2707,31 @@ startTime = beginning + 295
 dimmduration = 1
 eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting2, 95, 0, int(dimmduration*10), 10, 0, 100))
 eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 95, 0, int(dimmduration*10), 10, 0, 100))
+
+# 296 - 297 Tiny Flut wave
+eventDict['time'].append(ChannelAddEffect(At(startTime), BottomController, Channel3, EffectStrobe1, 0))
+
+
+# STATE SUMMARY
+# 
+# TOP                               | BOTTOM
+#                                   |
+#
+# Light Channels                    | Light Channels
+# --------------------------------- | ---------------------------------
+#   Channel1: Setting1, [Perlin, ]  |   Channel1: Setting1, []
+#   Channel2: Setting2, [Strobe2, ] |   Channel2: Setting2, []
+#   Channel3: Setting3, []          |   Channel3: Setting3, [Strobe2, ]
+#   Channel4: Setting4, []          |   Channel4: Setting4, [Strobe1, ]
+
+startTime = beginning + 296
+dimmduration = 0.5
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 0, 80, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 0, 80, int(dimmduration*10), 10, 0, 100))
+startTime = startTime + dimmduration
+dimmduration = 0.5
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting4, 80, 0, int(dimmduration*10), 10, 0, 100))
+eventDict['time'].append(SettingBezierDimm(At(startTime), BottomController, Setting3, 80, 0, int(dimmduration*10), 10, 0, 100))
 
 # 296.8 Double Key
 startTime = beginning + 296.8
@@ -2784,8 +2854,8 @@ eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting
 # 315.5:
 # Direction Change
 startTime = beginning + 315
-# eventDict['time'].append(MotorDirection(At(startTime), MOTOR_CLOCKWISE))
-# eventDict['time'].append(MotorSpeed(At(startTime), 90))
+eventDict['time'].append(MotorDirection(At(startTime), MOTOR_CLOCKWISE))
+eventDict['time'].append(MotorSpeed(At(startTime), 90))
 
 #316 Strobe Off
 startTime = beginning + 316
@@ -2802,8 +2872,8 @@ eventDict['time'].append(SettingStatic(At(startTime), BottomController, Setting1
 # 331:
 # Direction Change
 startTime = beginning + 330.5
-# eventDict['time'].append(MotorDirection(At(startTime), MOTOR_COUNTERCLOCKWISE))
-# eventDict['time'].append(MotorSpeed(At(startTime), 110))
+eventDict['time'].append(MotorDirection(At(startTime), MOTOR_COUNTERCLOCKWISE))
+eventDict['time'].append(MotorSpeed(At(startTime), 110))
 
 # 331: Silence with eerie sound
 startTime = beginning + 332
@@ -2829,8 +2899,8 @@ eventDict['time'].append(SettingBezierDimm(At(startTime), TopController, Setting
 # 354:
 # Motor Off
 startTime = beginning + 354
-# eventDict['time'].append(MotorSpeed(At(startTime), 0))
-# eventDict['time'].append(MotorDirection(At(startTime), MOTOR_CLOCKWISE))
+eventDict['time'].append(MotorSpeed(At(startTime), 0))
+eventDict['time'].append(MotorDirection(At(startTime), MOTOR_CLOCKWISE))
 
 
 startTime = startTime + 2
@@ -2839,8 +2909,8 @@ eventDict['time'].append(SettingStatic(At(startTime), BottomController, Setting4
 
 
 
-
+True
 eventDict['time'] = sorted(eventDict['time'], key=lambda x: x.condition.value, reverse=False)
 
-vd = VisualDriver(eventDict, music=music, usesMotor=False, startTime=298, isTake=False)
+vd = VisualDriver(eventDict, music=music, usesMotor=False, startTime=276, isTake=False)
 vd.start()
