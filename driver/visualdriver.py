@@ -46,13 +46,15 @@ class VisualDriver:
 
         self.bottomQueue = Queue()
         self.bottom = ArduinoPwmManager(ARDUINO_UNO_CONN, self.bottomQueue, self.shutdownQueue)
-        
+
         self.encoderLock = Lock()
         self.position = Value('d', 0.0, lock=False)
         self.distance = Value('d', 0.0, lock=False)
-        self.er = EncoderReader(self.encoderLock, self.position, self.distance, self.shutdownQueue)
 
         if self.usesMotor:
+
+            self.er = EncoderReader(self.encoderLock, self.position, self.distance, self.shutdownQueue)
+
             self.speed = Value('d', 0.0)
             self.targetSpeed = Value('i', 0)
             self.targetDirection = Value('i', MOTOR_CLOCKWISE)
@@ -122,7 +124,7 @@ class VisualDriver:
         self.top.start()
         self.bottom.connect()
         self.bottom.start()
-        self.er.start()
+
         if self.usesTrigger:
             self.trigger.start()
 
@@ -150,6 +152,7 @@ class VisualDriver:
             print('Pose received!')
 
         if self.usesMotor:
+            self.er.start()
             self.sc.start()
 
         skippedToStartTime = False

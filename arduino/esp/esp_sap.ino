@@ -24,6 +24,7 @@ void setup() {
   // IPAddress myIP = WiFi.softAPIP();
   // Serial.print("SoftAP IP address: ");
   // Serial.println(myIP);
+  // IP: 192.168.4.1
   server.begin();
 }
 

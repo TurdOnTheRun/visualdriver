@@ -44,7 +44,7 @@ void loop() {
       if(client.available()){
         Serial.write(client.read());                        // print the message to Serial Monitor
       }
-      client.stop();
     }
+    client.stop();
   }
 }
