@@ -834,15 +834,15 @@ sustainSteptime = 5
 eventDict['time'].append(ChannelSetChannel(At(startTime), TopController, ChannelSidechain, Channel4))
 eventDict['time'].append(ChannelSetChannel(At(startTime), BottomController, ChannelSidechain, Channel4))
 
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting4, 70, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting4, 70, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting4, 50, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting4, 50, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 #Delicate piano
 startTime = beginning + 50.2
 fadeOutLength = 1.5
 sustainSteptime = 5
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting4, 70, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
-eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting4, 70, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting4, 60, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
+eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting4, 60, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 
 
 #Delicate Piano
@@ -870,8 +870,6 @@ eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomCont
 startTime = beginning + 54.4
 fadeOutLength = 1.5
 sustainSteptime = 5
-eventDict['time'].append(ChannelSetChannel(At(startTime), TopController, ChannelSidechain, Channel4))
-eventDict['time'].append(ChannelSetChannel(At(startTime), BottomController, ChannelSidechain, Channel4))
 
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), TopController, Setting4, 95, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
 eventDict['time'].append(SettingImpulseToBezierFadeout(At(startTime), BottomController, Setting4, 95, 1, 40, sustainSteptime, int(fadeOutLength*10), 10, 100, 100))
@@ -2912,5 +2910,5 @@ eventDict['time'].append(SettingStatic(At(startTime), BottomController, Setting4
 True
 eventDict['time'] = sorted(eventDict['time'], key=lambda x: x.condition.value, reverse=False)
 
-vd = VisualDriver(eventDict, music=music, usesMotor=False, startTime=276, isTake=False)
+vd = VisualDriver(eventDict, music=music, usesMotor=True, startTime=0, isTake=True)
 vd.start()
